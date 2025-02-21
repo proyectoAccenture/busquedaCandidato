@@ -1,4 +1,4 @@
 package com.busquedaCandidato.candidato.mapper;
 
-public interface IStatusRequest {
+public interface IMapperStatusRequest {
 }

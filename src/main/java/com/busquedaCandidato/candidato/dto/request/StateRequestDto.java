@@ -5,7 +5,6 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class AddStateRequestDto {
-
+public class StateRequestDto {
     private final String state;
 }

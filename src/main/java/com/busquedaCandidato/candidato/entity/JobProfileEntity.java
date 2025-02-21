@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "Estado")
-public class StateEntity {
+@Table(name = "PuestoTrabajo")
+public class JobProfileEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,3 +17,4 @@ public class StateEntity {
     @Column(unique = true, nullable = false)
     private String name;
 }
+

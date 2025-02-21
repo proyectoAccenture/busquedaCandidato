@@ -5,8 +5,7 @@ import lombok.Data;
 
 @AllArgsConstructor
 @Data
-public class AddStateResponseDto {
-
+public class StateResponseDto {
     private final Long id;
     private final String state;
 }

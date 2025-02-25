@@ -3,7 +3,6 @@ package com.busquedaCandidato.candidato.entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import org.hibernate.boot.jaxb.Origin;
 import java.util.Date;
 
 @Entity
@@ -31,7 +30,7 @@ public class CandidateEntity {
     @Column(nullable = false)
     private String city;
 
-    @OneToOne
-    @JoinColumn(name = "origin_id")
-    private Origin origin;
+    @ManyToOne
+    @JoinColumn(name = "origin_id", nullable = false)
+    private OriginEntity origin;
 }

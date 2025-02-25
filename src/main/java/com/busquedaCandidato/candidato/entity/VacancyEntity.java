@@ -2,6 +2,7 @@ package com.busquedaCandidato.candidato.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
@@ -10,6 +11,7 @@ import java.util.List;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 @Table(name = "Vacante")
 public class VacancyEntity {
     @Id
@@ -17,15 +19,11 @@ public class VacancyEntity {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "candidate_id")
-    private CandidateEntity candidate;
-
-    @OneToOne
-    @JoinColumn(name = "jobProfile_id")
+    @JoinColumn(name = "jobProfile_id", nullable = false)
     private JobProfileEntity jobProfile;
 
-    @OneToOne
-    @JoinColumn(name = "roleID")
+    @ManyToOne
+    @JoinColumn(name = "roleID_id", nullable = false)
     private RoleIDEntity roleID;
 
     @Column(nullable = false)
@@ -43,8 +41,10 @@ public class VacancyEntity {
     @Column(nullable = false)
     private String level;
 
+    @ElementCollection
+    @CollectionTable(name = "Vacancy_Skills", joinColumns = @JoinColumn(name = "vacancy_id"))
     @Column(nullable = false)
-    private List<String> skill;
+    private List<String> skills;
 
     @Column(nullable = false)
     private String contract;

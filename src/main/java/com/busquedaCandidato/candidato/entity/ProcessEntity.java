@@ -2,6 +2,7 @@ package com.busquedaCandidato.candidato.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.boot.jaxb.Origin;
 
@@ -11,19 +12,32 @@ import java.util.List;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 @Table(name = "Proceso")
 public class ProcessEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany
-    @JoinColumn(name = "candidate_id")
+    @OneToOne
+    @JoinColumn(name = "candidate_id", nullable = false)
     private CandidateEntity candidate;
 
-    @OneToOne
-    @JoinColumn(name = "phase_id")
-    private PhaseEntity phase;
+    @ManyToMany
+    @JoinTable(
+            name = "process_phase",
+            joinColumns = @JoinColumn(name = "process_id"),
+            inverseJoinColumns = @JoinColumn(name = "phase_id")
+    )
+    private List<PhaseEntity> phases;
+
+    @ManyToMany
+    @JoinTable(
+            name = "process_state",
+            joinColumns = @JoinColumn(name = "process_id"),
+            inverseJoinColumns = @JoinColumn(name = "state_id")
+    )
+    private List<StateEntity> states;
 
     @Column(nullable = false)
     private Date date;
@@ -31,11 +45,6 @@ public class ProcessEntity {
     @Column(nullable = false)
     private String description;
 
-    @OneToOne
-    @JoinColumn(name = "state_id")
-    private StateEntity stateEntity;
-
-    // Status that verifies wheter the candidate passed
     @Column(nullable = false)
-    private Boolean state;
+    private Boolean status;
 }

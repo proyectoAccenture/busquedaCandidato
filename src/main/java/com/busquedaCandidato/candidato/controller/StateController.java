@@ -33,6 +33,8 @@ public class StateController {
                             schema = @Schema(implementation = StateResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "State not found", content = @Content)
     })
+
+
     @GetMapping("/{id}")
     public ResponseEntity<StateResponseDto> getState(@PathVariable Long id){
         return stateService.getState(id)

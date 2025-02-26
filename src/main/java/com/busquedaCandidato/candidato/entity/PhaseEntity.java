@@ -9,18 +9,17 @@ import java.util.List;
 
 @Entity
 @AllArgsConstructor
-@NoArgsConstructor
 @Data
-@Table(name = "Estado")
-public class StateEntity {
-
+@NoArgsConstructor
+@Table(name = "Fase")
+public class PhaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String name;
 
-    @ManyToMany(mappedBy = "states")
+    @ManyToMany(mappedBy = "phases")
     private List<ProcessEntity> processes;
 }

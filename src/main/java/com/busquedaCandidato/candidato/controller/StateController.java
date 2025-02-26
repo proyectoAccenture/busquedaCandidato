@@ -1,7 +1,12 @@
 package com.busquedaCandidato.candidato.controller;
 
 
+<<<<<<< Updated upstream
 import com.busquedaCandidato.candidato.dto.response.AddStateResponseDto;
+=======
+import com.busquedaCandidato.candidato.dto.request.StateRequestDto;
+import com.busquedaCandidato.candidato.dto.response.StateResponseDto;
+>>>>>>> Stashed changes
 import com.busquedaCandidato.candidato.service.StateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

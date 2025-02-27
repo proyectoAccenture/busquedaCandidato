@@ -9,5 +9,4 @@ import org.springframework.data.jpa.repository.Query;
 public interface IStateRepository  extends JpaRepository<StateEntity, Long> {
 
     boolean existsByName(String name);
-
 }

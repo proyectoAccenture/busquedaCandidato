@@ -3,7 +3,6 @@ package com.busquedaCandidato.candidato.controller;
 
 import com.busquedaCandidato.candidato.dto.request.StateRequestDto;
 import com.busquedaCandidato.candidato.dto.response.StateResponseDto;
-import com.busquedaCandidato.candidato.entity.StateEntity;
 import com.busquedaCandidato.candidato.service.StateService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;

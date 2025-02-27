@@ -7,12 +7,11 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.busquedaCandidato.candidato.dto.request.OriginRequestDto;
-import com.busquedaCandidato.candidato.dto.request.StateRequestDto;
 import com.busquedaCandidato.candidato.dto.response.OriginResponseDto;
 import com.busquedaCandidato.candidato.entity.OriginEntity;
 import com.busquedaCandidato.candidato.exception.type.StateAlreadyExistsException;
-import com.busquedaCandidato.candidato.mapper.Request.IMapperOriginRequest;
-import com.busquedaCandidato.candidato.mapper.Response.IMapperOriginResponse;
+import com.busquedaCandidato.candidato.mapper.IMapperOriginRequest;
+import com.busquedaCandidato.candidato.mapper.IMapperOriginResponse;
 import com.busquedaCandidato.candidato.repository.IOriginRepository;
 
 

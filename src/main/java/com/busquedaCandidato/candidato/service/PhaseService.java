@@ -10,8 +10,8 @@ import com.busquedaCandidato.candidato.dto.request.PhaseRequestDto;
 import com.busquedaCandidato.candidato.dto.response.PhaseResponseDto;
 import com.busquedaCandidato.candidato.entity.PhaseEntity;
 import com.busquedaCandidato.candidato.exception.type.StateAlreadyExistsException;
-import com.busquedaCandidato.candidato.mapper.Request.IMapperPhaseRequest;
-import com.busquedaCandidato.candidato.mapper.Response.IMapperPhaseResponse;
+import com.busquedaCandidato.candidato.mapper.IMapperPhaseRequest;
+import com.busquedaCandidato.candidato.mapper.IMapperPhaseResponse;
 import com.busquedaCandidato.candidato.repository.IPhaseRepository;
 
 import lombok.AllArgsConstructor;

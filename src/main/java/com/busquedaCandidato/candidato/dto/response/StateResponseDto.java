@@ -1,7 +1,6 @@
 package com.busquedaCandidato.candidato.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Schema(name = "StateResponse", description = "Model represent a state on database")

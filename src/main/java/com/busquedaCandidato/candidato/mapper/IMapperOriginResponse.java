@@ -1,4 +1,4 @@
-package com.busquedaCandidato.candidato.mapper.Response;
+package com.busquedaCandidato.candidato.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

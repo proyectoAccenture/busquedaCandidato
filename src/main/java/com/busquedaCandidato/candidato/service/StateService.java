@@ -4,8 +4,8 @@ import com.busquedaCandidato.candidato.dto.request.StateRequestDto;
 import com.busquedaCandidato.candidato.dto.response.StateResponseDto;
 import com.busquedaCandidato.candidato.entity.StateEntity;
 import com.busquedaCandidato.candidato.exception.type.StateAlreadyExistsException;
-import com.busquedaCandidato.candidato.mapper.IMapperStatusRequest;
-import com.busquedaCandidato.candidato.mapper.IMapperStatusResponse;
+import com.busquedaCandidato.candidato.mapper.IMapperStateRequest;
+import com.busquedaCandidato.candidato.mapper.IMapperStateResponse;
 import com.busquedaCandidato.candidato.repository.IStateRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,18 +19,18 @@ import java.util.stream.Collectors;
 public class StateService {
 
     private final IStateRepository stateRepository;
-    private final IMapperStatusResponse mapperStatusResponse;
-    private final IMapperStatusRequest mapperStatusRequest;
+    private final IMapperStateResponse mapperStateResponse;
+    private final IMapperStateRequest mapperStateRequest;
 
     public Optional<StateResponseDto> getState(Long id){
         return stateRepository.findById(id)
-                .map(mapperStatusResponse::StatusToStatusResponse);
+                .map(mapperStateResponse::StateToStateResponse);
 
     }
 
     public List<StateResponseDto> getAllState(){
         return stateRepository.findAll().stream()
-                .map(mapperStatusResponse::StatusToStatusResponse)
+                .map(mapperStateResponse::StateToStateResponse)
                 .collect(Collectors.toList());
     }
 
@@ -38,16 +38,16 @@ public class StateService {
         if(stateRepository.existsByName(stateRequestDto.getName())){
             throw new StateAlreadyExistsException();
         }
-        StateEntity stateEntity = mapperStatusRequest.StatusRequestToStatus(stateRequestDto);
+        StateEntity stateEntity = mapperStateRequest.StateResquestToState(stateRequestDto);
         StateEntity stateEntitySave = stateRepository.save(stateEntity);
-        return mapperStatusResponse.StatusToStatusResponse(stateEntitySave);
+        return mapperStateResponse.StateToStateResponse(stateEntitySave);
     }
 
     public Optional<StateResponseDto> updateState(Long id, StateRequestDto stateRequestDto) {
         return stateRepository.findById(id)
                 .map(existingEntity -> {
                     existingEntity.setName(stateRequestDto.getName());
-                    return mapperStatusResponse.StatusToStatusResponse(stateRepository.save(existingEntity));
+                    return mapperStateResponse.StateToStateResponse(stateRepository.save(existingEntity));
                 });
     }
 

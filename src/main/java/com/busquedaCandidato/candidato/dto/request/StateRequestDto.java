@@ -11,6 +11,6 @@ public class StateRequestDto {
 
     @Schema(name = "name", description = "Name of state", example = "Validation")
     @NotNull(message = "State cannot be null")
-    @Size(min = 1, max = 25, message = "The state name must be greater than 0 and less than 10")
+    @Size(min = 1, max = 255, message = "The state name must be greater than 0 and less than 10")
     private final String name;
 }

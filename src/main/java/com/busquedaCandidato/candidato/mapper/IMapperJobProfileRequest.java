@@ -10,7 +10,7 @@ import com.busquedaCandidato.candidato.entity.JobProfileEntity;
 @Mapper(componentModel = "spring")
 public interface IMapperJobProfileRequest {
      @Mapping(source = "name", target = "name")
-    JobProfileEntity JobProfileResquestToStatus (JobProfileRequestDto jobProfileRequestDto);
+    JobProfileEntity JobProfileResquestToJobProfile (JobProfileRequestDto jobProfileRequestDto);
 
 
 }

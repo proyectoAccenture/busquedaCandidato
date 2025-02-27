@@ -21,5 +21,5 @@ public interface IMapperJobProfileResponse {
      * @return El DTO JobProfileResponseDto mapeado.
      */
     @Mapping(source = "name", target = "name")
-    JobProfileResponseDto JobProfileToStatusResponse (JobProfileEntity jobProfileEntity);
+    JobProfileResponseDto JobProfileToJobProfileResponse (JobProfileEntity jobProfileEntity);
 }

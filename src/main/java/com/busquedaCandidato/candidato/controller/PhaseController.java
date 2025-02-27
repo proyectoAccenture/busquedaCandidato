@@ -21,7 +21,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
@@ -66,7 +66,7 @@ public class PhaseController {
             @ApiResponse(responseCode = "409", description = "Phase already exists", content = @Content)
     })
      @PostMapping("/")
-    public ResponseEntity<PhaseResponseDto> savePhase(@Valid @RequestBody PhaseRequestDto phaseRequestDto){
+    public ResponseEntity<PhaseResponseDto> savePhase(@Valid @org.springframework.web.bind.annotation.RequestBody PhaseRequestDto phaseRequestDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(phaseService.savePhase(phaseRequestDto));
     }
 
@@ -76,7 +76,7 @@ public class PhaseController {
             @ApiResponse(responseCode = "404", description = "Phase not found", content = @Content)
     })
     @PutMapping("/{id}")
-    public ResponseEntity<PhaseResponseDto> updatePhase(@Valid @PathVariable Long id, @RequestBody PhaseRequestDto phaseRequestDto){
+    public ResponseEntity<PhaseResponseDto> updatePhase(@Valid @PathVariable Long id, @org.springframework.web.bind.annotation.RequestBody PhaseRequestDto phaseRequestDto){
         return phaseService.updatePhase(id, phaseRequestDto)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());

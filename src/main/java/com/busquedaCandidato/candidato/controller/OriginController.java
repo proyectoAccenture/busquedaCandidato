@@ -20,7 +20,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
@@ -64,7 +64,7 @@ public class OriginController {
             @ApiResponse(responseCode = "409", description = "Origin already exists", content = @Content)
     })
     @PostMapping("/")
-    public ResponseEntity<OriginResponseDto> saveOrigin(@Valid @RequestBody OriginRequestDto originRequestDto){
+    public ResponseEntity<OriginResponseDto> saveOrigin(@Valid @org.springframework.web.bind.annotation.RequestBody OriginRequestDto originRequestDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(originService.saveOrigin(originRequestDto));
     }
      @Operation(summary = "Update an existing origin")
@@ -73,7 +73,7 @@ public class OriginController {
             @ApiResponse(responseCode = "404", description = "Origin not found", content = @Content)
     })
     @PutMapping("/{id}")
-    public ResponseEntity<OriginResponseDto> updateOrigin(@Valid @PathVariable Long id, @RequestBody OriginRequestDto originRequestDto){
+    public ResponseEntity<OriginResponseDto> updateOrigin(@Valid @PathVariable Long id, @org.springframework.web.bind.annotation.RequestBody OriginRequestDto originRequestDto){
         return originService.updateOrigin(id, originRequestDto)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());

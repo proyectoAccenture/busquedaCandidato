@@ -3,7 +3,7 @@ package com.busquedaCandidato.candidato.service;
 import com.busquedaCandidato.candidato.dto.request.StateRequestDto;
 import com.busquedaCandidato.candidato.dto.response.StateResponseDto;
 import com.busquedaCandidato.candidato.entity.StateEntity;
-import com.busquedaCandidato.candidato.exception.type.StateAlreadyExistsException;
+import com.busquedaCandidato.candidato.exception.type.EntityAlreadyExistsException;
 import com.busquedaCandidato.candidato.mapper.IMapperStateRequest;
 import com.busquedaCandidato.candidato.mapper.IMapperStateResponse;
 import com.busquedaCandidato.candidato.repository.IStateRepository;
@@ -36,7 +36,7 @@ public class StateService {
 
     public StateResponseDto saveState(StateRequestDto stateRequestDto) {
         if(stateRepository.existsByName(stateRequestDto.getName())){
-            throw new StateAlreadyExistsException();
+            throw new EntityAlreadyExistsException();
         }
         StateEntity stateEntity = mapperStateRequest.StateResquestToState(stateRequestDto);
         StateEntity stateEntitySave = stateRepository.save(stateEntity);

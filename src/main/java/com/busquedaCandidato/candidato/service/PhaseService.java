@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import com.busquedaCandidato.candidato.dto.request.PhaseRequestDto;
 import com.busquedaCandidato.candidato.dto.response.PhaseResponseDto;
 import com.busquedaCandidato.candidato.entity.PhaseEntity;
-import com.busquedaCandidato.candidato.exception.type.StateAlreadyExistsException;
+import com.busquedaCandidato.candidato.exception.type.EntityAlreadyExistsException;
 import com.busquedaCandidato.candidato.mapper.IMapperPhaseRequest;
 import com.busquedaCandidato.candidato.mapper.IMapperPhaseResponse;
 import com.busquedaCandidato.candidato.repository.IPhaseRepository;
@@ -38,7 +38,7 @@ public class PhaseService {
 
     public PhaseResponseDto savePhase(PhaseRequestDto phaseRequestDto) {
         if(phaseRepository.existsByName(phaseRequestDto.getName())){
-            throw new StateAlreadyExistsException();
+            throw new EntityAlreadyExistsException();
         }
         PhaseEntity phaseEntity = mapperPhaseRequest.PhaseRequestToPhase(phaseRequestDto);
         PhaseEntity phaseEntitySave = phaseRepository.save(phaseEntity);

@@ -1,7 +1,7 @@
 package com.busquedaCandidato.candidato.exception;
 
 import com.busquedaCandidato.candidato.exception.response.ExceptionResponse;
-import com.busquedaCandidato.candidato.exception.type.StateAlreadyExistsException;
+import com.busquedaCandidato.candidato.exception.type.EntityAlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,10 +15,10 @@ public class GlobalException {
 
     private static final String MESSAGE = "Message";
 
-    @ExceptionHandler(StateAlreadyExistsException.class)
-    public ResponseEntity<Map<String, String>> StateAlreadyExistsException(StateAlreadyExistsException ex) {
+    @ExceptionHandler(EntityAlreadyExistsException.class)
+    public ResponseEntity<Map<String, String>> EntityAlreadyExistsException(EntityAlreadyExistsException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.STATE_ALREADY_EXISTS.getMessage()));
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ENTITY_ALREADY_EXISTS.getMessage()));
     }
 }
 

@@ -9,12 +9,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Table(name = "RoleID")
-public class RoleIDEntity {
+@Table(name = "PuestoTrabajo")
+public class JobProfileEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, name ="roleID")
+    @Column(unique = true, nullable = false)
     private String name;
 }
+

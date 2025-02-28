@@ -5,16 +5,22 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Table(name = "RoleID")
-public class RoleIDEntity {
+@Table(name = "Estado")
+public class StateEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, name ="roleID")
+    @Column(unique = true)
     private String name;
+
+    @ManyToMany(mappedBy = "states")
+    private List<ProcessEntity> processes;
 }

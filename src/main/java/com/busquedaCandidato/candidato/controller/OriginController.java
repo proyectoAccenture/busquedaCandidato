@@ -46,21 +46,28 @@ public class OriginController {
             @ApiResponse(responseCode = "200", description = "All origin returned",
                     content = @Content(mediaType = "application/json",
                             array = @ArraySchema(schema = @Schema(implementation = OriginResponseDto.class)))),
-            @ApiResponse(responseCode = "404", description = "No data found", content = @Content)
+            @ApiResponse(responseCode = "404", description = "No data found", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)         
     })
     @GetMapping("/")
     public ResponseEntity<List<OriginResponseDto>> getAllOrigin(){
-        List<OriginResponseDto> origin = originService.getAllOrigin();
-        return origin.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(origin);
+        try{
+                List<OriginResponseDto> origin = originService.getAllOrigin();
+                return ResponseEntity.ok(origin);
+            } catch (Exception e){
+                return ResponseEntity.internalServerError().build();
+            }
     }
 
      @Operation(summary = "Add a new origin")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Origin created", content = @Content),
-            @ApiResponse(responseCode = "409", description = "Origin already exists", content = @Content)
-    })
+            @ApiResponse(responseCode = "409", description = "Origin already exists", content = @Content),
+            @ApiResponse(responseCode = "400", description = "Origin invalid request", content = @Content)
+        })
+    
     @PostMapping("/")
-    public ResponseEntity<OriginResponseDto> saveOrigin(@Valid @org.springframework.web.bind.annotation.RequestBody OriginRequestDto originRequestDto){
+    public ResponseEntity<OriginResponseDto> saveOrigin(@Valid @RequestBody OriginRequestDto originRequestDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(originService.saveOrigin(originRequestDto));
     }
 

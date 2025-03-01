@@ -39,7 +39,7 @@ public class OriginService {
 
     public OriginResponseDto saveOrigin(OriginRequestDto originRequestDto) {
         if(originRepository.existsByName(originRequestDto.getName())){
-            throw new EntityAlreadyExistsException();
+            throw new EntityAlreadyExistsException();  
         }
         OriginEntity originEntity = mapperOriginRequest.OriginRequestToOrigin(originRequestDto);
         OriginEntity originEntitySave = originRepository.save(originEntity);

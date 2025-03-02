@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import com.busquedaCandidato.candidato.dto.request.OriginRequestDto;
 import com.busquedaCandidato.candidato.dto.response.OriginResponseDto;
 import com.busquedaCandidato.candidato.entity.OriginEntity;
-import com.busquedaCandidato.candidato.exception.type.StateAlreadyExistsException;
+import com.busquedaCandidato.candidato.exception.type.EntityAlreadyExistsException;
 import com.busquedaCandidato.candidato.mapper.IMapperOriginRequest;
 import com.busquedaCandidato.candidato.mapper.IMapperOriginResponse;
 import com.busquedaCandidato.candidato.repository.IOriginRepository;
@@ -39,7 +39,7 @@ public class OriginService {
 
     public OriginResponseDto saveOrigin(OriginRequestDto originRequestDto) {
         if(originRepository.existsByName(originRequestDto.getName())){
-            throw new StateAlreadyExistsException();
+            throw new EntityAlreadyExistsException();
         }
         OriginEntity originEntity = mapperOriginRequest.OriginRequestToOrigin(originRequestDto);
         OriginEntity originEntitySave = originRepository.save(originEntity);

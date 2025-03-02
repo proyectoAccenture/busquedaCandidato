@@ -8,9 +8,9 @@ import lombok.Data;
 @Schema(name = "PhaseRequest", description = "Model represent a phase on database")
 @Data
 public class PhaseRequestDto {
-    @Schema(name = "name", description = "Name of phase", example = "Validation")
+    @Schema(name = "name", description = "Name of phase")
     @NotNull(message = "Phase cannot be null")
-    @Size(min = 1, max = 25, message = "The phase name must be greater than 0 and less than 25")
+    @Size(min = 1, max = 250, message = "The phase name must be greater than 0 and less than 250")
     private final String name;
 }
 

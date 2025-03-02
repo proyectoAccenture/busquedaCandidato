@@ -2,12 +2,16 @@ package com.busquedaCandidato.candidato.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 @Table(name = "Candidato")
 public class CandidateEntity {
 
@@ -22,15 +26,14 @@ public class CandidateEntity {
     private Long IDCard;
 
     @Column(nullable = false)
-    private Date birthdate;
+    private LocalDate birthdate;
+
+    @Column(nullable = false)
+    private Long phone;
 
     @Column(nullable = false)
     private String email;
 
     @Column(nullable = false)
     private String city;
-
-    @ManyToOne
-    @JoinColumn(name = "origin_id", nullable = false)
-    private OriginEntity origin;
 }

@@ -3,7 +3,7 @@ package com.busquedaCandidato.candidato.service;
 import com.busquedaCandidato.candidato.dto.request.JobProfileRequestDto;
 import com.busquedaCandidato.candidato.dto.response.JobProfileResponseDto;
 import com.busquedaCandidato.candidato.entity.JobProfileEntity;
-import com.busquedaCandidato.candidato.exception.type.StateAlreadyExistsException;
+import com.busquedaCandidato.candidato.exception.type.EntityAlreadyExistsException;
 import com.busquedaCandidato.candidato.mapper.IMapperJobProfileRequest;
 import com.busquedaCandidato.candidato.mapper.IMapperJobProfileResponse;
 import com.busquedaCandidato.candidato.repository.IJobProfileRepository;
@@ -33,7 +33,7 @@ public class JobProfileService {
      */
     public Optional<JobProfileResponseDto> getJobProfile(Long id){
         return jobProfileRepository.findById(id)
-                .map(mapperJobProfileResponse::JobProfileToStatusResponse);
+                .map(mapperJobProfileResponse::JobProfileToJobProfileResponse);
 
     }
 
@@ -44,7 +44,7 @@ public class JobProfileService {
      */
     public List<JobProfileResponseDto> getAllJobProfile(){
         return jobProfileRepository.findAll().stream()
-                .map(mapperJobProfileResponse::JobProfileToStatusResponse)
+                .map(mapperJobProfileResponse::JobProfileToJobProfileResponse)
                 .collect(Collectors.toList());
     }
 
@@ -55,15 +55,15 @@ public class JobProfileService {
      *
      * @param jobProfileRequestDto El DTO que representa la solicitud de creación de un perfil de trabajo.
      * @return El JobProfileResponseDto del perfil de trabajo guardado.
-     * @throws StateAlreadyExistsException si ya existe un perfil de trabajo con el mismo nombre.
+     * @throws EntityAlreadyExistsException si ya existe un perfil de trabajo con el mismo nombre.
      */
     public JobProfileResponseDto saveJobProfile(JobProfileRequestDto jobProfileRequestDto) {
         if(jobProfileRepository.existsByName(jobProfileRequestDto.getName())){
-            throw new StateAlreadyExistsException();
+            throw new EntityAlreadyExistsException();
         }
-        JobProfileEntity jobProfileEntity = mapperJobProfileRequest.JobProfileResquestToStatus(jobProfileRequestDto);
+        JobProfileEntity jobProfileEntity = mapperJobProfileRequest.JobProfileResquestToJobProfile(jobProfileRequestDto);
         JobProfileEntity jobProfileEntitySave = jobProfileRepository.save(jobProfileEntity);
-        return mapperJobProfileResponse.JobProfileToStatusResponse(jobProfileEntitySave);
+        return mapperJobProfileResponse.JobProfileToJobProfileResponse(jobProfileEntitySave);
     }
 
 
@@ -78,7 +78,7 @@ public class JobProfileService {
         return jobProfileRepository.findById(id)
                 .map(existingJob -> {
                     existingJob.setName(jobProfileRequestDto.getName());
-                    return mapperJobProfileResponse.JobProfileToStatusResponse(jobProfileRepository.save(existingJob));
+                    return mapperJobProfileResponse.JobProfileToJobProfileResponse(jobProfileRepository.save(existingJob));
                 });
     }
 

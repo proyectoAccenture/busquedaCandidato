@@ -13,14 +13,10 @@ import java.util.List;
 @Data
 @Table(name = "Estado")
 public class StateEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String name;
-
-    @ManyToMany(mappedBy = "states")
-    private List<ProcessEntity> processes;
 }

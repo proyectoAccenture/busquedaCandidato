@@ -10,5 +10,5 @@ import org.mapstruct.Mapping;
 public interface IMapperJobProfileResponse {
 
     @Mapping(source = "name", target = "name")
-    JobProfileResponseDto JobProfileToJobProfileResponse (JobProfileEntity jobProfileEntity);
+    JobProfileResponseDto JobProfileToStatusResponse (JobProfileEntity jobProfileEntity);
 }

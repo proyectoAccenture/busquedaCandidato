@@ -24,13 +24,13 @@ public class PhaseService {
     private final IMapperPhaseResponse mapperPhaseResponse;
     private final IMapperPhaseRequest mapperPhaseRequest;
 
-    public Optional<PhaseResponseDto> getPhase(Long id){
+    public Optional<PhaseResponseDto> getState(Long id){
         return phaseRepository.findById(id)
                 .map(mapperPhaseResponse:: PhaseToPhaseResponse );
 
     }
 
-      public List<PhaseResponseDto> getAllPhase(){
+      public List<PhaseResponseDto> getAllState(){
         return phaseRepository.findAll().stream()
                 .map(mapperPhaseResponse::PhaseToPhaseResponse)
                 .collect(Collectors.toList());

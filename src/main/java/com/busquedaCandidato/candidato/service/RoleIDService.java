@@ -4,7 +4,7 @@ package com.busquedaCandidato.candidato.service;
 import com.busquedaCandidato.candidato.dto.request.RoleIDRequestDto;
 import com.busquedaCandidato.candidato.dto.response.RoleIDResponseDto;
 import com.busquedaCandidato.candidato.entity.RoleIDEntity;
-import com.busquedaCandidato.candidato.exception.type.EntityAlreadyExistsException;
+import com.busquedaCandidato.candidato.exception.type.StateAlreadyExistsException;
 import com.busquedaCandidato.candidato.mapper.IMapperRoleIDRequest;
 import com.busquedaCandidato.candidato.mapper.IMapperRoleIDResponse;
 import com.busquedaCandidato.candidato.repository.IRoleIDRepository;
@@ -43,7 +43,7 @@ public class RoleIDService {
      *
      * @return Una lista de RolIDResponseDto.
      */
-    public List<RoleIDResponseDto> getAllRoleID() {
+    public List<RoleIDResponseDto> getAllJRoleID() {
         return roleIDRepository.findAll().stream()
                 .map(mapperRolIDResponse::RolIDToStatusResponse)
                 .collect(Collectors.toList());
@@ -58,7 +58,7 @@ public class RoleIDService {
      */
     public RoleIDResponseDto saveRolID(RoleIDRequestDto rolIDRequestDto) {
         if (roleIDRepository.existsByName(rolIDRequestDto.getName())) {
-            throw new EntityAlreadyExistsException();
+            throw new StateAlreadyExistsException();
         }
         RoleIDEntity roleIDEntity = mapperRolIDRequest.RolIDRequestToStatus(rolIDRequestDto);
         RoleIDEntity roleIDEntitySave = roleIDRepository.save(roleIDEntity);

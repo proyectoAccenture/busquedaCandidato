@@ -2,7 +2,6 @@ package com.busquedaCandidato.candidato.controller;
 
 import com.busquedaCandidato.candidato.dto.request.JobProfileRequestDto;
 import com.busquedaCandidato.candidato.dto.response.JobProfileResponseDto;
-import com.busquedaCandidato.candidato.exception.type.EntityNotFoundException;
 import com.busquedaCandidato.candidato.service.JobProfileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -17,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Controlador REST para manejar las operaciones relacionadas con los perfiles de trabajo.
@@ -45,12 +43,9 @@ public class JobProfileController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<JobProfileResponseDto> getByIdJobProfile(@PathVariable Long id){
-        Optional<JobProfileResponseDto> stateOptional = jobProfileService.getJobProfile(id);
-                if (stateOptional.isPresent()) {
-                        return ResponseEntity.ok(stateOptional.get());
-                } else {
-                        throw new EntityNotFoundException("State not found");
-                }
+        return jobProfileService.getJobProfile(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
 
@@ -65,18 +60,13 @@ public class JobProfileController {
             @ApiResponse(responseCode = "200", description = "All job profiles returned",
                     content = @Content(mediaType = "application/json",
                             array = @ArraySchema(schema = @Schema(implementation = JobProfileResponseDto.class)))),
-            @ApiResponse(responseCode = "404", description = "No data found", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content) 
+            @ApiResponse(responseCode = "404", description = "No data found", content = @Content)
     })
 
     @GetMapping("/")
     public ResponseEntity<List<JobProfileResponseDto>> getAllJobProfile(){
-        try{
-                List<JobProfileResponseDto> jobProfile = jobProfileService.getAllJobProfile();
-                return ResponseEntity.ok(jobProfile);
-            } catch (Exception e){
-                return ResponseEntity.internalServerError().build();
-            }
+        List<JobProfileResponseDto> job = jobProfileService.getAllJobProfile();
+        return job.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(job);
     }
 
 
@@ -92,8 +82,7 @@ public class JobProfileController {
     @Operation(summary = "Add a new jo profile")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Job profile created", content = @Content),
-            @ApiResponse(responseCode = "409", description = "Job profile already exists", content = @Content),
-            @ApiResponse(responseCode = "400", description = "Job profile invalid request", content = @Content)
+            @ApiResponse(responseCode = "409", description = "Job profile already exists", content = @Content)
     })
     @PostMapping("/")
     public ResponseEntity<JobProfileResponseDto> saveJobProfile(@Valid @RequestBody JobProfileRequestDto jobProfileRequestDto){
@@ -117,12 +106,9 @@ public class JobProfileController {
 
     @PutMapping("/{id}")
     public ResponseEntity<JobProfileResponseDto> updateJobProfile(@Valid @PathVariable Long id, @RequestBody JobProfileRequestDto jobProfileRequestDto){
-        Optional<JobProfileResponseDto> stateOptional = jobProfileService.updateJobProfile(id, jobProfileRequestDto);
-                if (stateOptional.isPresent()) {
-                        return ResponseEntity.ok(stateOptional.get());
-                } else {
-                        throw new EntityNotFoundException("State not found");
-                }
+        return jobProfileService.updateJobProfile(id, jobProfileRequestDto)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
 
@@ -144,12 +130,7 @@ public class JobProfileController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteJobProfile(@PathVariable Long id){
-        boolean isDeleted = jobProfileService.deleteJobProfile(id);  
-                if (isDeleted) {
-                    return ResponseEntity.noContent().build();  
-                } else {
-                    throw new EntityNotFoundException("State not found");
-                }
+        return jobProfileService.deleteJobProfile(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 
 

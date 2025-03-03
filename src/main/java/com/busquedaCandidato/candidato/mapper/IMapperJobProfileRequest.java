@@ -12,8 +12,15 @@ import org.mapstruct.Mapping;
  */
 @Mapper(componentModel = "spring")
 public interface IMapperJobProfileRequest {
-     @Mapping(source = "name", target = "name")
-    JobProfileEntity JobProfileResquestToJobProfile (JobProfileRequestDto jobProfileRequestDto);
+
+    /**
+     * Mapea JobProfileRequestDto a JobProfileEntity.
+     *
+     * @param jobProfileRequestDto El DTO que representa una solicitud de perfil de trabajo.
+     * @return La entidad JobProfileEntity mapeada.
+     */
+    @Mapping(source = "name", target = "name")
+    JobProfileEntity  JobProfileResquestToStatus(JobProfileRequestDto jobProfileRequestDto);
 
 
 }

@@ -7,6 +7,8 @@ import com.busquedaCandidato.candidato.exception.type.EntityAlreadyExistsExcepti
 import com.busquedaCandidato.candidato.mapper.IMapperStateRequest;
 import com.busquedaCandidato.candidato.mapper.IMapperStateResponse;
 import com.busquedaCandidato.candidato.repository.IStateRepository;
+
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +27,7 @@ public class StateService {
     public Optional<StateResponseDto> getState(Long id){
         return stateRepository.findById(id)
                 .map(mapperStateResponse::StateToStateResponse);
-
+                       
     }
 
     public List<StateResponseDto> getAllState(){

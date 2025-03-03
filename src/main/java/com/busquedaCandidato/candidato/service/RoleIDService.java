@@ -43,7 +43,7 @@ public class RoleIDService {
      *
      * @return Una lista de RolIDResponseDto.
      */
-    public List<RoleIDResponseDto> getAllJRoleID() {
+    public List<RoleIDResponseDto> getAllRoleID() {
         return roleIDRepository.findAll().stream()
                 .map(mapperRolIDResponse::RolIDToStatusResponse)
                 .collect(Collectors.toList());

@@ -1,6 +1,7 @@
 package com.busquedaCandidato.candidato.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.busquedaCandidato.candidato.dto.request.OriginRequestDto;
 import com.busquedaCandidato.candidato.dto.response.OriginResponseDto;
+import com.busquedaCandidato.candidato.exception.type.EntityNotFoundException;
 import com.busquedaCandidato.candidato.service.OriginService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,9 +38,12 @@ public class OriginController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<OriginResponseDto> getOrigin(@PathVariable Long id){
-        return originService.getOrigin(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        Optional<OriginResponseDto> stateOptional = originService.getOrigin(id);
+                if (stateOptional.isPresent()) {
+                        return ResponseEntity.ok(stateOptional.get());
+                } else {
+                        throw new EntityNotFoundException("State not found");
+                }
     }
 
      @Operation(summary = "Get all the origin")
@@ -77,10 +82,13 @@ public class OriginController {
             @ApiResponse(responseCode = "404", description = "Origin not found", content = @Content)
     })
     @PutMapping("/{id}")
-    public ResponseEntity<OriginResponseDto> updateOrigin(@Valid @PathVariable Long id, @org.springframework.web.bind.annotation.RequestBody OriginRequestDto originRequestDto){
-        return originService.updateOrigin(id, originRequestDto)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<OriginResponseDto> updateOrigin(@Valid @PathVariable Long id, @RequestBody OriginRequestDto originRequestDto){
+        Optional<OriginResponseDto> stateOptional = originService.updateOrigin(id, originRequestDto);
+                if (stateOptional.isPresent()) {
+                        return ResponseEntity.ok(stateOptional.get());
+                } else {
+                        throw new EntityNotFoundException("State not found");
+                }
     }
 
     @Operation(summary = "Delete a origin by their Number")
@@ -90,7 +98,12 @@ public class OriginController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrigin(@PathVariable Long id){
-        return originService.deleteOrigin(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        boolean isDeleted = originService.deleteOrigin(id);  
+                if (isDeleted) {
+                    return ResponseEntity.noContent().build();  
+                } else {
+                    throw new EntityNotFoundException("State not found");
+                }
     }
 
 

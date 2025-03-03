@@ -1,10 +1,9 @@
 package com.busquedaCandidato.candidato.service;
 
-
 import com.busquedaCandidato.candidato.dto.request.RoleIDRequestDto;
 import com.busquedaCandidato.candidato.dto.response.RoleIDResponseDto;
 import com.busquedaCandidato.candidato.entity.RoleIDEntity;
-import com.busquedaCandidato.candidato.exception.type.StateAlreadyExistsException;
+import com.busquedaCandidato.candidato.exception.type.EntityAlreadyExistsException;
 import com.busquedaCandidato.candidato.mapper.IMapperRoleIDRequest;
 import com.busquedaCandidato.candidato.mapper.IMapperRoleIDResponse;
 import com.busquedaCandidato.candidato.repository.IRoleIDRepository;
@@ -54,11 +53,11 @@ public class RoleIDService {
      *
      * @param rolIDRequestDto El DTO que representa la solicitud de creación de un Role ID.
      * @return El RolIDResponseDto del role ID guardado.
-     * @throws StateAlreadyExistsException si ya existe un role ID con el mismo nombre.
+     * @throws EntityAlreadyExistsException si ya existe un role ID con el mismo nombre.
      */
     public RoleIDResponseDto saveRolID(RoleIDRequestDto rolIDRequestDto) {
         if (roleIDRepository.existsByName(rolIDRequestDto.getName())) {
-            throw new StateAlreadyExistsException();
+            throw new EntityAlreadyExistsException();
         }
         RoleIDEntity roleIDEntity = mapperRolIDRequest.RolIDRequestToStatus(rolIDRequestDto);
         RoleIDEntity roleIDEntitySave = roleIDRepository.save(roleIDEntity);

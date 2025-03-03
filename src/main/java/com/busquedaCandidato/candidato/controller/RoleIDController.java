@@ -3,6 +3,7 @@ package com.busquedaCandidato.candidato.controller;
 
 import com.busquedaCandidato.candidato.dto.request.RoleIDRequestDto;
 import com.busquedaCandidato.candidato.dto.response.RoleIDResponseDto;
+import com.busquedaCandidato.candidato.exception.type.EntityNotFoundException;
 import com.busquedaCandidato.candidato.service.RoleIDService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -17,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Controlador REST para manejar las operaciones relacionadas con los role ID.
@@ -44,9 +46,12 @@ public class RoleIDController {
 
     @GetMapping("/{id}")
     public ResponseEntity<RoleIDResponseDto> getByIdRoleID(@PathVariable Long id){
-        return roleIDService.getRolID(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        Optional<RoleIDResponseDto> stateOptional = roleIDService.getRolID(id);
+                if (stateOptional.isPresent()) {
+                        return ResponseEntity.ok(stateOptional.get());
+                } else {
+                        throw new EntityNotFoundException("State not found");
+                }
     }
 
     /**
@@ -65,8 +70,12 @@ public class RoleIDController {
 
     @GetMapping("/")
     public ResponseEntity<List<RoleIDResponseDto>> getAllRoleID(){
-        List<RoleIDResponseDto> roleid = roleIDService.getAllJRoleID();
-        return roleid.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(roleid);
+        try{
+                List<RoleIDResponseDto> roleID = roleIDService.getAllRoleID();
+                return ResponseEntity.ok(roleID);
+            } catch (Exception e){
+                return ResponseEntity.internalServerError().build();
+            }
     }
 
     /**
@@ -78,7 +87,8 @@ public class RoleIDController {
     @Operation(summary = "Add a new role id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Rol id created", content = @Content),
-            @ApiResponse(responseCode = "409", description = "Rol id already exists", content = @Content)
+            @ApiResponse(responseCode = "409", description = "Rol id already exists", content = @Content),
+            @ApiResponse(responseCode = "400", description = "Rol id invalid request", content = @Content)
     })
     @PostMapping("/")
     public ResponseEntity<RoleIDResponseDto> saveRoleID(@Valid @RequestBody RoleIDRequestDto rolIDRequestDto){
@@ -100,9 +110,12 @@ public class RoleIDController {
 
     @PutMapping("/{id}")
     public ResponseEntity<RoleIDResponseDto> updateRoleID(@Valid @PathVariable Long id, @RequestBody RoleIDRequestDto rolIDRequestDto){
-        return roleIDService.updateRolID(id, rolIDRequestDto)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        Optional<RoleIDResponseDto> stateOptional = roleIDService.updateRolID(id, rolIDRequestDto);
+                if (stateOptional.isPresent()) {
+                        return ResponseEntity.ok(stateOptional.get());
+                } else {
+                        throw new EntityNotFoundException("State not found");
+                }
     }
 
     /**
@@ -119,7 +132,12 @@ public class RoleIDController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRoleID(@PathVariable Long id){
-        return roleIDService.deleteRolID(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        boolean isDeleted = roleIDService.deleteRolID(id);  
+                if (isDeleted) {
+                    return ResponseEntity.noContent().build();  
+                } else {
+                    throw new EntityNotFoundException("State not found");
+                }
     }
 
 }//Fin de la clase RoleIDController

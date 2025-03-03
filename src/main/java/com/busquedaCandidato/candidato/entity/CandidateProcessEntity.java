@@ -30,7 +30,7 @@ public class CandidateProcessEntity {
     @JoinColumn(name = "state_id", nullable = false)
     private StateEntity state;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String description;
 
     @Column(nullable = false)

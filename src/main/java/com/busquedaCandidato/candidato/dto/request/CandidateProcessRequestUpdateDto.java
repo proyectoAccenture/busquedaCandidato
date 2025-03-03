@@ -3,11 +3,13 @@ package com.busquedaCandidato.candidato.dto.request;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Data
-@Schema(name = "CandidateProcess", description = "The same candidate process model but only for updating")
+@NoArgsConstructor
+@Schema(name = "CandidateProcessRequestUpdate", description = "The same candidate process model but only for updating")
 public class CandidateProcessRequestUpdateDto {
     @Schema(name = "State",description = "Id of state", example = "1")
     @NotNull(message = "state cannot be null")

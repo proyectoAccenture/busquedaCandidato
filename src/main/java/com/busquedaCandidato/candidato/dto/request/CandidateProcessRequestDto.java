@@ -4,12 +4,14 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
 @Data
-@Schema(name = "CandidateProcess", description = "Model represent a candidate process on database")
+@NoArgsConstructor
+@Schema(name = "CandidateProcessRequest", description = "Model represent a candidate process on database")
 public class CandidateProcessRequestDto {
 
     @Schema(name = "ProcessId",description = "Id of process of candidate",example = "1")

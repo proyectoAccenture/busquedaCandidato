@@ -23,7 +23,6 @@ public class ProcessEntity {
     @JoinColumn(name = "candidate_id", nullable = false)
     private CandidateEntity candidate;
 
-    // Relación con la tabla intermedia que almacena las fases y sus estados
     @OneToMany(mappedBy = "process", cascade = CascadeType.ALL)
     private List<CandidateProcessEntity> processPhases;
 }

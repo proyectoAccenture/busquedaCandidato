@@ -20,6 +20,4 @@ public class OriginEntity {
     @Column(unique = true, nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "origin")
-    private List<CandidateEntity> candidates;
 }

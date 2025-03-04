@@ -7,6 +7,6 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface IMapperCandidateProcessRequest {
-    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "description", source = "description")
     CandidateProcessEntity CandidateProcessResquestToCandidateProcess (CandidateProcessRequestDto candidateProcessRequestDto);
 }

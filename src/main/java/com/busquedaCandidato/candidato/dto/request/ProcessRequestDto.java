@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Schema(name = "ProcessRequest", description = "Model represent a process on database")
 public class ProcessRequestDto {
-    @Schema(name = "CandidateId",description = "Id of candidate",example = "1")
+    @Schema(name = "candidateId",description = "Id of candidate", example = "1")
     @NotNull(message = "candidateId cannot be null")
     private Long candidateId;
 }

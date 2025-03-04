@@ -20,7 +20,4 @@ public class PhaseEntity {
     @Column(unique = true, nullable = false)
     private String name;
 
-    // Se relaciona con los procesos en la tabla intermedia
-    @OneToMany(mappedBy = "phase", cascade = CascadeType.ALL)
-    private List<CandidateProcessEntity> processPhases;
 }

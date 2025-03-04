@@ -28,46 +28,53 @@ public class CandidateProcessService {
     private final IProcessRepository processRepository;
     private final IPhaseRepository phaseRepository;
     private final IStateRepository stateRepository;
-    private final ICandidateProcessRepository historyProcessRepository;
+    private final ICandidateProcessRepository candidateProcessRepository;
     private final IMapperCandidateProcessResponse mapperHistoryProcessResponse;
 
-    public CandidateProcessResponseDto addPhaseToProcess(CandidateProcessRequestDto historyProcessRequestDTO){
+    public CandidateProcessResponseDto addPhaseToProcess(CandidateProcessRequestDto candidateProcessRequestDto){
 
-        ProcessEntity process = processRepository.findById(historyProcessRequestDTO.getProcessId())
+        Optional<CandidateProcessEntity> currentPhaseOptional = candidateProcessRepository.findTopByProcessIdOrderByAssignedDateDesc(candidateProcessRequestDto.getProcessId());
+
+        if(currentPhaseOptional.isPresent() && !currentPhaseOptional.get().getStatus()){
+            throw new CannotBeCreateCandidateProcessException();
+        }
+
+        ProcessEntity processEntity = processRepository.findById(candidateProcessRequestDto.getProcessId())
                 .orElseThrow(ProcessNoExistException::new);
 
-        PhaseEntity phase = phaseRepository.findById(historyProcessRequestDTO.getPhaseId())
-                .orElseThrow(StateNoFoundException::new);
-
-        StateEntity state = stateRepository.findById(historyProcessRequestDTO.getStateId())
+        PhaseEntity phaseEntity = phaseRepository.findById(candidateProcessRequestDto.getPhaseId())
                 .orElseThrow(PhaseNoFoundException::new);
 
-        CandidateProcessEntity newCandidateProcess = new CandidateProcessEntity();
-        newCandidateProcess.setProcess(process);
-        newCandidateProcess.setPhase(phase);
-        newCandidateProcess.setState(state);
-        newCandidateProcess.getStatus();
-        newCandidateProcess.setAssignedDate(historyProcessRequestDTO.getAssignedDate());
+        StateEntity stateEntity = stateRepository.findById(candidateProcessRequestDto.getStateId())
+                .orElseThrow(StateNoFoundException::new);
 
-        CandidateProcessEntity savedEntity = historyProcessRepository.save(newCandidateProcess);
+        CandidateProcessEntity newCandidateProcess = new CandidateProcessEntity();
+        newCandidateProcess.setProcess(processEntity);
+        newCandidateProcess.setPhase(phaseEntity);
+        newCandidateProcess.setState(stateEntity);
+        newCandidateProcess.setDescription(candidateProcessRequestDto.getDescription());
+        newCandidateProcess.setStatus(candidateProcessRequestDto.getStatus());
+        newCandidateProcess.setAssignedDate(candidateProcessRequestDto.getAssignedDate());
+
+        CandidateProcessEntity savedEntity = candidateProcessRepository.save(newCandidateProcess);
         return mapperHistoryProcessResponse.CandidateProcessToCandidateProcessResponse(savedEntity);
     }
 
     public CandidateProcessResponseDto getCandidateProcessById(Long processId){
-        CandidateProcessEntity currentPhase = historyProcessRepository.findTopByProcessIdOrderByAssignedDateDesc(processId)
+        CandidateProcessEntity currentPhase = candidateProcessRepository.findTopByProcessIdOrderByAssignedDateDesc(processId)
                 .orElseThrow(NotPhasesAssignedException::new);
 
         return mapperHistoryProcessResponse.CandidateProcessToCandidateProcessResponse(currentPhase);
     }
 
     public List<CandidateProcessResponseDto> getAllCandidateProcess(){
-        return historyProcessRepository.findAll().stream()
+        return candidateProcessRepository.findAll().stream()
                 .map(mapperHistoryProcessResponse::CandidateProcessToCandidateProcessResponse)
                 .collect(Collectors.toList());
     }
 
     public Optional<CandidateProcessResponseDto> updateCandidateProcess(Long id, CandidateProcessRequestUpdateDto candidateProcessRequestUpdateDto) {
-        return historyProcessRepository.findById(id)
+        return candidateProcessRepository.findById(id)
                 .map(existingEntity -> {
 
                     StateEntity newState = stateRepository.findById(candidateProcessRequestUpdateDto.getStateId())
@@ -78,15 +85,14 @@ public class CandidateProcessService {
                     existingEntity.setStatus(candidateProcessRequestUpdateDto.getStatus());
                     existingEntity.setAssignedDate(candidateProcessRequestUpdateDto.getAssignedDate());
 
-                    CandidateProcessEntity updatedEntity = historyProcessRepository.save(existingEntity);
-
+                    CandidateProcessEntity updatedEntity = candidateProcessRepository.save(existingEntity);
                     return mapperHistoryProcessResponse.CandidateProcessToCandidateProcessResponse(updatedEntity);
                 });
     }
 
     public boolean deleteCandidateProcess(Long id){
-        if (historyProcessRepository.existsById(id)) {
-            historyProcessRepository.deleteById(id);
+        if (candidateProcessRepository.existsById(id)) {
+            candidateProcessRepository.deleteById(id);
             return true;
         }
         return false;

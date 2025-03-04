@@ -19,13 +19,13 @@ public class CandidateProcessResponseDto {
     private Long phaseId;
 
     @Schema(name = "phaseName")
-    private Long phaseName;
+    private String phaseName;
 
     @Schema(name = "stateId")
     private Long stateId;
 
     @Schema(name = "stateName")
-    private Long stateName;
+    private String stateName;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate assignedDate;

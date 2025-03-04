@@ -69,7 +69,7 @@ public class ProcessController {
             @ApiResponse(responseCode = "404", description = "process not found", content = @Content)
     })
     @PutMapping("/{id}")
-    public ResponseEntity<ProcessResponseDto> updateState(@Valid @PathVariable Long id, @RequestBody ProcessRequestDto processRequestDto){
+    public ResponseEntity<ProcessResponseDto> updateProcess(@Valid @PathVariable Long id, @RequestBody ProcessRequestDto processRequestDto){
         return processService.updateProcess(id, processRequestDto)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -81,7 +81,7 @@ public class ProcessController {
             @ApiResponse(responseCode = "404", description = "process not found", content = @Content)
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteState(@PathVariable Long id){
+    public ResponseEntity<Void> deleteProces(@PathVariable Long id){
         return processService.deleteProcess(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 }

@@ -33,7 +33,7 @@ public class GlobalException {
     }
 
     @ExceptionHandler(EntityAlreadyExistsException.class)
-    public ResponseEntity<Map<String, String>> StateAlreadyExistsException(EntityAlreadyExistsException ex) {
+    public ResponseEntity<Map<String, String>> EntityAlreadyExistsException(EntityAlreadyExistsException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ENTITY_ALREADY_EXISTS.getMessage()));
     }
@@ -66,6 +66,18 @@ public class GlobalException {
     public ResponseEntity<Map<String, String>> StateAlreadyExistsException(NotPhasesAssignedException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.NOT_PHASES_ASSIGNED.getMessage()));
+    }
+
+    @ExceptionHandler(IdCardAlreadyExistException.class)
+    public ResponseEntity<Map<String, String>> IdCardAlreadyExistException(IdCardAlreadyExistException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.IDCARD_ALREADY_EXISTS.getMessage()));
+    }
+
+    @ExceptionHandler(CannotBeCreateCandidateProcessException.class)
+    public ResponseEntity<Map<String, String>> CannotBeCreateCandidateProcessException(CannotBeCreateCandidateProcessException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.CANNOT_BE_CREATED_CANDIDATE_PROCESS.getMessage()));
     }
 
 }

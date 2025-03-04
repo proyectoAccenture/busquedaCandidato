@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface ICandidateProcessRepository extends JpaRepository<CandidateProcessEntity, Long> {
     Optional<CandidateProcessEntity> findTopByProcessIdOrderByAssignedDateDesc(Long processId);
+
 }

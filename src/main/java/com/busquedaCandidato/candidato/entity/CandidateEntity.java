@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @AllArgsConstructor
@@ -22,8 +21,11 @@ public class CandidateEntity {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
+    private String lastName;
+
     @Column(unique = true, nullable = false)
-    private Long IDCard;
+    private Long card;
 
     @Column(nullable = false)
     private LocalDate birthdate;
@@ -32,8 +34,8 @@ public class CandidateEntity {
     private Long phone;
 
     @Column(nullable = false)
-    private String email;
+    private String city;
 
     @Column(nullable = false)
-    private String city;
+    private String email;
 }

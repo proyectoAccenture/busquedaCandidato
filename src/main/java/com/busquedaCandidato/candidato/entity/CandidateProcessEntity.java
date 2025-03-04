@@ -1,5 +1,6 @@
 package com.busquedaCandidato.candidato.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,6 +21,7 @@ public class CandidateProcessEntity {
 
     @ManyToOne
     @JoinColumn(name = "process_id", nullable = false)
+    @JsonBackReference
     private ProcessEntity process;
 
     @ManyToOne

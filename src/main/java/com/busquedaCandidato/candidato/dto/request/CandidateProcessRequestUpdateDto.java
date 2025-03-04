@@ -11,17 +11,17 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Schema(name = "CandidateProcessRequestUpdate", description = "The same candidate process model but only for updating")
 public class CandidateProcessRequestUpdateDto {
-    @Schema(name = "State",description = "Id of state", example = "1")
+    @Schema(name = "stateId",description = "Id of state", example = "1")
     @NotNull(message = "state cannot be null")
     private Long stateId;
 
-    @Schema(name = "Description", description = "Description about candidate process", example = "This process is...")
+    @Schema(name = "description", description = "Description about candidate process", example = "This process is...")
     private String description;
 
-    @Schema(name = "Status",description = "Status in which a candidate is located")
+    @Schema(name = "status",description = "Status in which a candidate is located")
     private Boolean status;
 
-    @Schema(name = "Date",description = "Name of the job profile", example = "year-month-day")
+    @Schema(name = "assignedDate",description = "Name of the job profile", example = "2025-01-30")
     @NotNull(message = "Date in which a candidate is doing the phase")
     private LocalDate assignedDate;
 }

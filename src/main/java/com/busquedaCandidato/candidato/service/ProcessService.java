@@ -9,6 +9,7 @@ import com.busquedaCandidato.candidato.mapper.IMapperProcessRequest;
 import com.busquedaCandidato.candidato.mapper.IMapperProcessResponse;
 import com.busquedaCandidato.candidato.repository.ICandidateRepository;
 import com.busquedaCandidato.candidato.repository.IProcessRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,6 @@ public class ProcessService {
     private final IProcessRepository processRepository;
     private final ICandidateRepository candidateRepository;
     private final IMapperProcessResponse mapperProcessResponse;
-    private final IMapperProcessRequest iMapperProcessRequest;
 
     public Optional<ProcessResponseDto> getProcess(Long id){
         return processRepository.findById(id)
@@ -37,7 +37,11 @@ public class ProcessService {
     }
 
     public ProcessResponseDto saveProcess(ProcessRequestDto processRequestDto) {
-        ProcessEntity processEntity = iMapperProcessRequest.ProcessResquestToProcessEntity(processRequestDto);
+        CandidateEntity candidate = candidateRepository.findById(processRequestDto.getCandidateId())
+                .orElseThrow(EntityNotFoundException::new);
+
+        ProcessEntity processEntity = new ProcessEntity();
+        processEntity.setCandidate(candidate);
         ProcessEntity processEntitySave = processRepository.save(processEntity);
         return mapperProcessResponse.ProcessToProcessResponse(processEntitySave);
     }
@@ -46,10 +50,10 @@ public class ProcessService {
         return processRepository.findById(id)
                 .map(existingEntity -> {
 
-                    CandidateEntity candidateEntity = candidateRepository.findById(id)
+                    CandidateEntity candidateEntity = candidateRepository.findById(processRequestDto.getCandidateId())
                             .orElseThrow(StateNoFoundException::new);
 
-                    existingEntity.setId(candidateEntity.getId());
+                    existingEntity.setCandidate(candidateEntity);
                     return mapperProcessResponse.ProcessToProcessResponse(processRepository.save(existingEntity));
                 });
     }

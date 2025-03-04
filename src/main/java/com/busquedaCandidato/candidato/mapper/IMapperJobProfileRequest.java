@@ -20,7 +20,7 @@ public interface IMapperJobProfileRequest {
      * @return La entidad JobProfileEntity mapeada.
      */
     @Mapping(source = "name", target = "name")
-    JobProfileEntity  JobProfileResquestToStatus(JobProfileRequestDto jobProfileRequestDto);
+    JobProfileEntity  JobProfileResquestToJobProfile(JobProfileRequestDto jobProfileRequestDto);
 
 
 }

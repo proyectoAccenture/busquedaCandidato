@@ -25,7 +25,6 @@ public class StateService {
     public Optional<StateResponseDto> getState(Long id){
         return stateRepository.findById(id)
                 .map(mapperStateResponse::StateToStateResponse);
-
     }
 
     public List<StateResponseDto> getAllState(){

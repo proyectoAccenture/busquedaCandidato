@@ -33,7 +33,7 @@ public class JobProfileService {
      */
     public Optional<JobProfileResponseDto> getJobProfile(Long id){
         return jobProfileRepository.findById(id)
-                .map(mapperJobProfileResponse::JobProfileToStatusResponse);
+                .map(mapperJobProfileResponse::JobProfileToJobProfileResponse);
 
     }
 
@@ -44,7 +44,7 @@ public class JobProfileService {
      */
     public List<JobProfileResponseDto> getAllJobProfile(){
         return jobProfileRepository.findAll().stream()
-                .map(mapperJobProfileResponse::JobProfileToStatusResponse)
+                .map(mapperJobProfileResponse::JobProfileToJobProfileResponse)
                 .collect(Collectors.toList());
     }
 
@@ -61,9 +61,9 @@ public class JobProfileService {
         if(jobProfileRepository.existsByName(jobProfileRequestDto.getName())){
             throw new EntityAlreadyExistsException();
         }
-        JobProfileEntity jobProfileEntity = mapperJobProfileRequest.JobProfileResquestToStatus(jobProfileRequestDto);
+        JobProfileEntity jobProfileEntity = mapperJobProfileRequest.JobProfileResquestToJobProfile(jobProfileRequestDto);
         JobProfileEntity jobProfileEntitySave = jobProfileRepository.save(jobProfileEntity);
-        return mapperJobProfileResponse.JobProfileToStatusResponse(jobProfileEntitySave);
+        return mapperJobProfileResponse.JobProfileToJobProfileResponse(jobProfileEntitySave);
     }
 
 
@@ -78,7 +78,7 @@ public class JobProfileService {
         return jobProfileRepository.findById(id)
                 .map(existingJob -> {
                     existingJob.setName(jobProfileRequestDto.getName());
-                    return mapperJobProfileResponse.JobProfileToStatusResponse(jobProfileRepository.save(existingJob));
+                    return mapperJobProfileResponse.JobProfileToJobProfileResponse(jobProfileRepository.save(existingJob));
                 });
     }
 

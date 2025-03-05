@@ -19,18 +19,6 @@ public class PostulationResponseDto {
     @Schema(name = "salaryAspiration", description = "the salary you hope to have ", example = "0.000.000")
     private String salaryAspiration;
 
-    @Schema(name = "salaryCurrent", description = "the salary you have in this moment", example = "0.000.000")
-    private String salaryCurrent;
-
-    @Schema(name = "experience", description = "write the experience you have", example = "5 year")
-    private String experience;
-
-    @Schema(name = "level", description = "level you have", example = "Senior")
-    private String level;
-
-    @Schema(name = "skills", description = "skills you have", example = "Java, AWS, Angular")
-    private String skills;
-
     @Schema(name = "vacancyCompanyId",description = "Id of tha vacancy",example = "1")
     private Long vacancyCompanyId;
 

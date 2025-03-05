@@ -58,11 +58,15 @@ public class VacancyCompanyRequestDto {
     @Size(min = 1, max = 100, message = "The source must be greater than 0 and less than 100")
     private String source;
 
-    @Schema(name = "role",description = "Id of roleId",example = "1")
+    @Schema(name = "role",description = "Id of role",example = "1")
     @NotNull(message = "roleId cannot be null")
     private Long role;
 
-    @Schema(name = "jobProfile",description = "Id of origin", example = "1")
+    @Schema(name = "jobProfile",description = "Id of jobProfile", example = "1")
     @NotNull(message = "jobProfile cannot be null")
     private Long jobProfile;
+
+    @Schema(name = "origin",description = "Id of origin", example = "1")
+    @NotNull(message = "origin cannot be null")
+    private Long origin;
 }

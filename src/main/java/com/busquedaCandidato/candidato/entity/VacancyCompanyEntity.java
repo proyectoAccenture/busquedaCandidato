@@ -48,6 +48,10 @@ public class VacancyCompanyEntity {
     private RoleIDEntity role;
 
     @ManyToOne
-    @JoinColumn(name = "origin_id", nullable = false)
+    @JoinColumn(name = "jobProfile_id", nullable = false)
     private JobProfileEntity jobProfile;
+
+    @ManyToOne
+    @JoinColumn(name = "origin_id", nullable = false)
+    private OriginEntity origin;
 }

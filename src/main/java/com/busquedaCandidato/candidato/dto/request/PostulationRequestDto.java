@@ -28,26 +28,6 @@ public class PostulationRequestDto {
     @Pattern(regexp = "^[0-9]{1,3}(\\.[0-9]{3})*$", message = "The salary must be a valid number with thousands separated by dots (e.g., 300.000, 1.234.567)")
     private String salaryAspiration;
 
-    @Schema(name = "salaryCurrent", description = "the salary you have in this moment", example = "0.000.000")
-    @Size(min = 1, max = 100, message = "The name must be greater than 0 and less than 100")
-    @Pattern(regexp = "^[0-9]{1,3}(\\.[0-9]{3})*$", message = "The salary must be a valid number with thousands separated by dots (e.g., 300.000, 1.234.567)")
-    private String salaryCurrent;
-
-    @Schema(name = "experience", description = "the the experience you have", example = "5 year")
-    @NotNull(message = "experience cannot be null")
-    @Size(min = 1, max = 100, message = "The experience must be greater than 0 and less than 100")
-    private String experience;
-
-    @Schema(name = "level", description = "leve you have", example = "Senior")
-    @NotNull(message = "level cannot be null")
-    @Size(min = 1, max = 100, message = "The level must be greater than 0 and less than 100")
-    private String level;
-
-    @Schema(name = "skills", description = "skills you have", example = "Java, AWS, Angular")
-    @NotNull(message = "skills cannot be null")
-    @Size(min = 1, max = 100, message = "The skills must be greater than 0 and less than 100")
-    private String skills;
-
     @Schema(name = "vacancyCompanyId",description = "Id of tha vacancy",example = "1")
     @NotNull(message = "vacancyCompanyId cannot be null")
     private Long vacancyCompanyId;

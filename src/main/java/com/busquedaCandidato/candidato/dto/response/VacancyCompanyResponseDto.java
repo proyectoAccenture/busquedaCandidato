@@ -48,4 +48,10 @@ public class VacancyCompanyResponseDto {
     @Schema(name = "jobProfileName",description = "Name of job profile", example = "string")
     private String jobProfileName;
 
+    @Schema(name = "originId",description = "Id of rol Id",example = "1")
+    private Long originId;
+
+    @Schema(name = "originName",description = "Name of rol", example = "string")
+    private String originName;
+
 }

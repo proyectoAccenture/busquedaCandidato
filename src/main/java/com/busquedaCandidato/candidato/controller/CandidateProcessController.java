@@ -34,8 +34,8 @@ public class CandidateProcessController {
             @ApiResponse(responseCode = "409", description = "Phase already exists", content = @Content)
     })
     @PostMapping("/")
-    public ResponseEntity<CandidateProcessResponseDto> saveState(@Valid @RequestBody CandidateProcessRequestDto historyProcessRequestDTO) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(candidateProcessService.addPhaseToProcess(historyProcessRequestDTO));
+    public ResponseEntity<CandidateProcessResponseDto> saveCandidateProcess(@Valid @RequestBody CandidateProcessRequestDto candidateProcessRequestDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(candidateProcessService.addPhaseToProcess(candidateProcessRequestDto));
     }
 
     @Operation(summary = "Get a phase by their number")
@@ -52,7 +52,6 @@ public class CandidateProcessController {
         if (candidateProcessResponseDto == null) {
             return ResponseEntity.notFound().build();
         }
-
         return ResponseEntity.ok(candidateProcessResponseDto);
     }
 

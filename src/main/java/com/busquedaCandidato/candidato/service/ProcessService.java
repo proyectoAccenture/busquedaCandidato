@@ -3,11 +3,14 @@ package com.busquedaCandidato.candidato.service;
 import com.busquedaCandidato.candidato.dto.request.ProcessRequestDto;
 import com.busquedaCandidato.candidato.dto.response.ProcessResponseDto;
 import com.busquedaCandidato.candidato.entity.CandidateEntity;
+import com.busquedaCandidato.candidato.entity.PostulationEntity;
 import com.busquedaCandidato.candidato.entity.ProcessEntity;
+import com.busquedaCandidato.candidato.exception.type.CandidateNoPostulation;
+import com.busquedaCandidato.candidato.exception.type.CannotBeCreateCandidateProcessException;
 import com.busquedaCandidato.candidato.exception.type.StateNoFoundException;
-import com.busquedaCandidato.candidato.mapper.IMapperProcessRequest;
 import com.busquedaCandidato.candidato.mapper.IMapperProcessResponse;
 import com.busquedaCandidato.candidato.repository.ICandidateRepository;
+import com.busquedaCandidato.candidato.repository.IPostulationRepository;
 import com.busquedaCandidato.candidato.repository.IProcessRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -23,6 +26,7 @@ public class ProcessService {
 
     private final IProcessRepository processRepository;
     private final ICandidateRepository candidateRepository;
+    private final IPostulationRepository postulationRepository;
     private final IMapperProcessResponse mapperProcessResponse;
 
     public Optional<ProcessResponseDto> getProcess(Long id){
@@ -37,6 +41,13 @@ public class ProcessService {
     }
 
     public ProcessResponseDto saveProcess(ProcessRequestDto processRequestDto) {
+
+        Optional<PostulationEntity> postulationEntityOptional = postulationRepository.findById(processRequestDto.getCandidateId());
+
+        if(postulationEntityOptional.isEmpty()){
+            throw new CandidateNoPostulation();
+        }
+
         CandidateEntity candidate = candidateRepository.findById(processRequestDto.getCandidateId())
                 .orElseThrow(EntityNotFoundException::new);
 
@@ -65,5 +76,4 @@ public class ProcessService {
         }
         return false;
     }
-
 }

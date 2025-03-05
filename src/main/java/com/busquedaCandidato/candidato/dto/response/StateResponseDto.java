@@ -7,8 +7,8 @@ import lombok.Data;
 @Data
 public class StateResponseDto {
     @Schema(name = "stateId", defaultValue = "1", description = "Unique Id of state on database")
-    private final Long id;
+    private Long id;
 
     @Schema(name = "name", description = "State name")
-    private final String name;
+    private String name;
 }

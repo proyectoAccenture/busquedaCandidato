@@ -7,8 +7,8 @@ import lombok.Data;
 @Data
 public class RoleIDResponseDto {
     @Schema(name = "id",defaultValue = "1", description = "Unique Id of the Role ID in the database")
-    private final  Long id;
+    private Long id;
 
     @Schema(name = "name",description = "Role ID name")
-    private final String name;
+    private String name;
 }

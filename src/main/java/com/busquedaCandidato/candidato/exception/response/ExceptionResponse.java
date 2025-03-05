@@ -8,7 +8,9 @@ public enum ExceptionResponse {
     PHASE_NO_FOUND("State has not been found"),
     NOT_PHASES_ASSIGNED("There are not phases assigned to this process"),
     IDCARD_ALREADY_EXISTS("There is already a id card with that number"),
-    CANNOT_BE_CREATED_CANDIDATE_PROCESS("the candidate process cannot be create because the post status is false");
+    CANNOT_BE_CREATED_CANDIDATE_PROCESS("the candidate process cannot be create because the post status is false"),
+    ENTITY_DOESNOT_EXIST("There is not job profile with that id "),
+    CANDIDATE_DOESNOT_POSTULATION("The candidate must first have been nominated ");
 
 
     private final String message;

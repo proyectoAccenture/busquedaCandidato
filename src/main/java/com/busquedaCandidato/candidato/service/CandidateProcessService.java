@@ -8,7 +8,6 @@ import com.busquedaCandidato.candidato.entity.PhaseEntity;
 import com.busquedaCandidato.candidato.entity.ProcessEntity;
 import com.busquedaCandidato.candidato.entity.StateEntity;
 import com.busquedaCandidato.candidato.exception.type.*;
-import com.busquedaCandidato.candidato.mapper.IMapperCandidateProcessRequest;
 import com.busquedaCandidato.candidato.mapper.IMapperCandidateProcessResponse;
 import com.busquedaCandidato.candidato.repository.IPhaseRepository;
 import com.busquedaCandidato.candidato.repository.ICandidateProcessRepository;
@@ -33,14 +32,19 @@ public class CandidateProcessService {
 
     public CandidateProcessResponseDto addPhaseToProcess(CandidateProcessRequestDto candidateProcessRequestDto){
 
-        Optional<CandidateProcessEntity> currentPhaseOptional = candidateProcessRepository.findTopByProcessIdOrderByAssignedDateDesc(candidateProcessRequestDto.getProcessId());
-
-        if(currentPhaseOptional.isPresent() && !currentPhaseOptional.get().getStatus()){
-            throw new CannotBeCreateCandidateProcessException();
-        }
-
         ProcessEntity processEntity = processRepository.findById(candidateProcessRequestDto.getProcessId())
                 .orElseThrow(ProcessNoExistException::new);
+
+        Optional<CandidateProcessEntity> currentPhaseOptional = candidateProcessRepository.findTopByProcessOrderByAssignedDateDesc(processEntity);
+
+        if (currentPhaseOptional.isPresent()) {
+            CandidateProcessEntity lastCandidateProcess = currentPhaseOptional.get();
+            System.out.println("Última fase encontrada con status: " + lastCandidateProcess.getStatus());
+
+            if (!lastCandidateProcess.getStatus()) {
+                throw new CannotBeCreateCandidateProcessException();
+            }
+        }
 
         PhaseEntity phaseEntity = phaseRepository.findById(candidateProcessRequestDto.getPhaseId())
                 .orElseThrow(PhaseNoFoundException::new);
@@ -61,7 +65,11 @@ public class CandidateProcessService {
     }
 
     public CandidateProcessResponseDto getCandidateProcessById(Long processId){
-        CandidateProcessEntity currentPhase = candidateProcessRepository.findTopByProcessIdOrderByAssignedDateDesc(processId)
+        ProcessEntity processEntity = processRepository.findById(processId)
+                .orElseThrow(ProcessNoExistException::new);
+
+        CandidateProcessEntity currentPhase = candidateProcessRepository
+                .findTopByProcessOrderByAssignedDateDesc(processEntity)
                 .orElseThrow(NotPhasesAssignedException::new);
 
         return mapperHistoryProcessResponse.CandidateProcessToCandidateProcessResponse(currentPhase);

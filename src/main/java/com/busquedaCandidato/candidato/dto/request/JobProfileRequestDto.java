@@ -14,6 +14,6 @@ public class JobProfileRequestDto {
 
     @Schema(name = "name",description = "Name of the job profile",example = "Dev Backend")
     @NotNull(message = "jobrofile cannot be null")
-    @Size(min = 1, max = 100, message = "The job profile name must be greater than 0 and less than 100")
+    @Size(min = 1, max = 50, message = "The job profile name must be greater than 0 and less than 100")
     private String name;
 }

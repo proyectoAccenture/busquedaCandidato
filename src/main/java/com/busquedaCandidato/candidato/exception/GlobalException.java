@@ -52,7 +52,7 @@ public class GlobalException {
 
     @ExceptionHandler(StateNoFoundException.class)
     public ResponseEntity<Map<String, String>> ProcessClosedException(StateNoFoundException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.STATE_NO_FOUND.getMessage()));
     }
 
@@ -79,6 +79,19 @@ public class GlobalException {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.CANNOT_BE_CREATED_CANDIDATE_PROCESS.getMessage()));
     }
+
+    @ExceptionHandler(EntityNoExistException.class)
+    public ResponseEntity<Map<String, String>> EntityNoExistException(EntityNoExistException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ENTITY_DOESNOT_EXIST.getMessage()));
+    }
+
+    @ExceptionHandler(CandidateNoPostulation.class)
+    public ResponseEntity<Map<String, String>> CandidateNoPostulation(CandidateNoPostulation ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.CANDIDATE_DOESNOT_POSTULATION.getMessage()));
+    }
+
 
 }
 

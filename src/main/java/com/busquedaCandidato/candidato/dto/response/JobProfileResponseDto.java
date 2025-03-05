@@ -7,8 +7,8 @@ import lombok.Data;
 @Data
 public class JobProfileResponseDto {
     @Schema(name = "id",defaultValue = "1", description = "Unique Id of the job profile in the database")
-    private final  Long id;
+    private Long id;
 
     @Schema(name = "name",description = "Job profile name")
-    private final String name;
+    private String name;
 }

@@ -8,8 +8,8 @@ import lombok.Data;
 @Data
 public class PhaseResponseDto {
     @Schema(name = "phaseId", defaultValue = "1", description = "Unique Id of phase on database")
-    private final Long id;
+    private Long id;
     @Schema(name = "name", description = "Phase name")
-    private final String name;
+    private String name;
 
 }

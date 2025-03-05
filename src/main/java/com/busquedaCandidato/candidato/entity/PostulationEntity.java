@@ -23,17 +23,6 @@ public class PostulationEntity {
     @Column(nullable = false)
     private String salaryAspiration;
 
-    private String salaryCurrent;
-
-    @Column(nullable = false)
-    private String experience;
-
-    @Column(nullable = false)
-    private String level;
-
-    @Column(nullable = false)
-    private String skills;
-
     @ManyToOne
     @JoinColumn(name = "rol_id", nullable = false)
     private VacancyCompanyEntity vacancyCompany;

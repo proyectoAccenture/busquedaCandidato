@@ -42,10 +42,6 @@ public class PostulationService {
         PostulationEntity postulationEntityNew = new PostulationEntity();
         postulationEntityNew.setDatePresentation(postulationRequestDto.getDatePresentation());
         postulationEntityNew.setSalaryAspiration(postulationRequestDto.getSalaryAspiration());
-        postulationEntityNew.setSalaryCurrent(postulationRequestDto.getSalaryCurrent());
-        postulationEntityNew.setExperience(postulationRequestDto.getExperience());
-        postulationEntityNew.setLevel(postulationRequestDto.getLevel());
-        postulationEntityNew.setSkills(postulationRequestDto.getSkills());
         postulationEntityNew.setVacancyCompany(vacancyCompanyEntity);
         postulationEntityNew.setCandidate(candidateEntity);
 
@@ -66,10 +62,6 @@ public class PostulationService {
 
                     existingEntity.setDatePresentation(postulationRequestDto.getDatePresentation());
                     existingEntity.setSalaryAspiration(postulationRequestDto.getSalaryAspiration());
-                    existingEntity.setSalaryCurrent(postulationRequestDto.getSalaryCurrent());
-                    existingEntity.setExperience(postulationRequestDto.getExperience());
-                    existingEntity.setLevel(postulationRequestDto.getLevel());
-                    existingEntity.setSkills(postulationRequestDto.getSkills());
                     existingEntity.setVacancyCompany(vacancyCompanyEntity);
                     existingEntity.setCandidate(candidateEntity);
 

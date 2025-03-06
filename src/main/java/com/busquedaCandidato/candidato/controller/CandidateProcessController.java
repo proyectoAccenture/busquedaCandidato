@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/candidate_process")
+@RequestMapping("/api/candidate_process")
 @RequiredArgsConstructor
 public class CandidateProcessController {
 

@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @NoArgsConstructor
-@Table(name = "Fase")
+@Table(name = "Phase")
 public class PhaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

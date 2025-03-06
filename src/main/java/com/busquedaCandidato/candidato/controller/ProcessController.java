@@ -2,8 +2,10 @@ package com.busquedaCandidato.candidato.controller;
 
 import com.busquedaCandidato.candidato.dto.request.ProcessRequestDto;
 import com.busquedaCandidato.candidato.dto.request.StateRequestDto;
+import com.busquedaCandidato.candidato.dto.response.PostulationResponseDto;
 import com.busquedaCandidato.candidato.dto.response.ProcessResponseDto;
 import com.busquedaCandidato.candidato.dto.response.StateResponseDto;
+import com.busquedaCandidato.candidato.exception.type.EntityNotFoundException;
 import com.busquedaCandidato.candidato.service.ProcessService;
 import com.busquedaCandidato.candidato.service.StateService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,9 +21,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/process")
+@RequestMapping("/api/process")
 @RequiredArgsConstructor
 public class ProcessController {
     private final ProcessService processService;
@@ -35,9 +38,12 @@ public class ProcessController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<ProcessResponseDto> getProcess(@PathVariable Long id){
-        return processService.getProcess(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        Optional<ProcessResponseDto> processOptional = processService.getProcess(id);
+        if (processOptional.isPresent()) {
+            return ResponseEntity.ok(processOptional.get());
+        } else {
+            throw new EntityNotFoundException("Process not found");
+        }
     }
 
     @Operation(summary = "Get all the process")
@@ -49,8 +55,12 @@ public class ProcessController {
     })
     @GetMapping("/")
     public ResponseEntity<List<ProcessResponseDto>> getAllProcess(){
-        List<ProcessResponseDto> states = processService.getAllProcess();
-        return states.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(states);
+        try{
+            List<ProcessResponseDto> process = processService.getAllProcess();
+            return ResponseEntity.ok(process);
+        } catch (Exception e){
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @Operation(summary = "Add a new process")
@@ -70,9 +80,12 @@ public class ProcessController {
     })
     @PutMapping("/{id}")
     public ResponseEntity<ProcessResponseDto> updateProcess(@Valid @PathVariable Long id, @RequestBody ProcessRequestDto processRequestDto){
-        return processService.updateProcess(id, processRequestDto)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        Optional<ProcessResponseDto> processOptional = processService.updateProcess(id, processRequestDto);
+        if (processOptional.isPresent()) {
+            return ResponseEntity.ok(processOptional.get());
+        } else {
+            throw new EntityNotFoundException("Process not found");
+        }
     }
 
     @Operation(summary = "Delete a process by their Number")
@@ -81,7 +94,12 @@ public class ProcessController {
             @ApiResponse(responseCode = "404", description = "process not found", content = @Content)
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProces(@PathVariable Long id){
-        return processService.deleteProcess(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    public ResponseEntity<Void> deleteProcess(@PathVariable Long id){
+        boolean isDeleted = processService.deleteProcess(id);
+        if (isDeleted) {
+            return ResponseEntity.noContent().build();
+        } else {
+            throw new EntityNotFoundException("Process not found");
+        }
     }
 }

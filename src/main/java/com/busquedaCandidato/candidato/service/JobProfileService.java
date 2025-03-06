@@ -14,9 +14,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-/**
- * Servicio para manejar las operaciones relacionadas con el perfil de trabajo.
- */
 @Service
 @AllArgsConstructor
 public class JobProfileService {
@@ -24,39 +21,18 @@ public class JobProfileService {
     private final IMapperJobProfileResponse mapperJobProfileResponse;
     private final IMapperJobProfileRequest mapperJobProfileRequest;
 
-
-    /**
-     * Obtiene un perfil de trabajo por su ID.
-     *
-     * @param id El ID del perfil de trabajo.
-     * @return Un Optional que contiene el JobProfileResponseDto si se encuentra, de lo contrario vacío.
-     */
     public Optional<JobProfileResponseDto> getJobProfile(Long id){
         return jobProfileRepository.findById(id)
                 .map(mapperJobProfileResponse::JobProfileToJobProfileResponse);
 
     }
 
-    /**
-     * Obtiene todos los perfiles de trabajo.
-     *
-     * @return Una lista de JobProfileResponseDto.
-     */
     public List<JobProfileResponseDto> getAllJobProfile(){
         return jobProfileRepository.findAll().stream()
                 .map(mapperJobProfileResponse::JobProfileToJobProfileResponse)
                 .collect(Collectors.toList());
     }
 
-
-
-    /**
-     * Guarda un nuevo perfil de trabajo.
-     *
-     * @param jobProfileRequestDto El DTO que representa la solicitud de creación de un perfil de trabajo.
-     * @return El JobProfileResponseDto del perfil de trabajo guardado.
-     * @throws EntityAlreadyExistsException si ya existe un perfil de trabajo con el mismo nombre.
-     */
     public JobProfileResponseDto saveJobProfile(JobProfileRequestDto jobProfileRequestDto) {
         if(jobProfileRepository.existsByName(jobProfileRequestDto.getName())){
             throw new EntityAlreadyExistsException();
@@ -66,14 +42,6 @@ public class JobProfileService {
         return mapperJobProfileResponse.JobProfileToJobProfileResponse(jobProfileEntitySave);
     }
 
-
-    /**
-     * Actualiza un perfil de trabajo existente.
-     *
-     * @param id El ID del perfil de trabajo.
-     * @param jobProfileRequestDto El DTO que representa la solicitud de actualización de un perfil de trabajo.
-     * @return Un Optional que contiene el JobProfileResponseDto actualizado si se encuentra, de lo contrario vacío.
-     */
     public Optional<JobProfileResponseDto> updateJobProfile(Long id, JobProfileRequestDto jobProfileRequestDto) {
         return jobProfileRepository.findById(id)
                 .map(existingJob -> {
@@ -82,13 +50,6 @@ public class JobProfileService {
                 });
     }
 
-
-    /**
-     * Elimina un perfil de trabajo por su ID.
-     *
-     * @param id El ID del perfil de trabajo.
-     * @return true si el perfil de trabajo fue eliminado, de lo contrario false.
-     */
     public boolean deleteJobProfile(Long id){
         if (jobProfileRepository.existsById(id)) {
             jobProfileRepository.deleteById(id);
@@ -97,4 +58,4 @@ public class JobProfileService {
         return false;
     }
 
-}//Fin de la clase JobProfileService
+}

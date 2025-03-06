@@ -13,7 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Table(name = "ProcesoCandidato")
+@Table(name = "CandidateProcess")
 public class CandidateProcessEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

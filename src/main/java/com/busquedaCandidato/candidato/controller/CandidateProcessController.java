@@ -48,7 +48,6 @@ public class CandidateProcessController {
     @GetMapping("/{id}")
     public ResponseEntity<CandidateProcessResponseDto> getCandidateProcess(@PathVariable Long id) {
         CandidateProcessResponseDto candidateProcessResponseDto = candidateProcessService.getCandidateProcessById(id);
-
         if (candidateProcessResponseDto == null) {
             return ResponseEntity.notFound().build();
         }

@@ -50,7 +50,7 @@ public class RoleIDController {
         }
     }
 
-    @Operation
+    @Operation(summary = "Get all the rolID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "All Role ID returned",
                     content = @Content(mediaType = "application/json",

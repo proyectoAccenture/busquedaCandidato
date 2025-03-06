@@ -3,6 +3,8 @@ package com.busquedaCandidato.candidato.controller;
 
 import com.busquedaCandidato.candidato.dto.request.CandidateRequestDto;
 import com.busquedaCandidato.candidato.dto.response.CandidateResponseDto;
+import com.busquedaCandidato.candidato.dto.response.OriginResponseDto;
+import com.busquedaCandidato.candidato.exception.type.EntityNotFoundException;
 import com.busquedaCandidato.candidato.service.CandidateService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -17,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/candidate")
@@ -33,9 +36,12 @@ public class CandidateController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<CandidateResponseDto> getCandidate(@PathVariable Long id){
-        return candidateService.getCandidate(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        Optional<CandidateResponseDto> canditateOptional = candidateService.getCandidate(id);
+        if (canditateOptional.isPresent()) {
+            return ResponseEntity.ok(canditateOptional.get());
+        } else {
+            throw new EntityNotFoundException("Candidate not found");
+        }
     }
 
     @Operation(summary = "Get all the candidate")

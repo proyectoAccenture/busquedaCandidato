@@ -64,7 +64,7 @@ public class JobProfileController {
         }
     }
 
-    @Operation(summary = "Add a new jo profile")
+    @Operation(summary = "Add a new job profile")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Job profile created", content = @Content),
             @ApiResponse(responseCode = "409", description = "Job profile already exists", content = @Content)

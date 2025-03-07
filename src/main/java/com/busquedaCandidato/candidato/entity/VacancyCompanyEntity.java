@@ -44,7 +44,11 @@ public class VacancyCompanyEntity {
     private String source;
 
     @ManyToOne
+<<<<<<< HEAD
     @JoinColumn(name = "role_id", nullable = false)
+=======
+    @JoinColumn(name = "RoleID_id", nullable = false)
+>>>>>>> 6a17b9c9e6c656605a65ec6b0e672481d1841594
     private RoleIDEntity role;
 
     @ManyToOne

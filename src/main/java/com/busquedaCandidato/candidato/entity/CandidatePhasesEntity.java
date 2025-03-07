@@ -12,8 +12,13 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+<<<<<<< HEAD:src/main/java/com/busquedaCandidato/candidato/entity/CandidatePhasesEntity.java
 @Table(name = "candidate_phases")
 public class CandidatePhasesEntity {
+=======
+@Table(name = "CandidateProcess")
+public class CandidateProcessEntity {
+>>>>>>> 6a17b9c9e6c656605a65ec6b0e672481d1841594:src/main/java/com/busquedaCandidato/candidato/entity/CandidateProcessEntity.java
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

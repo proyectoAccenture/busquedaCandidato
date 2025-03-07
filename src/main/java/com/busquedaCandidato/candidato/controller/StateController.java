@@ -2,7 +2,9 @@ package com.busquedaCandidato.candidato.controller;
 
 
 import com.busquedaCandidato.candidato.dto.request.StateRequestDto;
+import com.busquedaCandidato.candidato.dto.response.RoleIDResponseDto;
 import com.busquedaCandidato.candidato.dto.response.StateResponseDto;
+import com.busquedaCandidato.candidato.exception.type.EntityNotFoundException;
 import com.busquedaCandidato.candidato.service.StateService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -17,9 +19,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/state")
+@RequestMapping("/api/state")
 @RequiredArgsConstructor
 public class StateController {
 
@@ -34,9 +37,12 @@ public class StateController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<StateResponseDto> getState(@PathVariable Long id){
-        return stateService.getState(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        Optional<StateResponseDto> stateOptional = stateService.getState(id);
+        if (stateOptional.isPresent()) {
+            return ResponseEntity.ok(stateOptional.get());
+        } else {
+            throw new EntityNotFoundException("State not found");
+        }
     }
 
     @Operation(summary = "Get all the state")
@@ -48,8 +54,12 @@ public class StateController {
     })
     @GetMapping("/")
     public ResponseEntity<List<StateResponseDto>> getAllState(){
-        List<StateResponseDto> states = stateService.getAllState();
-        return states.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(states);
+        try{
+            List<StateResponseDto> state = stateService.getAllState();
+            return ResponseEntity.ok(state);
+        } catch (Exception e){
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @Operation(summary = "Add a new state")
@@ -69,9 +79,12 @@ public class StateController {
     })
     @PutMapping("/{id}")
     public ResponseEntity<StateResponseDto> updateState(@Valid @PathVariable Long id, @RequestBody StateRequestDto stateRequestDto){
-        return stateService.updateState(id, stateRequestDto)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        Optional<StateResponseDto> stateOptional = stateService.updateState(id, stateRequestDto);
+        if (stateOptional.isPresent()) {
+            return ResponseEntity.ok(stateOptional.get());
+        } else {
+            throw new EntityNotFoundException("State not found");
+        }
     }
 
     @Operation(summary = "Delete a state by their Number")
@@ -81,6 +94,11 @@ public class StateController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteState(@PathVariable Long id){
-        return stateService.deleteState(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        boolean isDeleted = stateService.deleteState(id);
+        if (isDeleted) {
+            return ResponseEntity.noContent().build();
+        } else {
+            throw new EntityNotFoundException("State not found");
+        }
     }
 }

@@ -44,7 +44,7 @@ public class VacancyCompanyEntity {
     private String source;
 
     @ManyToOne
-    @JoinColumn(name = "rol_id", nullable = false)
+    @JoinColumn(name = "RoleID_id", nullable = false)
     private RoleIDEntity role;
 
     @ManyToOne

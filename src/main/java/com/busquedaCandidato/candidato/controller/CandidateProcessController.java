@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/candidate_process")
+@RequestMapping("/api/candidate_process")
 @RequiredArgsConstructor
 public class CandidateProcessController {
 
@@ -48,7 +48,6 @@ public class CandidateProcessController {
     @GetMapping("/{id}")
     public ResponseEntity<CandidateProcessResponseDto> getCandidateProcess(@PathVariable Long id) {
         CandidateProcessResponseDto candidateProcessResponseDto = candidateProcessService.getCandidateProcessById(id);
-
         if (candidateProcessResponseDto == null) {
             return ResponseEntity.notFound().build();
         }

@@ -92,6 +92,12 @@ public class GlobalException {
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.CANDIDATE_DOESNOT_POSTULATION.getMessage()));
     }
 
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleEntityNotFoundException(EntityNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.NOT_FOUND.getMessage()));
+    }
+
 
 }
 

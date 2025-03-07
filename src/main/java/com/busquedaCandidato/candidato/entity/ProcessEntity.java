@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Table(name = "Proceso")
+@Table(name = "Process")
 public class ProcessEntity {
 
     @Id

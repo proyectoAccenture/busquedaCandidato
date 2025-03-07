@@ -13,11 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-<<<<<<< HEAD
 @Table(name = "candidate")
-=======
-@Table(name = "Candidate")
->>>>>>> 6a17b9c9e6c656605a65ec6b0e672481d1841594
 public class CandidateEntity {
 
     @Id

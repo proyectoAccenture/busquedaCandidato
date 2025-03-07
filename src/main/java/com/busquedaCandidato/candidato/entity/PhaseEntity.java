@@ -11,11 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @NoArgsConstructor
-<<<<<<< HEAD
 @Table(name = "phase")
-=======
-@Table(name = "Phase")
->>>>>>> 6a17b9c9e6c656605a65ec6b0e672481d1841594
 public class PhaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

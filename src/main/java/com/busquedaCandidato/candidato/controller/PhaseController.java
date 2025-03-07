@@ -1,10 +1,7 @@
 package com.busquedaCandidato.candidato.controller;
 
 import java.util.List;
-import java.util.Optional;
 
-import com.busquedaCandidato.candidato.dto.response.OriginResponseDto;
-import com.busquedaCandidato.candidato.exception.type.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +21,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/phase")
+@RequestMapping("/phase")
 @RequiredArgsConstructor
 public class PhaseController {
 
@@ -39,12 +36,9 @@ public class PhaseController {
     })
      @GetMapping("/{id}")
     public ResponseEntity<PhaseResponseDto> getState(@PathVariable Long id){
-        Optional<PhaseResponseDto> phaseOptional = phaseService.getPhase(id);
-        if (phaseOptional.isPresent()) {
-            return ResponseEntity.ok(phaseOptional.get());
-        } else {
-            throw new EntityNotFoundException("Phase not found");
-        }
+        return phaseService.getState(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
     @Operation(summary = "Get all the phase")
     @ApiResponses(value = {
@@ -55,12 +49,8 @@ public class PhaseController {
     })
     @GetMapping("/")
     public ResponseEntity<List<PhaseResponseDto>> getAllState(){
-        try{
-            List<PhaseResponseDto> phase = phaseService.getAllPhase();
-            return ResponseEntity.ok(phase);
-        } catch (Exception e){
-            return ResponseEntity.internalServerError().build();
-        }
+        List<PhaseResponseDto> phases = phaseService.getAllState();
+        return phases.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(phases);
     }
 
     @Operation(summary = "Add a new phase")
@@ -80,12 +70,9 @@ public class PhaseController {
     })
     @PutMapping("/{id}")
     public ResponseEntity<PhaseResponseDto> updatePhase(@Valid @PathVariable Long id, @RequestBody PhaseRequestDto phaseRequestDto){
-        Optional<PhaseResponseDto> phaseOptional = phaseService.updatePhase(id, phaseRequestDto);
-        if (phaseOptional.isPresent()) {
-            return ResponseEntity.ok(phaseOptional.get());
-        } else {
-            throw new EntityNotFoundException("Phase not found");
-        }
+        return phaseService.updatePhase(id, phaseRequestDto)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Operation(summary = "Delete a phase by their Number")
@@ -95,12 +82,7 @@ public class PhaseController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePhase(@PathVariable Long id){
-        boolean isDeleted = phaseService.deletePhase(id);
-        if (isDeleted) {
-            return ResponseEntity.noContent().build();
-        } else {
-            throw new EntityNotFoundException("Phase not found");
-        }
+        return phaseService.deletePhase(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 
 

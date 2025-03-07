@@ -2,10 +2,7 @@ package com.busquedaCandidato.candidato.controller;
 
 
 import com.busquedaCandidato.candidato.dto.request.RoleIDRequestDto;
-import com.busquedaCandidato.candidato.dto.response.PostulationResponseDto;
-import com.busquedaCandidato.candidato.dto.response.ProcessResponseDto;
 import com.busquedaCandidato.candidato.dto.response.RoleIDResponseDto;
-import com.busquedaCandidato.candidato.exception.type.EntityNotFoundException;
 import com.busquedaCandidato.candidato.service.RoleIDService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -20,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Controlador REST para manejar las operaciones relacionadas con los role ID.
@@ -32,6 +28,12 @@ public class RoleIDController {
 
     private final RoleIDService roleIDService;
 
+    /**
+     * Obtiene un Role ID por su ID.
+     *
+     * @param id El ID del Role ID.
+     * @return ResponseEntity con el RolIDResponseDto se encuentra, de lo contrario 404.
+     */
     @Operation(summary = "Get a Role ID by ist ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Role ID found",
@@ -42,15 +44,17 @@ public class RoleIDController {
 
     @GetMapping("/{id}")
     public ResponseEntity<RoleIDResponseDto> getByIdRoleID(@PathVariable Long id){
-        Optional<RoleIDResponseDto> rolIdOptional = roleIDService.getRolID(id);
-        if (rolIdOptional.isPresent()) {
-            return ResponseEntity.ok(rolIdOptional.get());
-        } else {
-            throw new EntityNotFoundException("RolId not found");
-        }
+        return roleIDService.getRolID(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "Get all the rolID")
+    /**
+     * Obtiene todos los Role ID.
+     *
+     * @return ResponseEntity con una lista de RoleIDResponseDto o 204 si no hay role id.
+     */
+    @Operation
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "All Role ID returned",
                     content = @Content(mediaType = "application/json",
@@ -61,14 +65,16 @@ public class RoleIDController {
 
     @GetMapping("/")
     public ResponseEntity<List<RoleIDResponseDto>> getAllRoleID(){
-        try{
-            List<RoleIDResponseDto> rolId = roleIDService.getAllRolID();
-            return ResponseEntity.ok(rolId);
-        } catch (Exception e){
-            return ResponseEntity.internalServerError().build();
-        }
+        List<RoleIDResponseDto> roleid = roleIDService.getAllJRoleID();
+        return roleid.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(roleid);
     }
 
+    /**
+     * Añade un nuevo Role ID.
+     *
+     * @param rolIDRequestDto El DTO que representa la solicitud de creación de un Role ID.
+     * @return ResponseEntity con el RoleIDResponseDto del role id creado.
+     */
     @Operation(summary = "Add a new role id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Rol id created", content = @Content),
@@ -79,6 +85,13 @@ public class RoleIDController {
         return ResponseEntity.status(HttpStatus.CREATED).body(roleIDService.saveRolID(rolIDRequestDto));
     }
 
+    /**
+     * Actualiza un Role ID existente.
+     *
+     * @param id El ID del Role ID.
+     * @param rolIDRequestDto El DTO que representa la solicitud de actualización de un rol id.
+     * @return ResponseEntity con el RoleIDResponseDto actualizado.
+     */
     @Operation(summary = "Update an existing rol id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Role ID updated", content = @Content),
@@ -87,14 +100,17 @@ public class RoleIDController {
 
     @PutMapping("/{id}")
     public ResponseEntity<RoleIDResponseDto> updateRoleID(@Valid @PathVariable Long id, @RequestBody RoleIDRequestDto rolIDRequestDto){
-        Optional<RoleIDResponseDto> rolIdOptional = roleIDService.updateRolID(id, rolIDRequestDto);
-        if (rolIdOptional.isPresent()) {
-            return ResponseEntity.ok(rolIdOptional.get());
-        } else {
-            throw new EntityNotFoundException("RoleId not found");
-        }
+        return roleIDService.updateRolID(id, rolIDRequestDto)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    /**
+     * Elimina un Role ID por su ID.
+     *
+     * @param id El ID del Role ID.
+     * @return ResponseEntity con estado 204 si el role id fue eliminado, de lo contrario 404.
+     */
     @Operation(summary = "Delete a role id by its ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Role id deleted", content = @Content),
@@ -103,12 +119,7 @@ public class RoleIDController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRoleID(@PathVariable Long id){
-        boolean isDeleted = roleIDService.deleteRolID(id);
-        if (isDeleted) {
-            return ResponseEntity.noContent().build();
-        } else {
-            throw new EntityNotFoundException("Roleid not found");
-        }
+        return roleIDService.deleteRolID(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 
-}
+}//Fin de la clase RoleIDController

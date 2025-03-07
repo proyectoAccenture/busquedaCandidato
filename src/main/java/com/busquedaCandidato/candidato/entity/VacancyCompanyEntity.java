@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Table(name = "VacancyCompany")
+@Table(name = "company_vacancy")
 public class VacancyCompanyEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,11 +44,11 @@ public class VacancyCompanyEntity {
     private String source;
 
     @ManyToOne
-    @JoinColumn(name = "rol_id", nullable = false)
+    @JoinColumn(name = "role_id", nullable = false)
     private RoleIDEntity role;
 
     @ManyToOne
-    @JoinColumn(name = "jobProfile_id", nullable = false)
+    @JoinColumn(name = "job_profile_id", nullable = false)
     private JobProfileEntity jobProfile;
 
     @ManyToOne

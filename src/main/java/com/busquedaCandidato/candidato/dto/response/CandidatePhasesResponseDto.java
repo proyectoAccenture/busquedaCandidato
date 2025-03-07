@@ -6,14 +6,14 @@ import lombok.Data;
 
 import java.time.LocalDate;
 
-@Schema(name = "CandidateProcessResponse",description = "Model representing a candidate process in the database")
+@Schema(name = "CandidatePhasesResponse",description = "Model representing a candidate phases process in the database")
 @Data
-public class CandidateProcessResponseDto {
-    @Schema(name = "id",defaultValue = "1", description = "Unique Id of the candidate process in the database")
+public class CandidatePhasesResponseDto {
+    @Schema(name = "id",defaultValue = "1", description = "Unique Id of the candidate phases process in the database")
     private Long id;
 
-    @Schema(name = "processId")
-    private Long processId;
+    //_@Schema(name = "processId")
+    //private Long processId;
 
     @Schema(name = "phaseId")
     private Long phaseId;

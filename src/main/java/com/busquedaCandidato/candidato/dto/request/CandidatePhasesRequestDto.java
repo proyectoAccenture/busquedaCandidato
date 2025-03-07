@@ -11,12 +11,12 @@ import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
-@Schema(name = "CandidateProcessRequest", description = "Model represent a candidate process on database")
-public class CandidateProcessRequestDto {
+@Schema(name = "CandidatePhasesRequest", description = "Model represent a candidate phases process on database")
+public class CandidatePhasesRequestDto {
 
-    @Schema(name = "processId",description = "Id of process of candidate",example = "1")
-    @NotNull(message = "processId cannot be null")
-    private Long processId;
+    //_@Schema(name = "processId",description = "Id of process of candidate",example = "1")
+   //_@NotNull(message = "processId cannot be null")
+    //private Long processId;
 
     @Schema(name = "phaseId",description = "Id of phaseId",example = "1")
     @NotNull(message = "phaseId cannot be null")

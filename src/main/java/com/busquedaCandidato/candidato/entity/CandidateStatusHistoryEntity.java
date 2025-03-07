@@ -5,29 +5,32 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
+import java.security.Timestamp;
 import java.time.LocalDate;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Table(name = "postulation")
-public class PostulationEntity {
+@Table(name = "candidate_status_history")
+public class CandidateStatusHistoryEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private String salaryAspiration;
+    private String description;
 
     @Column(nullable = false)
-    private LocalDate datePresentation;
+    private LocalDate assignmentDate;
 
     @ManyToOne
-    @JoinColumn(name = "candidate_id", nullable = false)
-    private CandidateEntity candidate;
+    @JoinColumn(name = "postulation_id", nullable = false)
+    private PostulationEntity postulation;
 
     @ManyToOne
-    @JoinColumn(name = "company_vacancy_id", nullable = false)
-    private VacancyCompanyEntity  vacancyCompany;
+    @JoinColumn(name = "candidate_phases_id", nullable = false)
+    private CandidatePhasesEntity candidatePhases;
 }

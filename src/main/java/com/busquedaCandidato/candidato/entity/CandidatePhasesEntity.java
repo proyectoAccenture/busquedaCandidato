@@ -7,30 +7,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Table(name = "ProcesoCandidato")
-public class CandidateProcessEntity {
+@Table(name = "candidate_phases")
+public class CandidatePhasesEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "process_id", nullable = false)
-    @JsonBackReference
-    private ProcessEntity process;
-
-    @ManyToOne
-    @JoinColumn(name = "phase_id", nullable = false)
-    private PhaseEntity phase;
-
-    @ManyToOne
-    @JoinColumn(name = "state_id", nullable = false)
-    private StateEntity state;
 
     @Column(nullable = false)
     private String description;
@@ -40,4 +27,15 @@ public class CandidateProcessEntity {
 
     @Column(nullable = false)
     private LocalDate assignedDate;
+
+
+    @ManyToOne
+    @JoinColumn(name = "phase_id", nullable = false)
+    private PhaseEntity phase;
+
+    @ManyToOne
+    @JoinColumn(name = "state_id", nullable = false)
+    private StateEntity state;
+
+
 }

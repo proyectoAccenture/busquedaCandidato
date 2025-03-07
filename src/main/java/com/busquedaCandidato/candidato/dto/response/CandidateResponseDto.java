@@ -24,6 +24,9 @@ public class CandidateResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate birthdate;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate registrationDate;
+
     @Schema(name = "phone",description = "phone of the candidate")
     private Long phone;
 

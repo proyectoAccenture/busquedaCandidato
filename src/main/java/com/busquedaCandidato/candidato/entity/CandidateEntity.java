@@ -5,13 +5,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.security.Timestamp;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Table(name = "Candidato")
+@Table(name = "candidate")
 public class CandidateEntity {
 
     @Id
@@ -28,9 +30,6 @@ public class CandidateEntity {
     private Long card;
 
     @Column(nullable = false)
-    private LocalDate birthdate;
-
-    @Column(nullable = false)
     private Long phone;
 
     @Column(nullable = false)
@@ -38,4 +37,15 @@ public class CandidateEntity {
 
     @Column(nullable = false)
     private String email;
+
+    @Column(nullable = false)
+    private LocalDate birthdate;
+
+    @Column(nullable = false)
+    private LocalDate registrationDate;
+
+    @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostulationEntity> postulation;
+
+
 }

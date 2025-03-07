@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.security.Timestamp;
 import java.time.LocalDate;
 
 @Data
@@ -36,6 +37,13 @@ public class CandidateRequestDto {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate birthdate;
+
+
+    @Schema(name = "registrationDate", description = "registrationDate of the candidate", example = "2004-03-01")
+    @NotNull(message = "registrationDate cannot be null")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate registrationDate;
 
     @Schema(name = "phone",description = "phone of the candidate", example = "3002004050")
     @NotNull(message = "phone cannot be null")

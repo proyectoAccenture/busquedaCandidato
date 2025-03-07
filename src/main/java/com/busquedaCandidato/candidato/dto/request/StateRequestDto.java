@@ -1,7 +1,9 @@
 package com.busquedaCandidato.candidato.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,5 +16,8 @@ public class StateRequestDto {
     @Schema(name = "name", description = "Name of state")
     @NotNull(message = "State cannot be null")
     @Size(min = 1, max = 250, message = "The state name must be greater than 0 and less than 250")
+    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", message = "The name must not contain special characters or numbers")
+    @NotBlank(message = "State cannot be black")
     private String name;
+
 }

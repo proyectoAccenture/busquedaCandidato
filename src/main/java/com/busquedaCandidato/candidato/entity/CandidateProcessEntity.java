@@ -20,11 +20,6 @@ public class CandidateProcessEntity {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "process_id", nullable = false)
-    @JsonBackReference
-    private ProcessEntity process;
-
-    @ManyToOne
     @JoinColumn(name = "phase_id", nullable = false)
     private PhaseEntity phase;
 

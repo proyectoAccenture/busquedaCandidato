@@ -7,7 +7,6 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface IMapperCandidateProcessResponse {
-    @Mapping(source = "process.id", target = "processId")
     @Mapping(source = "phase.id", target = "phaseId")
     @Mapping(source = "phase.name", target = "phaseName")
     @Mapping(source = "state.id", target = "stateId")

@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Schema(name = "CandidateProcessRequestUpdate", description = "The same candidate process model but only for updating")
 public class CandidateProcessRequestUpdateDto {
+
     @Schema(name = "stateId",description = "Id of state", example = "1")
     @NotNull(message = "state cannot be null")
     private Long stateId;

@@ -25,7 +25,7 @@ public class ProcessEntity {
     @JoinColumn(name = "candidate_id", nullable = false)
     private CandidateEntity candidate;
 
-    @OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "candidateProcess", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<CandidateProcessEntity> processPhases = new ArrayList<>();
 }

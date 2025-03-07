@@ -12,9 +12,6 @@ public class CandidateProcessResponseDto {
     @Schema(name = "id",defaultValue = "1", description = "Unique Id of the candidate process in the database")
     private Long id;
 
-    @Schema(name = "processId")
-    private Long processId;
-
     @Schema(name = "phaseId")
     private Long phaseId;
 

@@ -71,8 +71,8 @@ public class PostulationService {
     }
 
     public boolean deletePostulation(Long id){
-        if (vacancyCompanyRepository.existsById(id)) {
-            vacancyCompanyRepository.deleteById(id);
+        if (postulationRepository.existsById(id)) {
+            postulationRepository.deleteById(id);
             return true;
         }
         return false;

@@ -32,7 +32,7 @@ public class CandidateProcessService {
 
     public CandidateProcessResponseDto addPhaseToProcess(CandidateProcessRequestDto candidateProcessRequestDto){
 
-        ProcessEntity processEntity = processRepository.findById(candidateProcessRequestDto.getProcessId())
+        /* ProcessEntity processEntity = processRepository.findById(candidateProcessRequestDto.getProcessId())
                 .orElseThrow(ProcessNoExistException::new);
 
         Optional<CandidateProcessEntity> currentPhaseOptional = candidateProcessRepository.findTopByProcessOrderByAssignedDateDesc(processEntity);
@@ -44,7 +44,7 @@ public class CandidateProcessService {
             if (!lastCandidateProcess.getStatus()) {
                 throw new CannotBeCreateCandidateProcessException();
             }
-        }
+        } */
 
         PhaseEntity phaseEntity = phaseRepository.findById(candidateProcessRequestDto.getPhaseId())
                 .orElseThrow(PhaseNoFoundException::new);
@@ -53,7 +53,6 @@ public class CandidateProcessService {
                 .orElseThrow(StateNoFoundException::new);
 
         CandidateProcessEntity newCandidateProcess = new CandidateProcessEntity();
-        newCandidateProcess.setProcess(processEntity);
         newCandidateProcess.setPhase(phaseEntity);
         newCandidateProcess.setState(stateEntity);
         newCandidateProcess.setDescription(candidateProcessRequestDto.getDescription());

@@ -14,10 +14,6 @@ import java.time.LocalDate;
 @Schema(name = "CandidateProcessRequest", description = "Model represent a candidate process on database")
 public class CandidateProcessRequestDto {
 
-    @Schema(name = "processId",description = "Id of process of candidate",example = "1")
-    @NotNull(message = "processId cannot be null")
-    private Long processId;
-
     @Schema(name = "phaseId",description = "Id of phaseId",example = "1")
     @NotNull(message = "phaseId cannot be null")
     private Long phaseId;

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class RoleIDRequestDto {
-    @Schema(name = "name",description = "Name of the Role ID",example = "Role of the vacancy")
+    @Schema(name = "name",description = "Name of the Role ID", example = "string")
     @NotNull(message = "Role ID cannot be null")
     @Size(min = 1, max = 100, message = "The Role ID name must be greater than 0 and less than 100")
     private String name;

@@ -86,17 +86,24 @@ public class GlobalException {
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ENTITY_DOESNOT_EXIST.getMessage()));
     }
 
-    @ExceptionHandler(CandidateNoPostulation.class)
-    public ResponseEntity<Map<String, String>> CandidateNoPostulation(CandidateNoPostulation ex) {
+    @ExceptionHandler(CandidateNoPostulationException.class)
+    public ResponseEntity<Map<String, String>> CandidateNoPostulationException(CandidateNoPostulationException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.CANDIDATE_DOESNOT_POSTULATION.getMessage()));
     }
 
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleEntityNotFoundException(EntityNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.NOT_FOUND.getMessage()));
+    @ExceptionHandler(ProcessAlreadyExistException.class)
+    public ResponseEntity<Map<String, String>> ProcessAlreadyExistException(ProcessAlreadyExistException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.PROCESS_ALREADY_EXIST.getMessage()));
     }
+
+    @ExceptionHandler(CandidateNoExistException.class)
+    public ResponseEntity<Map<String, String>> CandidateNoExistException(CandidateNoExistException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.CANDIDATE_DOESNOT_EXIST.getMessage()));
+    }
+
 
 
 }

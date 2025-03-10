@@ -20,10 +20,24 @@ public class CandidateService {
     private final IMapperCandidateResponse mapperCandidateResponse;
     private final IMapperCandidateRequest mapperCandidateRequest;
 
-    public Optional<CandidateResponseDto> getCandidate(Long id){
+    public CandidateResponseDto getByIdCandidate(Long id){
         return candidateRepository.findById(id)
-                .map(mapperCandidateResponse::CandidateToCandidateResponse);
+                .map(mapperCandidateResponse::CandidateToCandidateResponse)
+                .orElseThrow(CandidateNoExistException::new);
     }
+
+    public List<CandidateResponseDto> getByNameCandidate(String name){
+        List<CandidateEntity> candidateEntities = candidateRepository.findByName(name);
+
+        if(candidateEntities.isEmpty()){
+            throw new CandidateNoExistException();
+        }
+
+        return candidateEntities.stream()
+                .map(mapperCandidateResponse::CandidateToCandidateResponse)
+                .collect(Collectors.toList());
+    }
+
 
     public List<CandidateResponseDto> getAllCandidate(){
         return candidateRepository.findAll().stream()

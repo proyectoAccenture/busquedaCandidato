@@ -27,21 +27,31 @@ import java.util.Optional;
 public class CandidateController {
     private final CandidateService candidateService;
 
-    @Operation(summary = "Get a candidate by their Number")
+    @Operation(summary = "Get a candidate by their number")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Candidate found",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CandidateResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "Candidate not found", content = @Content)
     })
-    @GetMapping("/{id}")
-    public ResponseEntity<CandidateResponseDto> getCandidate(@PathVariable Long id){
-        Optional<CandidateResponseDto> canditateOptional = candidateService.getCandidate(id);
-        if (canditateOptional.isPresent()) {
-            return ResponseEntity.ok(canditateOptional.get());
-        } else {
-            throw new EntityNotFoundException("Candidate not found");
-        }
+    @GetMapping("/id/{id}")
+    public ResponseEntity<CandidateResponseDto> getByIdCandidate(@PathVariable Long id){
+        CandidateResponseDto canditate = candidateService.getByIdCandidate(id);
+        return ResponseEntity.ok(canditate);
+    }
+
+    @Operation(summary = "Get a candidate by their name")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Candidate found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CandidateResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "Candidate not found", content = @Content)
+    })
+    @GetMapping("/name/{name}")
+    public ResponseEntity<List<CandidateResponseDto>> getByNameCandidate(@PathVariable String name){
+        List<CandidateResponseDto> candidates = candidateService.getByNameCandidate(name);
+        return ResponseEntity.ok(candidates);
+
     }
 
     @Operation(summary = "Get all the candidate")

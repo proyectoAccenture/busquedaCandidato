@@ -32,14 +32,13 @@ public class CandidateRequestDto {
     @Digits(integer = 10, fraction = 0, message = "card must have exactly 10 digits")
     private Long card;
 
-    @Schema(name = "birthdate", description = "birthdate of the candidate", example = "2004-03-01")
+    @Schema(name = "birthdate", description = "birthdate of the candidate", example = "2004-01-01")
     @NotNull(message = "birthdate cannot be null")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate birthdate;
 
-
-    @Schema(name = "registrationDate", description = "registrationDate of the candidate", example = "2004-03-01")
+    @Schema(name = "registrationDate", description = "registrationDate of the candidate", example = "2025-01-01")
     @NotNull(message = "registrationDate cannot be null")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")

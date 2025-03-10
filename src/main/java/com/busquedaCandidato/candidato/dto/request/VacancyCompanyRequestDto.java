@@ -27,17 +27,17 @@ public class VacancyCompanyRequestDto {
     @Pattern(regexp = "^[0-9]{1,3}(\\.[0-9]{3})*$", message = "The salary must be a valid number with thousands separated by dots (e.g., 300.000, 1.234.567)")
     private String salary;
 
-    @Schema(name = "experience", description = "experience should have of the candidate", example = "5 year")
+    @Schema(name = "experience", description = "experience should have of the candidate", example = "string")
     @NotNull(message = "experience cannot be null")
     @Size(min = 1, max = 100, message = "The experience must be greater than 0 and less than 100")
     private String experience;
 
-    @Schema(name = "level", description = "skills should have of the candidate", example = "Senior")
+    @Schema(name = "level", description = "skills should have of the candidate", example = "string")
     @NotNull(message = "level cannot be null")
     @Size(min = 1, max = 100, message = "The skills must be greater than 0 and less than 100")
     private String level;
 
-    @Schema(name = "skills", description = "skills should have of the candidate", example = "Java, AWS, Angular")
+    @Schema(name = "skills", description = "skills should have of the candidate", example = "string")
     @NotNull(message = "skills cannot be null")
     @Size(min = 1, max = 100, message = "The skills must be greater than 0 and less than 100")
     private String skills;
@@ -47,13 +47,13 @@ public class VacancyCompanyRequestDto {
     @Size(min = 1, max = 100, message = "The experience must be greater than 0 and less than 100")
     private String description;
 
-    @Schema(name = "datePublication", description = "datePublication of the candidate", example = "2025-03-01")
+    @Schema(name = "datePublication", description = "datePublication of the candidate", example = "2025-01-01")
     @NotNull(message = "datePublication cannot be null")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate datePublication;
 
-    @Schema(name = "source", description = "source where the vacancy was launched ", example = "workday")
+    @Schema(name = "source", description = "source where the vacancy was launched ", example = "string")
     @NotNull(message = "source cannot be null")
     @Size(min = 1, max = 100, message = "The source must be greater than 0 and less than 100")
     private String source;

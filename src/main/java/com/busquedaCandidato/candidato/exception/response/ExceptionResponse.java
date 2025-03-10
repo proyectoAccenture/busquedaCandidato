@@ -9,10 +9,10 @@ public enum ExceptionResponse {
     NOT_PHASES_ASSIGNED("There are not phases assigned to this process"),
     IDCARD_ALREADY_EXISTS("There is already a id card with that number"),
     CANNOT_BE_CREATED_CANDIDATE_PROCESS("the candidate process cannot be create because the post status is false"),
-    ENTITY_DOESNOT_EXIST("There is not job profile with that id "),
+    ENTITY_DOESNOT_EXIST("There is anything entity with that id "),
     CANDIDATE_DOESNOT_POSTULATION("The candidate must first have been nominated "),
-    INVALID_REQUEST("The request is not in the correct format."),
-    NOT_FOUND("The resource was not found");
+    PROCESS_ALREADY_EXIST("It already exist a process of the candidate with that postulation"),
+    CANDIDATE_DOESNOT_EXIST("The candidate does not exist");
 
 
     private final String message;

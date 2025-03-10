@@ -14,24 +14,24 @@ import java.time.LocalDate;
 @Schema(name = "CandidatePhasesRequest", description = "Model represent a candidate phases process on database")
 public class CandidatePhasesRequestDto {
 
-    //_@Schema(name = "processId",description = "Id of process of candidate",example = "1")
-   //_@NotNull(message = "processId cannot be null")
-    //private Long processId;
+    @Schema(name = "processId",description = "Id of process of candidate",example = "1")
+    @NotNull(message = "processId cannot be null")
+    private Long processId;
 
-    @Schema(name = "phaseId",description = "Id of phaseId",example = "1")
-    @NotNull(message = "phaseId cannot be null")
+    @Schema(name = "phaseId", description = "Id of phaseId", example = "1")
+    @NotNull(message = "PhaseId cannot be null")
     private Long phaseId;
 
-    @Schema(name = "stateId",description = "Id of state", example = "1")
-    @NotNull(message = "state cannot be null")
+    @Schema(name = "stateId", description = "Id of stateId", example = "1")
+    @NotNull(message = "State cannot be null")
     private Long stateId;
 
     @Schema(name = "status",description = "Status in which a candidate is located")
-    @NotNull(message = "status cannot be null")
+    @NotNull(message = "Status cannot be null")
     private Boolean status;
 
     @Schema(name = "description", description = "Description about candidate process", example = "This process is...")
-    @NotNull(message = "description cannot be null")
+    @NotNull(message = "Description cannot be null")
     private String description;
 
     @Schema(name = "assignedDate", description = "Date when the candidate is assigned", example = "2024-03-01")

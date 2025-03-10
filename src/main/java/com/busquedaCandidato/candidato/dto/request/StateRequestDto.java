@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StateRequestDto {
 
-    @Schema(name = "name", description = "Name of state")
+    @Schema(name = "name", description = "Name of state", example = "string")
     @NotNull(message = "State cannot be null")
     @Size(min = 1, max = 250, message = "The state name must be greater than 0 and less than 250")
     private String name;

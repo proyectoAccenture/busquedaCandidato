@@ -3,15 +3,12 @@ package com.busquedaCandidato.candidato.service;
 import com.busquedaCandidato.candidato.dto.request.CandidatePhasesRequestDto;
 import com.busquedaCandidato.candidato.dto.request.CandidatePhasesRequestUpdateDto;
 import com.busquedaCandidato.candidato.dto.response.CandidatePhasesResponseDto;
-import com.busquedaCandidato.candidato.entity.CandidatePhasesEntity;
-import com.busquedaCandidato.candidato.entity.PhaseEntity;
-import com.busquedaCandidato.candidato.entity.CandidateStatusHistoryEntity;
-import com.busquedaCandidato.candidato.entity.StateEntity;
+import com.busquedaCandidato.candidato.entity.*;
 import com.busquedaCandidato.candidato.exception.type.*;
 import com.busquedaCandidato.candidato.mapper.IMapperCandidatePhasesResponse;
 import com.busquedaCandidato.candidato.repository.IPhaseRepository;
 import com.busquedaCandidato.candidato.repository.ICandidatePhasesRepository;
-import com.busquedaCandidato.candidato.repository.ICandidateStatusHistoryRepository;
+import com.busquedaCandidato.candidato.repository.IProcessRepository;
 import com.busquedaCandidato.candidato.repository.IStateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,7 +21,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CandidatePhasesService {
 
-    private final ICandidateStatusHistoryRepository processRepository;
+    private final IProcessRepository processRepository;
     private final IPhaseRepository phaseRepository;
     private final IStateRepository stateRepository;
     private final ICandidatePhasesRepository candidatePhasesRepository;
@@ -32,21 +29,18 @@ public class CandidatePhasesService {
 
     public CandidatePhasesResponseDto addPhaseToProcess(CandidatePhasesRequestDto candidatePhasesRequestDto){
 
-       /*
-        candidateStatusHistoryEntity_candidateStatusHistoryEntity = processRepository.findById(candidatePhasesRequestDto.getProcessId())
-        //  .orElseThrow(ProcessNoExistException::new);
+        ProcessEntity processEntity = processRepository.findById(candidatePhasesRequestDto.getProcessId())
+                .orElseThrow(ProcessNoExistException::new);
 
-        //Optional<CandidatePhasesEntity> currentPhaseOptional = candidateProcessRepository.findTopByProcessOrderByAssignedDateDesc(candidateStatusHistoryEntity);
+        Optional<CandidatePhasesEntity> currentPhaseOptional = candidatePhasesRepository.findTopByProcessOrderByAssignedDateDesc(processEntity);
 
         if (currentPhaseOptional.isPresent()) {
-            CandidatePhasesEntity lastCandidateProcess = currentPhaseOptional.get();
-            System.out.println("Última fase encontrada con status: " + lastCandidateProcess.getStatus());
+            CandidatePhasesEntity lastCandidatePhases = currentPhaseOptional.get();
 
-            if (!lastCandidateProcess.getStatus()) {
+            if (!lastCandidatePhases.getStatus()) {
                 throw new CannotBeCreateCandidateProcessException();
             }
         }
-       */
 
         PhaseEntity phaseEntity = phaseRepository.findById(candidatePhasesRequestDto.getPhaseId())
                 .orElseThrow(PhaseNoFoundException::new);
@@ -55,6 +49,7 @@ public class CandidatePhasesService {
                 .orElseThrow(StateNoFoundException::new);
 
         CandidatePhasesEntity newCandidateProcess = new CandidatePhasesEntity();
+        newCandidateProcess.setProcess(processEntity);
         newCandidateProcess.setPhase(phaseEntity);
         newCandidateProcess.setState(stateEntity);
         newCandidateProcess.setDescription(candidatePhasesRequestDto.getDescription());

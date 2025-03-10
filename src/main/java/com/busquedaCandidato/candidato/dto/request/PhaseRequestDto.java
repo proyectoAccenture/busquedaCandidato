@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class PhaseRequestDto {
-    @Schema(name = "name", description = "Name of phase")
+    @Schema(name = "name", description = "Name of phase", example = "string")
     @NotNull(message = "Phase cannot be null")
     @Size(min = 1, max = 250, message = "The phase name must be greater than 0 and less than 250")
     private String name;

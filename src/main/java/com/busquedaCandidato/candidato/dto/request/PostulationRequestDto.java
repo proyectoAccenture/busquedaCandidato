@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @Schema(name = "PostulationRequest", description = "Model represent a postulation of the candidate on database")
 public class PostulationRequestDto {
 
-    @Schema(name = "datePresentation", description = "date in which the candidate appliqued", example = "2025-03-01")
+    @Schema(name = "datePresentation", description = "date in which the candidate appliqued", example = "2025-01-01")
     @NotNull(message = "datePresentation cannot be null")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")

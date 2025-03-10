@@ -19,11 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-<<<<<<< HEAD:src/main/java/com/busquedaCandidato/candidato/controller/CandidatePhasesController.java
-@RequestMapping("/candidate_phases")
-=======
-@RequestMapping("/api/candidate_process")
->>>>>>> 6a17b9c9e6c656605a65ec6b0e672481d1841594:src/main/java/com/busquedaCandidato/candidato/controller/CandidateProcessController.java
+@RequestMapping("/api/candidate_phases")
 @RequiredArgsConstructor
 public class CandidatePhasesController {
 
@@ -47,16 +43,10 @@ public class CandidatePhasesController {
             @ApiResponse(responseCode = "404", description = "phase not found", content = @Content)
     })
     @GetMapping("/{id}")
-<<<<<<< HEAD:src/main/java/com/busquedaCandidato/candidato/controller/CandidatePhasesController.java
     public ResponseEntity<CandidatePhasesResponseDto> getCandidatePhases(@PathVariable Long id) {
         CandidatePhasesResponseDto candidatePhasesResponseDto = candidatePhasesService.getCandidatePhasesById(id);
 
         if (candidatePhasesResponseDto == null) {
-=======
-    public ResponseEntity<CandidateProcessResponseDto> getCandidateProcess(@PathVariable Long id) {
-        CandidateProcessResponseDto candidateProcessResponseDto = candidateProcessService.getCandidateProcessById(id);
-        if (candidateProcessResponseDto == null) {
->>>>>>> 6a17b9c9e6c656605a65ec6b0e672481d1841594:src/main/java/com/busquedaCandidato/candidato/controller/CandidateProcessController.java
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(candidatePhasesResponseDto);

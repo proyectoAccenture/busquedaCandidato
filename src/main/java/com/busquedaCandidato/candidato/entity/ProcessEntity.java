@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,18 +14,24 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Table(name = "Process")
+@Table(name = "process")
 public class ProcessEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "candidate_id", nullable = false)
-    private CandidateEntity candidate;
+    @Column(nullable = false)
+    private String description;
+
+    @Column(nullable = false)
+    private LocalDate assignmentDate;
+
+    @ManyToOne
+    @JoinColumn(name = "postulation_id", nullable = false)
+    private PostulationEntity postulation;
 
     @OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private List<CandidateProcessEntity> processPhases = new ArrayList<>();
+    private List<CandidatePhasesEntity> processPhases = new ArrayList<>();
 }

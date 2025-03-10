@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OriginRequestDto {
 
-    @Schema(name = "name", description = "Name of origin")
+    @Schema(name = "name", description = "Name of origin", example = "string")
     @NotNull(message = "Origin cannot be null")
     @Size(min = 1, max = 250, message = "The origin name must be greater than 0 and less than 250")
     private String name;

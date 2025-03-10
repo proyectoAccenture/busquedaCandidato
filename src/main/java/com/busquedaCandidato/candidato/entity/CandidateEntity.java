@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.security.Timestamp;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -13,11 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-<<<<<<< HEAD
 @Table(name = "candidate")
-=======
-@Table(name = "Candidate")
->>>>>>> 6a17b9c9e6c656605a65ec6b0e672481d1841594
 public class CandidateEntity {
 
     @Id
@@ -47,9 +42,4 @@ public class CandidateEntity {
 
     @Column(nullable = false)
     private LocalDate registrationDate;
-
-    @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PostulationEntity> postulation;
-
-
 }

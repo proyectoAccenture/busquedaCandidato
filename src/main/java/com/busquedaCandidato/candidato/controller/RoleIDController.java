@@ -2,8 +2,7 @@ package com.busquedaCandidato.candidato.controller;
 
 
 import com.busquedaCandidato.candidato.dto.request.RoleIDRequestDto;
-import com.busquedaCandidato.candidato.dto.response.PostulationResponseDto;
-import com.busquedaCandidato.candidato.dto.response.ProcessResponseDto;
+
 import com.busquedaCandidato.candidato.dto.response.RoleIDResponseDto;
 import com.busquedaCandidato.candidato.exception.type.EntityNotFoundException;
 import com.busquedaCandidato.candidato.service.RoleIDService;
@@ -22,9 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Controlador REST para manejar las operaciones relacionadas con los role ID.
- */
+
 @RestController
 @RequestMapping("/api/roleid")
 @RequiredArgsConstructor

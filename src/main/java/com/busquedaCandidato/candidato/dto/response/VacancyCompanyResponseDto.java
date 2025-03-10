@@ -12,46 +12,46 @@ public class VacancyCompanyResponseDto {
     @Schema(name = "id", defaultValue = "1", description = "Unique Id of origin on database")
     private final Long id;
 
-    @Schema(name = "contract", description = "contract of the candidate", example = "string")
+    @Schema(name = "contract", description = "Contract of the candidate")
     private String contract;
 
-    @Schema(name = "salary", description = "salary should have of the candidate", example = "string")
+    @Schema(name = "salary", description = "Salary should have of the candidate")
     private String salary;
 
-    @Schema(name = "experience", description = "experience should have of the candidate", example = "5 year")
+    @Schema(name = "experience", description = "Experience should have of the candidate")
     private String experience;
 
-    @Schema(name = "level", description = "skills should have of the candidate", example = "Senior")
+    @Schema(name = "level", description = "Level should have of the candidate")
     private String level;
 
-    @Schema(name = "skills", description = "skills should have of the candidate", example = "Java, AWS, Angular")
+    @Schema(name = "skills", description = "Skills should have of the candidate")
     private String skills;
 
-    @Schema(name = "description", description = "experience should have of the candidate", example = "string")
+    @Schema(name = "description", description = "Description should have of the candidate")
     private String description;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate datePublication;
 
-    @Schema(name = "source", description = "source where the vacancy was launched ", example = "workday")
+    @Schema(name = "source", description = "source where the vacancy was launched ")
     private String source;
 
-    @Schema(name = "roleId",description = "Id of rol Id",example = "1")
+    @Schema(name = "roleId",description = "Id of role")
     private Long roleId;
 
-    @Schema(name = "roleName",description = "Name of rol", example = "string")
+    @Schema(name = "roleName",description = "Name of rol")
     private String roleName;
 
-    @Schema(name = "jobProfileId",description = "Id of job profile", example = "1")
+    @Schema(name = "jobProfileId",description = "Id of job profile")
     private Long jobProfileId;
 
-    @Schema(name = "jobProfileName",description = "Name of job profile", example = "string")
+    @Schema(name = "jobProfileName",description = "Name of job profile")
     private String jobProfileName;
 
-    @Schema(name = "originId",description = "Id of rol Id",example = "1")
+    @Schema(name = "originId",description = "Id of rol Id")
     private Long originId;
 
-    @Schema(name = "originName",description = "Name of rol", example = "string")
+    @Schema(name = "originName",description = "Name of rol")
     private String originName;
 
 }

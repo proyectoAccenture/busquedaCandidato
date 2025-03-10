@@ -9,7 +9,7 @@ import org.mapstruct.Mapping;
 public interface IMapperJobProfileRequest {
 
     @Mapping(source = "name", target = "name")
-    JobProfileEntity  JobProfileResquestToJobProfile(JobProfileRequestDto jobProfileRequestDto);
+    JobProfileEntity JobProfileResquestToJobProfile(JobProfileRequestDto jobProfileRequestDto);
 
 
 }

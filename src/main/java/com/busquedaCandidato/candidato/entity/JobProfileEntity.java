@@ -9,11 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-<<<<<<< HEAD
 @Table(name = "job_profile")
-=======
-@Table(name = "JobProfile")
->>>>>>> 6a17b9c9e6c656605a65ec6b0e672481d1841594
 public class JobProfileEntity {
 
     @Id

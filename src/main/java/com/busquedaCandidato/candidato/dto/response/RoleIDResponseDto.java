@@ -9,6 +9,6 @@ public class RoleIDResponseDto {
     @Schema(name = "id",defaultValue = "1", description = "Unique Id of the Role ID in the database")
     private Long id;
 
-    @Schema(name = "name",description = "Role ID name")
+    @Schema(name = "name",description = "Role id name")
     private String name;
 }

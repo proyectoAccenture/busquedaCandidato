@@ -4,11 +4,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.busquedaCandidato.candidato.entity.OriginEntity;
 import org.springframework.stereotype.Service;
 
 import com.busquedaCandidato.candidato.dto.request.OriginRequestDto;
 import com.busquedaCandidato.candidato.dto.response.OriginResponseDto;
-import com.busquedaCandidato.candidato.entity.OriginEntity;
 import com.busquedaCandidato.candidato.exception.type.EntityAlreadyExistsException;
 import com.busquedaCandidato.candidato.mapper.IMapperOriginRequest;
 import com.busquedaCandidato.candidato.mapper.IMapperOriginResponse;

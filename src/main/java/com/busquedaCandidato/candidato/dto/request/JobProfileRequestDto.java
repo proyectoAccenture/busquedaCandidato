@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class JobProfileRequestDto {
 
-    @Schema(name = "name",description = "Name of the job profile",example = "Dev Backend")
+    @Schema(name = "name",description = "Name of the job profile", example = "string")
     @NotNull(message = "jobrofile cannot be null")
     @Size(min = 1, max = 50, message = "The job profile name must be greater than 0 and less than 100")
     private String name;

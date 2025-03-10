@@ -95,7 +95,6 @@ public class JobProfileController {
             @ApiResponse(responseCode = "200", description = "Job profile deleted", content = @Content),
             @ApiResponse(responseCode = "404", description = "Job profile not found", content = @Content)
     })
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteJobProfile(@PathVariable Long id){
         boolean isDeleted = jobProfileService.deleteJobProfile(id);
@@ -105,7 +104,4 @@ public class JobProfileController {
             throw new EntityNotFoundException("JobProfile not found");
         }
     }
-
-
-
 }

@@ -40,13 +40,13 @@ public class GlobalException {
 
     @ExceptionHandler(ProcessNoExistException.class)
     public ResponseEntity<Map<String, String>> ProcessNoExist(ProcessNoExistException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.PROCESS_NO_EXIST.getMessage()));
     }
 
     @ExceptionHandler(ProcessClosedException.class)
     public ResponseEntity<Map<String, String>> ProcessClosedException(ProcessClosedException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.PROCESS_CLOSED.getMessage()));
     }
 
@@ -58,13 +58,13 @@ public class GlobalException {
 
     @ExceptionHandler(PhaseNoFoundException.class)
     public ResponseEntity<Map<String, String>> ProcessClosedException(PhaseNoFoundException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.PHASE_NO_FOUND.getMessage()));
     }
 
     @ExceptionHandler(NotPhasesAssignedException.class)
     public ResponseEntity<Map<String, String>> StateAlreadyExistsException(NotPhasesAssignedException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.NOT_PHASES_ASSIGNED.getMessage()));
     }
 
@@ -76,19 +76,19 @@ public class GlobalException {
 
     @ExceptionHandler(CannotBeCreateCandidateProcessException.class)
     public ResponseEntity<Map<String, String>> CannotBeCreateCandidateProcessException(CannotBeCreateCandidateProcessException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.CANNOT_BE_CREATED_CANDIDATE_PROCESS.getMessage()));
     }
 
     @ExceptionHandler(EntityNoExistException.class)
     public ResponseEntity<Map<String, String>> EntityNoExistException(EntityNoExistException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ENTITY_DOESNOT_EXIST.getMessage()));
     }
 
     @ExceptionHandler(CandidateNoPostulationException.class)
     public ResponseEntity<Map<String, String>> CandidateNoPostulationException(CandidateNoPostulationException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.CANDIDATE_DOESNOT_POSTULATION.getMessage()));
     }
 
@@ -100,7 +100,7 @@ public class GlobalException {
 
     @ExceptionHandler(CandidateNoExistException.class)
     public ResponseEntity<Map<String, String>> CandidateNoExistException(CandidateNoExistException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.CANDIDATE_DOESNOT_EXIST.getMessage()));
     }
 

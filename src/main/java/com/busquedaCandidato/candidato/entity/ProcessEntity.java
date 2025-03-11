@@ -27,7 +27,7 @@ public class ProcessEntity {
     @Column(nullable = false)
     private LocalDate assignmentDate;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "postulation_id", nullable = false)
     private PostulationEntity postulation;
 

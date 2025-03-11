@@ -23,6 +23,7 @@ public class CandidatePhasesRequestUpdateDto {
     private String description;
 
     @Schema(name = "status", description = "Status in which a candidate phases is located")
+    @NotNull(message = "Status cannot be null")
     private Boolean status;
 
     @Schema(name = "assignedDate", description = "Name of the job profile", example = "2025-01-01")

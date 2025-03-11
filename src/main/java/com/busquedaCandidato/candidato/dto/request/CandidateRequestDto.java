@@ -16,15 +16,15 @@ import java.time.LocalDate;
 public class CandidateRequestDto {
 
     @Schema(name = "name", description = "Name of the candidate", example = "string")
-    @NotNull(message = "name cannot be null")
-    @Size(min = 1, max = 100, message = "The name must be greater than 0 and less than 100")
-    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", message = "The name must not contain special characters or numbers")
+    @NotBlank(message = "name cannot be blank")
+    @Size(min = 1, max = 100, message = "The name must be between 1 and 100 characters")
+    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", message = "The name must only contain letters and spaces")
     private String name;
 
     @Schema(name = "lastName", description = "Name of the candidate", example = "string")
-    @NotNull(message = "lastName cannot be null")
-    @Size(min = 1, max = 100, message = "The last name must be greater than 0 and less than 100")
-    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", message = "The name must not contain special characters or numbers")
+    @NotBlank(message = "lastName cannot be blank")
+    @Size(min = 1, max = 100, message = "The last name must be between 1 and 100 characters")
+    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", message = "The last name must only contain letters and spaces")
     private String lastName;
 
     @Schema(name = "card",description = "card of the candidate", example = "1000234567")
@@ -34,6 +34,7 @@ public class CandidateRequestDto {
 
     @Schema(name = "birthdate", description = "birthdate of the candidate", example = "2004-01-01")
     @NotNull(message = "birthdate cannot be null")
+    @Past(message = "Birthdate must be in the past")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate birthdate;
@@ -50,13 +51,14 @@ public class CandidateRequestDto {
     private Long phone;
 
     @Schema(name = "city", description = "city of the candidate", example = "string")
-    @NotNull(message = "city cannot be null")
-    @Size(min = 1, max = 100, message = "The city must be greater than 0 and less than 100")
-    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", message = "The city must not contain special characters or numbers")
+    @NotBlank(message = "city cannot be blank")
+    @Size(min = 1, max = 100, message = "The city name must be between 1 and 100 characters")
+    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", message = "The city name must only contain letters and spaces")
     private String city;
 
     @Schema(name = "email", description = "city of the candidate", example = "string")
-    @NotNull(message = "email cannot be null")
-    @Size(min = 1, max = 150, message = "The email must be greater than 0 and less than 100")
+    @NotBlank(message = "email cannot be blank")
+    @Size(max = 150, message = "The email must be less than 150 characters")
+    @Email(message = "Invalid email format")
     private String email;
 }

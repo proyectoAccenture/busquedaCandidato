@@ -2,8 +2,7 @@ package com.busquedaCandidato.candidato.dto.request;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,7 +12,8 @@ import lombok.NoArgsConstructor;
 public class JobProfileRequestDto {
 
     @Schema(name = "name",description = "Name of the job profile", example = "string")
-    @NotNull(message = "jobrofile cannot be null")
-    @Size(min = 1, max = 50, message = "The job profile name must be greater than 0 and less than 100")
+    @NotBlank(message = "jobprofile cannot be blank")
+    @Size(min = 1, max = 50, message = "The job profile name must be between 1 and 50 characters")
+    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", message = "The job profile name must only contain letters and spaces")
     private String name;
 }

@@ -12,7 +12,8 @@ public enum ExceptionResponse {
     ENTITY_DOESNOT_EXIST("There is anything entity with that id "),
     CANDIDATE_DOESNOT_POSTULATION("The candidate must first have been nominated "),
     PROCESS_ALREADY_EXIST("It already exist a process of the candidate with that postulation"),
-    CANDIDATE_DOESNOT_EXIST("The candidate does not exist");
+    CANDIDATE_DOESNOT_EXIST("The candidate does not exist"),
+    ROLEID_DOESNOT_EXIST("No role id found");
 
 
     private final String message;

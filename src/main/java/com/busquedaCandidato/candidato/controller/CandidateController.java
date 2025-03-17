@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,17 +28,17 @@ import java.util.Optional;
 public class CandidateController {
     private final CandidateService candidateService;
 
-    @Operation(summary = "Get a candidate by their number")
+    @Operation(summary = "Get a candidate by their role id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Candidate found",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CandidateResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "Candidate not found", content = @Content)
     })
-    @GetMapping("/id/{id}")
-    public ResponseEntity<CandidateResponseDto> getByIdCandidate(@PathVariable Long id){
-        CandidateResponseDto canditate = candidateService.getByIdCandidate(id);
-        return ResponseEntity.ok(canditate);
+    @GetMapping("/role/{idRole}")
+    public ResponseEntity<List<CandidateResponseDto>> geCandidateByRole(@PathVariable String idRole){
+        List<CandidateResponseDto> candidates = candidateService.getCandidateByRole(idRole);
+        return ResponseEntity.ok(candidates);
     }
 
     @Operation(summary = "Get a candidate by their name")
@@ -48,10 +49,23 @@ public class CandidateController {
             @ApiResponse(responseCode = "404", description = "Candidate not found", content = @Content)
     })
     @GetMapping("/name/{name}")
-    public ResponseEntity<List<CandidateResponseDto>> getByNameCandidate(@PathVariable String name){
+    public ResponseEntity<List<CandidateResponseDto>> getCandidateByName(@PathVariable String name){
         List<CandidateResponseDto> candidates = candidateService.getByNameCandidate(name);
         return ResponseEntity.ok(candidates);
 
+    }
+
+    @Operation(summary = "Get a candidate by their number")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Candidate found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CandidateResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "Candidate not found", content = @Content)
+    })
+    @GetMapping("/id/{id}")
+    public ResponseEntity<CandidateResponseDto> getCandidateById(@PathVariable Long id){
+        CandidateResponseDto candidate = candidateService.getByIdCandidate(id);
+        return ResponseEntity.ok(candidate);
     }
 
     @Operation(summary = "Get all the candidate")

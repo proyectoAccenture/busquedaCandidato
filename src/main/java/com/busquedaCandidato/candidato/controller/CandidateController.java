@@ -1,10 +1,7 @@
 package com.busquedaCandidato.candidato.controller;
 
-
 import com.busquedaCandidato.candidato.dto.request.CandidateRequestDto;
 import com.busquedaCandidato.candidato.dto.response.CandidateResponseDto;
-import com.busquedaCandidato.candidato.dto.response.OriginResponseDto;
-import com.busquedaCandidato.candidato.exception.type.EntityNotFoundException;
 import com.busquedaCandidato.candidato.service.CandidateService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -16,11 +13,16 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Iterator;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
-import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/api/candidate")
@@ -41,20 +43,6 @@ public class CandidateController {
         return ResponseEntity.ok(candidates);
     }
 
-    @Operation(summary = "Get a candidate by their name")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Candidate found",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = CandidateResponseDto.class))),
-            @ApiResponse(responseCode = "404", description = "Candidate not found", content = @Content)
-    })
-    @GetMapping("/name/{name}")
-    public ResponseEntity<List<CandidateResponseDto>> getCandidateByName(@PathVariable String name){
-        List<CandidateResponseDto> candidates = candidateService.getByNameCandidate(name);
-        return ResponseEntity.ok(candidates);
-
-    }
-
     @Operation(summary = "Get a candidate by their number")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Candidate found",
@@ -63,9 +51,22 @@ public class CandidateController {
             @ApiResponse(responseCode = "404", description = "Candidate not found", content = @Content)
     })
     @GetMapping("/id/{id}")
-    public ResponseEntity<CandidateResponseDto> getCandidateById(@PathVariable Long id){
+    public ResponseEntity<CandidateResponseDto> getByIdCandidate(@PathVariable Long id){
         CandidateResponseDto candidate = candidateService.getByIdCandidate(id);
         return ResponseEntity.ok(candidate);
+    }
+
+    @Operation(summary = "Get a candidate by their name")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Candidate found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CandidateResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "Candidate not found", content = @Content)
+    })
+    @GetMapping("/name/{name}")
+    public ResponseEntity<List<CandidateResponseDto>> getByNameCandidate(@PathVariable String name){
+        List<CandidateResponseDto> candidates = candidateService.getByNameCandidate(name);
+        return ResponseEntity.ok(candidates);
     }
 
     @Operation(summary = "Get all the candidate")

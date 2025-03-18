@@ -4,13 +4,13 @@ import com.busquedaCandidato.candidato.dto.request.JobProfileRequestDto;
 import com.busquedaCandidato.candidato.dto.response.JobProfileResponseDto;
 import com.busquedaCandidato.candidato.entity.JobProfileEntity;
 import com.busquedaCandidato.candidato.exception.type.EntityAlreadyExistsException;
+import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
 import com.busquedaCandidato.candidato.mapper.IMapperJobProfileRequest;
 import com.busquedaCandidato.candidato.mapper.IMapperJobProfileResponse;
 import com.busquedaCandidato.candidato.repository.IJobProfileRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,9 +20,10 @@ public class JobProfileService {
     private final IMapperJobProfileResponse mapperJobProfileResponse;
     private final IMapperJobProfileRequest mapperJobProfileRequest;
 
-    public Optional<JobProfileResponseDto> getJobProfile(Long id){
+    public JobProfileResponseDto getJobProfile(Long id){
         return jobProfileRepository.findById(id)
-                .map(mapperJobProfileResponse::JobProfileToJobProfileResponse);
+                .map(mapperJobProfileResponse::JobProfileToJobProfileResponse)
+                .orElseThrow(EntityNoExistException::new);
 
     }
 
@@ -41,20 +42,19 @@ public class JobProfileService {
         return mapperJobProfileResponse.JobProfileToJobProfileResponse(jobProfileEntitySave);
     }
 
-    public Optional<JobProfileResponseDto> updateJobProfile(Long id, JobProfileRequestDto jobProfileRequestDto) {
-        return jobProfileRepository.findById(id)
-                .map(existingJob -> {
-                    existingJob.setName(jobProfileRequestDto.getName());
-                    return mapperJobProfileResponse.JobProfileToJobProfileResponse(jobProfileRepository.save(existingJob));
-                });
+    public JobProfileResponseDto updateJobProfile(Long id, JobProfileRequestDto jobProfileRequestDto) {
+        JobProfileEntity existingJob = jobProfileRepository.findById(id)
+                .orElseThrow(EntityNoExistException::new);
+        existingJob.setName(jobProfileRequestDto.getName());
+        JobProfileEntity updatedJob = jobProfileRepository.save(existingJob);
+        return mapperJobProfileResponse.JobProfileToJobProfileResponse(updatedJob);
     }
 
-    public boolean deleteJobProfile(Long id){
-        if (jobProfileRepository.existsById(id)) {
-            jobProfileRepository.deleteById(id);
-            return true;
-        }
-        return false;
+    public void deleteJobProfile(Long id){
+        JobProfileEntity existingJob = jobProfileRepository.findById(id)
+                .orElseThrow(EntityNoExistException::new);
+        jobProfileRepository.delete(existingJob);
+
     }
 
 }

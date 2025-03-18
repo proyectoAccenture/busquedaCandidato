@@ -2,9 +2,7 @@ package com.busquedaCandidato.candidato.controller;
 
 
 import com.busquedaCandidato.candidato.dto.request.StateRequestDto;
-import com.busquedaCandidato.candidato.dto.response.RoleIDResponseDto;
 import com.busquedaCandidato.candidato.dto.response.StateResponseDto;
-import com.busquedaCandidato.candidato.exception.type.EntityNotFoundException;
 import com.busquedaCandidato.candidato.service.StateService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -19,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/state")
@@ -35,14 +32,12 @@ public class StateController {
                             schema = @Schema(implementation = StateResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "State not found", content = @Content)
     })
+
     @GetMapping("/{id}")
     public ResponseEntity<StateResponseDto> getState(@PathVariable Long id){
-        Optional<StateResponseDto> stateOptional = stateService.getState(id);
-        if (stateOptional.isPresent()) {
-            return ResponseEntity.ok(stateOptional.get());
-        } else {
-            throw new EntityNotFoundException("State not found");
-        }
+        return stateService.getState(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Operation(summary = "Get all the state")
@@ -52,14 +47,11 @@ public class StateController {
                             array = @ArraySchema(schema = @Schema(implementation = StateResponseDto.class)))),
             @ApiResponse(responseCode = "404", description = "No data found", content = @Content)
     })
+
     @GetMapping("/")
     public ResponseEntity<List<StateResponseDto>> getAllState(){
-        try{
-            List<StateResponseDto> state = stateService.getAllState();
-            return ResponseEntity.ok(state);
-        } catch (Exception e){
-            return ResponseEntity.internalServerError().build();
-        }
+        List<StateResponseDto> states = stateService.getAllState();
+        return states.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(states);
     }
 
     @Operation(summary = "Add a new state")
@@ -67,6 +59,7 @@ public class StateController {
             @ApiResponse(responseCode = "201", description = "State created", content = @Content),
             @ApiResponse(responseCode = "409", description = "State already exists", content = @Content)
     })
+
     @PostMapping("/")
     public ResponseEntity<StateResponseDto> saveState(@Valid @RequestBody StateRequestDto stateRequestDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(stateService.saveState(stateRequestDto));
@@ -79,12 +72,9 @@ public class StateController {
     })
     @PutMapping("/{id}")
     public ResponseEntity<StateResponseDto> updateState(@Valid @PathVariable Long id, @RequestBody StateRequestDto stateRequestDto){
-        Optional<StateResponseDto> stateOptional = stateService.updateState(id, stateRequestDto);
-        if (stateOptional.isPresent()) {
-            return ResponseEntity.ok(stateOptional.get());
-        } else {
-            throw new EntityNotFoundException("State not found");
-        }
+        return stateService.updateState(id, stateRequestDto)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Operation(summary = "Delete a state by their Number")
@@ -92,13 +82,9 @@ public class StateController {
             @ApiResponse(responseCode = "200", description = "State deleted", content = @Content),
             @ApiResponse(responseCode = "404", description = "State not found", content = @Content)
     })
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteState(@PathVariable Long id){
-        boolean isDeleted = stateService.deleteState(id);
-        if (isDeleted) {
-            return ResponseEntity.noContent().build();
-        } else {
-            throw new EntityNotFoundException("State not found");
-        }
+        return stateService.deleteState(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 }

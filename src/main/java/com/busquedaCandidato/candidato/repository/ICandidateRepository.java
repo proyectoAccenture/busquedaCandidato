@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface ICandidateRepository extends JpaRepository<CandidateEntity, Long> {
     boolean existsByCard(Long card);
-
     List<CandidateEntity> findByName(String name);
+    List<CandidateEntity> findByIdIn(List<Long> candidateIds);
 }

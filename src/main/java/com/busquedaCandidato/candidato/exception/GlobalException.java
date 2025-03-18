@@ -104,6 +104,11 @@ public class GlobalException {
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.CANDIDATE_DOESNOT_EXIST.getMessage()));
     }
 
+    @ExceptionHandler(RoleIdNoExistException.class)
+    public ResponseEntity<Map<String, String>> RoleIdNoExistException(RoleIdNoExistException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ROLEID_DOESNOT_EXIST.getMessage()));
+    }
 
 
 }

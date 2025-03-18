@@ -8,7 +8,6 @@ import com.busquedaCandidato.candidato.mapper.IMapperPostulationResponse;
 import com.busquedaCandidato.candidato.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

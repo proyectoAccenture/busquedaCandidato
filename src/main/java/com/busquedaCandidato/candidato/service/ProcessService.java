@@ -2,11 +2,13 @@ package com.busquedaCandidato.candidato.service;
 
 import com.busquedaCandidato.candidato.dto.request.ProcessRequestDto;
 import com.busquedaCandidato.candidato.dto.response.ProcessResponseDto;
+import com.busquedaCandidato.candidato.entity.CandidateEntity;
 import com.busquedaCandidato.candidato.entity.ProcessEntity;
 import com.busquedaCandidato.candidato.entity.PostulationEntity;
 import com.busquedaCandidato.candidato.exception.type.CandidateNoPostulationException;
 import com.busquedaCandidato.candidato.exception.type.ProcessAlreadyExistException;
 import com.busquedaCandidato.candidato.mapper.IMapperProcessResponse;
+import com.busquedaCandidato.candidato.repository.ICandidateRepository;
 import com.busquedaCandidato.candidato.repository.IPostulationRepository;
 import com.busquedaCandidato.candidato.repository.IProcessRepository;
 import lombok.AllArgsConstructor;
@@ -21,8 +23,17 @@ import java.util.stream.Collectors;
 public class ProcessService {
 
     private final IProcessRepository processRepository;
+    private final ICandidateRepository candidateRepository;
     private final IPostulationRepository postulationRepository;
     private final IMapperProcessResponse mapperProcessResponse;
+
+     public Optional<ProcessResponseDto> getProcesByIdCandidate(Long id){
+        CandidateEntity candidateEntity = candidateRepository.findById(id).get();
+        return processRepository.findById(candidateEntity.getId())
+                .map(mapperProcessResponse::ProcessToProcessResponse);
+    }
+
+
 
     public Optional<ProcessResponseDto> getByIdProcess(Long id){
         return processRepository.findById(id)

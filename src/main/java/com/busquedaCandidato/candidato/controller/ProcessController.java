@@ -23,6 +23,20 @@ import java.util.List;
 public class ProcessController {
     private final ProcessService processService;
 
+    @Operation(summary = "Get a candidate status history by their Number of postulation")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "ProcessEntity found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProcessResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "ProcessEntity not found", content = @Content)
+    })
+    @GetMapping("/candidate/{id}")
+    public ResponseEntity<ProcessResponseDto> getProcessByIdPostulation(@PathVariable Long id){
+        return processService.getProcesByIdCandidate(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
     @Operation(summary = "Get a candidate status history by their Number")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "ProcessEntity found",
@@ -47,7 +61,7 @@ public class ProcessController {
     })
 
     @GetMapping("/")
-    public ResponseEntity<List<ProcessResponseDto>> getAllAllCandidateStatusHistory(){
+    public ResponseEntity<List<ProcessResponseDto>> getAllCandidateStatusHistory(){
         List<ProcessResponseDto> states = processService.getAllProcess();
         return states.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(states);
     }

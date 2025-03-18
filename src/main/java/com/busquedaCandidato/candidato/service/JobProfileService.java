@@ -10,7 +10,6 @@ import com.busquedaCandidato.candidato.mapper.IMapperJobProfileResponse;
 import com.busquedaCandidato.candidato.repository.IJobProfileRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.stream.Collectors;
 

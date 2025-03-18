@@ -30,6 +30,19 @@ import java.util.List;
 public class CandidateController {
     private final CandidateService candidateService;
 
+    @Operation(summary = "Get a candidate by their role id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Candidate found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CandidateResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "Candidate not found", content = @Content)
+    })
+    @GetMapping("/role/{idRole}")
+    public ResponseEntity<List<CandidateResponseDto>> geCandidateByRole(@PathVariable String idRole){
+        List<CandidateResponseDto> candidates = candidateService.getCandidateByRole(idRole);
+        return ResponseEntity.ok(candidates);
+    }
+
     @Operation(summary = "Get a candidate by their number")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Candidate found",

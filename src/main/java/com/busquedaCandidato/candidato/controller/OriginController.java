@@ -1,9 +1,8 @@
 package com.busquedaCandidato.candidato.controller;
 
 import java.util.List;
-import java.util.Optional;
 
-import com.busquedaCandidato.candidato.exception.type.EntityNotFoundException;
+import com.busquedaCandidato.candidato.dto.response.JobProfileResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,14 +34,11 @@ public class OriginController {
                             schema = @Schema(implementation = OriginResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "Origin not found", content = @Content)
     })
+
     @GetMapping("/{id}")
-    public ResponseEntity<OriginResponseDto> getOrigin(@PathVariable Long id){
-        Optional<OriginResponseDto> stateOptional = originService.getOrigin(id);
-        if (stateOptional.isPresent()) {
-            return ResponseEntity.ok(stateOptional.get());
-        } else {
-            throw new EntityNotFoundException("Origin not found");
-        }
+    public ResponseEntity<OriginResponseDto> getOrigin(@PathVariable Long id) {
+        OriginResponseDto originResponseDto = originService.getOrigin(id);
+        return ResponseEntity.ok(originResponseDto);
     }
 
      @Operation(summary = "Get all the origin")
@@ -52,14 +48,11 @@ public class OriginController {
                             array = @ArraySchema(schema = @Schema(implementation = OriginResponseDto.class)))),
             @ApiResponse(responseCode = "404", description = "No data found", content = @Content)
     })
+
     @GetMapping("/")
     public ResponseEntity<List<OriginResponseDto>> getAllOrigin(){
-         try{
-             List<OriginResponseDto> origin = originService.getAllOrigin();
-             return ResponseEntity.ok(origin);
-         } catch (Exception e){
-             return ResponseEntity.internalServerError().build();
-         }
+         List<OriginResponseDto> origin = originService.getAllOrigin();
+         return origin.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(origin);
     }
 
      @Operation(summary = "Add a new origin")
@@ -67,6 +60,7 @@ public class OriginController {
             @ApiResponse(responseCode = "201", description = "Origin created", content = @Content),
             @ApiResponse(responseCode = "409", description = "Origin already exists", content = @Content)
     })
+
     @PostMapping("/")
     public ResponseEntity<OriginResponseDto> saveOrigin(@Valid @RequestBody OriginRequestDto originRequestDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(originService.saveOrigin(originRequestDto));
@@ -77,14 +71,11 @@ public class OriginController {
             @ApiResponse(responseCode = "200", description = "Origin updated", content = @Content),
             @ApiResponse(responseCode = "404", description = "Origin not found", content = @Content)
     })
+
     @PutMapping("/{id}")
     public ResponseEntity<OriginResponseDto> updateOrigin(@Valid @PathVariable Long id, @RequestBody OriginRequestDto originRequestDto){
-         Optional<OriginResponseDto> originOptional = originService.updateOrigin(id, originRequestDto);
-         if (originOptional.isPresent()) {
-             return ResponseEntity.ok(originOptional.get());
-         } else {
-             throw new EntityNotFoundException("Origin not found");
-         }
+         OriginResponseDto updatedOrigin = originService.updateOrigin(id, originRequestDto);
+         return ResponseEntity.ok(updatedOrigin);
     }
 
     @Operation(summary = "Delete a origin by their Number")
@@ -92,15 +83,11 @@ public class OriginController {
             @ApiResponse(responseCode = "200", description = "Origin deleted", content = @Content),
             @ApiResponse(responseCode = "404", description = "Origin not found", content = @Content)
     })
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrigin(@PathVariable Long id){
-        boolean isDeleted = originService.deleteOrigin(id);
-        if (isDeleted) {
-            return ResponseEntity.noContent().build();
-        } else {
-            throw new EntityNotFoundException("Origin not found");
-        }
+        originService.deleteOrigin(id);
+        return ResponseEntity.noContent().build();
     }
-
 
 }

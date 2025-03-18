@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.busquedaCandidato.candidato.entity.JobProfileEntity;
 import com.busquedaCandidato.candidato.entity.OriginEntity;
+import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
 import org.springframework.stereotype.Service;
 
 import com.busquedaCandidato.candidato.dto.request.OriginRequestDto;
@@ -25,9 +27,10 @@ public class OriginService {
     private final IMapperOriginResponse mapperOriginResponse;
     private final IMapperOriginRequest mapperOriginRequest;
 
-    public Optional<OriginResponseDto> getOrigin(Long id){
+    public OriginResponseDto getOrigin(Long id){
         return originRepository.findById(id)
-                .map(mapperOriginResponse:: OriginToOriginResponse);
+                .map(mapperOriginResponse:: OriginToOriginResponse)
+                .orElseThrow(EntityNoExistException::new);
 
     }
 
@@ -46,20 +49,18 @@ public class OriginService {
         return mapperOriginResponse.OriginToOriginResponse(originEntitySave);
     }
 
-    public Optional<OriginResponseDto> updateOrigin(Long id, OriginRequestDto originRequestDto) {
-        return originRepository.findById(id)
-                .map(existingEntity -> {
-                    existingEntity.setName(originRequestDto.getName());
-                    return mapperOriginResponse.OriginToOriginResponse(originRepository.save(existingEntity));
-                });
+    public OriginResponseDto updateOrigin(Long id, OriginRequestDto originRequestDto) {
+        OriginEntity existingOrigin = originRepository.findById(id)
+                .orElseThrow(EntityNoExistException::new);
+        existingOrigin.setName(originRequestDto.getName());
+        OriginEntity updatedOrigin = originRepository.save(existingOrigin);
+        return mapperOriginResponse.OriginToOriginResponse(updatedOrigin);
     }
 
-    public boolean deleteOrigin(Long id){
-        if (originRepository.existsById(id)) {
-            originRepository.deleteById(id);
-            return true;
-        }
-        return false;
+    public void deleteOrigin(Long id){
+        OriginEntity existingOrigin = originRepository.findById(id)
+                .orElseThrow(EntityNoExistException::new);
+        originRepository.delete(existingOrigin);
     }
 
 }

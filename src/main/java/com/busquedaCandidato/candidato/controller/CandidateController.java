@@ -112,6 +112,5 @@ public class CandidateController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCandidate(@PathVariable Long id){
         return candidateService.deleteCandidate(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
-
     }
 }

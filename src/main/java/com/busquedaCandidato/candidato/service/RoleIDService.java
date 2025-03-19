@@ -24,12 +24,12 @@ public class RoleIDService {
 
     public Optional<RoleIDResponseDto> getRolID(Long id) {
         return roleIDRepository.findById(id)
-                .map(mapperRolIDResponse::RolIdToRolIdResponse);
+                .map(mapperRolIDResponse::toDto);
     }
 
     public List<RoleIDResponseDto> getAllRolID() {
         return roleIDRepository.findAll().stream()
-                .map(mapperRolIDResponse::RolIdToRolIdResponse)
+                .map(mapperRolIDResponse::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -37,9 +37,9 @@ public class RoleIDService {
         if (roleIDRepository.existsByName(rolIDRequestDto.getName())) {
             throw new EntityAlreadyExistsException();
         }
-        RoleIDEntity roleIDEntity = mapperRolIDRequest.RolIDRequestToStatus(rolIDRequestDto);
+        RoleIDEntity roleIDEntity = mapperRolIDRequest.toEntity(rolIDRequestDto);
         RoleIDEntity roleIDEntitySave = roleIDRepository.save(roleIDEntity);
-        return mapperRolIDResponse.RolIdToRolIdResponse(roleIDEntitySave);
+        return mapperRolIDResponse.toDto(roleIDEntitySave);
 
     }
 
@@ -47,7 +47,7 @@ public class RoleIDService {
         return roleIDRepository.findById(id)
                 .map(existing -> {
                     existing.setName(rolIDRequestDto.getName());
-                    return mapperRolIDResponse.RolIdToRolIdResponse(roleIDRepository.save(existing));
+                    return mapperRolIDResponse.toDto(roleIDRepository.save(existing));
                 });
     }
 

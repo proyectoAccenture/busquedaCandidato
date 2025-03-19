@@ -13,8 +13,14 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
@@ -31,7 +37,6 @@ public class VacancyCompanyController {
                             schema = @Schema(implementation = VacancyCompanyResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "Candidate not found", content = @Content)
     })
-
     @GetMapping("/{id}")
     public ResponseEntity<VacancyCompanyResponseDto> getVacancy(@PathVariable Long id){
         return vacancyCompanyService.getVacancyCompany(id)
@@ -46,7 +51,6 @@ public class VacancyCompanyController {
                             array = @ArraySchema(schema = @Schema(implementation = VacancyCompanyResponseDto.class)))),
             @ApiResponse(responseCode = "404", description = "No data found", content = @Content)
     })
-
     @GetMapping("/")
     public ResponseEntity<List<VacancyCompanyResponseDto>> getAllVacancy(){
         List<VacancyCompanyResponseDto> states = vacancyCompanyService.getAllVacancyCompany();
@@ -58,7 +62,6 @@ public class VacancyCompanyController {
             @ApiResponse(responseCode = "201", description = "Vacancy created", content = @Content),
             @ApiResponse(responseCode = "409", description = "Vacancy already exists", content = @Content)
     })
-
     @PostMapping("/")
     public ResponseEntity<VacancyCompanyResponseDto> saveVacancy(@Valid @RequestBody VacancyCompanyRequestDto vacancyCompanyRequestDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(vacancyCompanyService.saveVacancyCompany(vacancyCompanyRequestDto));
@@ -69,7 +72,6 @@ public class VacancyCompanyController {
             @ApiResponse(responseCode = "200", description = "Vacancy updated", content = @Content),
             @ApiResponse(responseCode = "404", description = "Vacancy not found", content = @Content)
     })
-
     @PutMapping("/{id}")
     public ResponseEntity<VacancyCompanyResponseDto> updateCandidate(@Valid @PathVariable Long id, @RequestBody VacancyCompanyRequestDto vacancyCompanyRequestDto){
         return vacancyCompanyService.updateVacancyCompany(id, vacancyCompanyRequestDto)
@@ -82,10 +84,8 @@ public class VacancyCompanyController {
             @ApiResponse(responseCode = "200", description = "Vacancy deleted", content = @Content),
             @ApiResponse(responseCode = "404", description = "Vacancy not found", content = @Content)
     })
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteVacancy(@PathVariable Long id){
         return vacancyCompanyService.deleteVacancyCompany(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
-
     }
 }

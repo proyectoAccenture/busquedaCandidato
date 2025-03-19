@@ -14,7 +14,6 @@ import com.busquedaCandidato.candidato.repository.IRoleIDRepository;
 import com.busquedaCandidato.candidato.repository.IVacancyCompanyRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,12 +29,12 @@ public class VacancyCompanyService {
 
     public Optional<VacancyCompanyResponseDto> getVacancyCompany(Long id){
         return vacancyCompanyRepository.findById(id)
-                .map(mapperVacancyCompanyResponse::VacancyCompanyToVacancyCompanyResponse);
+                .map(mapperVacancyCompanyResponse::toDto);
     }
 
     public List<VacancyCompanyResponseDto> getAllVacancyCompany(){
         return vacancyCompanyRepository.findAll().stream()
-                .map(mapperVacancyCompanyResponse::VacancyCompanyToVacancyCompanyResponse)
+                .map(mapperVacancyCompanyResponse::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -63,7 +62,7 @@ public class VacancyCompanyService {
         vacancyCompanyEntityNew.setOrigin(originEntity);
 
         VacancyCompanyEntity vacancyCompanyEntitySave = vacancyCompanyRepository.save(vacancyCompanyEntityNew);
-        return mapperVacancyCompanyResponse.VacancyCompanyToVacancyCompanyResponse(vacancyCompanyEntitySave);
+        return mapperVacancyCompanyResponse.toDto(vacancyCompanyEntitySave);
     }
 
     public Optional<VacancyCompanyResponseDto> updateVacancyCompany(Long id, VacancyCompanyRequestDto vacancyCompanyRequestDto) {
@@ -92,7 +91,7 @@ public class VacancyCompanyService {
                     existingEntity.setOrigin(originEntity);
 
 
-                    return mapperVacancyCompanyResponse.VacancyCompanyToVacancyCompanyResponse(vacancyCompanyRepository.save(existingEntity));
+                    return mapperVacancyCompanyResponse.toDto(vacancyCompanyRepository.save(existingEntity));
                 });
     }
 

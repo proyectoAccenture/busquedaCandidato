@@ -86,7 +86,7 @@ public class PhaseController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePhase(@PathVariable Long id){
-        return phaseService.deetePhase(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        return phaseService.deletePhase(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 
 }

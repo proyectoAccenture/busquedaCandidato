@@ -6,6 +6,5 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface IMapperCandidateResponse {
-    CandidateResponseDto CandidateToCandidateResponse (CandidateEntity candidateEntity);
-
+    CandidateResponseDto toDto(CandidateEntity candidateEntity);
 }

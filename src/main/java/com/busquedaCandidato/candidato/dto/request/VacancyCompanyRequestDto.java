@@ -23,7 +23,10 @@ public class VacancyCompanyRequestDto {
     @Schema(name = "salary", description = "salary should have of the candidate", example = "string")
     @NotBlank(message = "salary cannot be blank")
     @Size(min = 1, max = 15, message = "The salary must be between 1 and 15 characters")
-    @Pattern(regexp = "^[0-9]+(\\.[0-9]{3})*$", message = "The salary must be a valid number with optional thousands separators (e.g., 3000000 or 3.000.000)")
+    @Pattern(regexp = "^(\\d{1,3}(\\.\\d{3})*|\\d+)(,\\d{1,2})?$",
+            message = "The salary must be a valid number with thousands separated by dots and optional decimals (e.g., 1.200.000, 500000, 1.234.567,89)")
+    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", message = "The salary must not only contain letters and spaces")
+    @Pattern(regexp = "^[a-zA-Z0-9 .,!?-]+$", message = "The salary must not contains invalid characters")
     private String salary;
 
     @Schema(name = "experience", description = "experience should have of the candidate", example = "string")

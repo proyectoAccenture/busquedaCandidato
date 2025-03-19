@@ -11,8 +11,6 @@ import com.busquedaCandidato.candidato.exception.type.EntityAlreadyExistsExcepti
 import com.busquedaCandidato.candidato.mapper.IMapperOriginRequest;
 import com.busquedaCandidato.candidato.mapper.IMapperOriginResponse;
 import com.busquedaCandidato.candidato.repository.IOriginRepository;
-
-
 import lombok.AllArgsConstructor;
 
 @Service
@@ -25,13 +23,13 @@ public class OriginService {
 
     public OriginResponseDto getOrigin(Long id){
         return originRepository.findById(id)
-                .map(mapperOriginResponse:: OriginToOriginResponse)
+                .map(mapperOriginResponse::toDto)
                 .orElseThrow(EntityNoExistException::new);
     }
 
     public List<OriginResponseDto> getAllOrigin(){
         return originRepository.findAll().stream()
-                .map(mapperOriginResponse::OriginToOriginResponse)
+                .map(mapperOriginResponse::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -40,10 +38,10 @@ public class OriginService {
             throw new EntityAlreadyExistsException();
         }
 
-        OriginEntity originEntity = mapperOriginRequest.OriginRequestToOrigin(originRequestDto);
+        OriginEntity originEntity = mapperOriginRequest.toEntity(originRequestDto);
         OriginEntity originEntitySave = originRepository.save(originEntity);
 
-        return mapperOriginResponse.OriginToOriginResponse(originEntitySave);
+        return mapperOriginResponse.toDto(originEntitySave);
     }
 
     public OriginResponseDto updateOrigin(Long id, OriginRequestDto originRequestDto) {
@@ -53,7 +51,7 @@ public class OriginService {
         existingOrigin.setName(originRequestDto.getName());
         OriginEntity updatedOrigin = originRepository.save(existingOrigin);
 
-        return mapperOriginResponse.OriginToOriginResponse(updatedOrigin);
+        return mapperOriginResponse.toDto(updatedOrigin);
     }
 
     public void deleteOrigin(Long id){
@@ -62,5 +60,4 @@ public class OriginService {
 
         originRepository.delete(existingOrigin);
     }
-
 }

@@ -27,13 +27,13 @@ public class VacancyCompanyService {
 
     public VacancyCompanyResponseDto getVacancyCompany(Long id){
         return vacancyCompanyRepository.findById(id)
-                .map(mapperVacancyCompanyResponse::VacancyCompanyToVacancyCompanyResponse)
+                .map(mapperVacancyCompanyResponse::toDto)
                 .orElseThrow(EntityNoExistException::new);
     }
 
     public List<VacancyCompanyResponseDto> getAllVacancyCompany(){
         return vacancyCompanyRepository.findAll().stream()
-                .map(mapperVacancyCompanyResponse::VacancyCompanyToVacancyCompanyResponse)
+                .map(mapperVacancyCompanyResponse::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -61,7 +61,7 @@ public class VacancyCompanyService {
         vacancyCompanyEntityNew.setOrigin(originEntity);
 
         VacancyCompanyEntity vacancyCompanyEntitySave = vacancyCompanyRepository.save(vacancyCompanyEntityNew);
-        return mapperVacancyCompanyResponse.VacancyCompanyToVacancyCompanyResponse(vacancyCompanyEntitySave);
+        return mapperVacancyCompanyResponse.toDto(vacancyCompanyEntitySave);
     }
 
     public Optional<VacancyCompanyResponseDto> updateVacancyCompany(Long id, VacancyCompanyRequestDto vacancyCompanyRequestDto) {
@@ -89,8 +89,7 @@ public class VacancyCompanyService {
         existingEntity.setJobProfile(jobProfileEntity);
         existingEntity.setOrigin(originEntity);
 
-        return Optional.of(mapperVacancyCompanyResponse.VacancyCompanyToVacancyCompanyResponse(vacancyCompanyRepository.save(existingEntity)));
-
+        return Optional.of(mapperVacancyCompanyResponse.toDto(vacancyCompanyRepository.save(existingEntity)));
     }
 
     public void deleteVacancyCompany(Long id){

@@ -24,12 +24,12 @@ public class PostulationService {
         PostulationEntity postulationEntity = postulationRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 
-        return mapperPostulationResponse.PostulationToPostulationResponse(postulationEntity);
+        return mapperPostulationResponse.toDto(postulationEntity);
     }
 
     public List<PostulationResponseDto> getAllPostulation(){
         return postulationRepository.findAll().stream()
-                .map(mapperPostulationResponse::PostulationToPostulationResponse)
+                .map(mapperPostulationResponse::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -47,25 +47,25 @@ public class PostulationService {
         postulationEntityNew.setCandidate(candidateEntity);
 
         PostulationEntity postulationEntitySave = postulationRepository.save(postulationEntityNew);
-        return mapperPostulationResponse.PostulationToPostulationResponse(postulationEntitySave);
+        return mapperPostulationResponse.toDto(postulationEntitySave);
     }
 
     public Optional<PostulationResponseDto> updatePostulation(Long id, PostulationRequestDto postulationRequestDto) {
-                    PostulationEntity existingEntity  = postulationRepository.findById(id)
-                                .orElseThrow(EntityNoExistException::new);
+        PostulationEntity existingEntity  = postulationRepository.findById(id)
+                .orElseThrow(EntityNoExistException::new);
 
-                    VacancyCompanyEntity vacancyCompanyEntity = vacancyCompanyRepository.findById(postulationRequestDto.getVacancyCompanyId())
-                            .orElseThrow(EntityNoExistException::new);
+        VacancyCompanyEntity vacancyCompanyEntity = vacancyCompanyRepository.findById(postulationRequestDto.getVacancyCompanyId())
+                .orElseThrow(EntityNoExistException::new);
 
-                    CandidateEntity candidateEntity = candidateRepository.findById(postulationRequestDto.getCandidateId())
-                            .orElseThrow(EntityNoExistException::new);
+        CandidateEntity candidateEntity = candidateRepository.findById(postulationRequestDto.getCandidateId())
+                .orElseThrow(EntityNoExistException::new);
 
-                    existingEntity.setDatePresentation(postulationRequestDto.getDatePresentation());
-                    existingEntity.setSalaryAspiration(postulationRequestDto.getSalaryAspiration());
-                    existingEntity.setVacancyCompany(vacancyCompanyEntity);
-                    existingEntity.setCandidate(candidateEntity);
+        existingEntity.setDatePresentation(postulationRequestDto.getDatePresentation());
+        existingEntity.setSalaryAspiration(postulationRequestDto.getSalaryAspiration());
+        existingEntity.setVacancyCompany(vacancyCompanyEntity);
+        existingEntity.setCandidate(candidateEntity);
 
-                    return Optional.of(mapperPostulationResponse.PostulationToPostulationResponse(postulationRepository.save(existingEntity)));
+        return Optional.of(mapperPostulationResponse.toDto(postulationRepository.save(existingEntity)));
     }
 
     public void deletePostulation(Long id){

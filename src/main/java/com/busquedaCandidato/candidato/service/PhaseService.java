@@ -12,7 +12,6 @@ import com.busquedaCandidato.candidato.exception.type.EntityAlreadyExistsExcepti
 import com.busquedaCandidato.candidato.mapper.IMapperPhaseRequest;
 import com.busquedaCandidato.candidato.mapper.IMapperPhaseResponse;
 import com.busquedaCandidato.candidato.repository.IPhaseRepository;
-
 import lombok.AllArgsConstructor;
 
 @Service
@@ -25,13 +24,12 @@ public class PhaseService {
 
     public Optional<PhaseResponseDto> getPhase(Long id){
         return phaseRepository.findById(id)
-                .map(mapperPhaseResponse:: PhaseToPhaseResponse );
-
+                .map(mapperPhaseResponse::toDto );
     }
 
-      public List<PhaseResponseDto> getAllPhase(){
+    public List<PhaseResponseDto> getAllPhase(){
         return phaseRepository.findAll().stream()
-                .map(mapperPhaseResponse::PhaseToPhaseResponse)
+                .map(mapperPhaseResponse::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -40,20 +38,20 @@ public class PhaseService {
             throw new EntityAlreadyExistsException();
         }
 
-        PhaseEntity phaseEntity = mapperPhaseRequest.PhaseRequestToPhase(phaseRequestDto);
+        PhaseEntity phaseEntity = mapperPhaseRequest.toEntity(phaseRequestDto);
         PhaseEntity phaseEntitySave = phaseRepository.save(phaseEntity);
 
-        return mapperPhaseResponse.PhaseToPhaseResponse(phaseEntitySave);
+        return mapperPhaseResponse.toDto(phaseEntitySave);
     }
 
-     public PhaseResponseDto updatePhase(Long id, PhaseRequestDto phaseRequestDto) {
+    public PhaseResponseDto updatePhase(Long id, PhaseRequestDto phaseRequestDto) {
          PhaseEntity existingPhase = phaseRepository.findById(id)
                  .orElseThrow(EntityNoExistException::new);
 
          existingPhase.setName(phaseRequestDto.getName());
          PhaseEntity updatedPhase = phaseRepository.save(existingPhase);
 
-         return mapperPhaseResponse.PhaseToPhaseResponse(updatedPhase);
+         return mapperPhaseResponse.toDto(updatedPhase);
     }
 
     public void deletePhase(Long id){
@@ -62,8 +60,4 @@ public class PhaseService {
 
         phaseRepository.delete(existingPhase);
     }
-
-
-
-
 }

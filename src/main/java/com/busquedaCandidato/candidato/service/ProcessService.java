@@ -33,25 +33,25 @@ public class ProcessService {
                 .orElseThrow(EntityNoExistException::new);
 
         return processRepository.findById(candidateEntity.getId())
-                .map(mapperProcessResponse::ProcessToProcessResponse)
+                .map(mapperProcessResponse::toDto)
                 .orElseThrow(EntityNoExistException::new);
     }
 
     public ProcessResponseDto getByIdProcess(Long id){
         return processRepository.findById(id)
-                .map(mapperProcessResponse::ProcessToProcessResponse)
+                .map(mapperProcessResponse::toDto)
                 .orElseThrow(CandidateNoExistException::new);
     }
 
     public List<ProcessResponseDto> getAllProcess(){
         return processRepository.findAll().stream()
-                .map(mapperProcessResponse::ProcessToProcessResponse)
+                .map(mapperProcessResponse::toDto)
                 .collect(Collectors.toList());
     }
 
     public ProcessResponseDto saveProcess(ProcessRequestDto processRequestDto) {
 
-        ProcessEntity processEntity = processRepository.findById(processRequestDto.getPostulationId())
+        processRepository.findById(processRequestDto.getPostulationId())
                 .orElseThrow(ProcessAlreadyExistException::new);
 
         PostulationEntity postulationEntity = postulationRepository.findById(processRequestDto.getPostulationId())
@@ -61,9 +61,9 @@ public class ProcessService {
         newCandidateStatusHistory.setDescription(processRequestDto.getDescription());
         newCandidateStatusHistory.setAssignmentDate(processRequestDto.getAssignedDate());
         newCandidateStatusHistory.setPostulation(postulationEntity);
-
         ProcessEntity processEntitySave = processRepository.save(newCandidateStatusHistory);
-        return mapperProcessResponse.ProcessToProcessResponse(processEntitySave);
+
+        return mapperProcessResponse.toDto(processEntitySave);
     }
 
     public Optional<ProcessResponseDto> updateProcess(Long id, ProcessRequestDto processRequestDto) {
@@ -77,7 +77,7 @@ public class ProcessService {
         existingEntity.setDescription(processRequestDto.getDescription());
         existingEntity.setAssignmentDate(processRequestDto.getAssignedDate());
 
-        return Optional.of(mapperProcessResponse.ProcessToProcessResponse(processRepository.save(existingEntity)));
+        return Optional.of(mapperProcessResponse.toDto(processRepository.save(existingEntity)));
     }
 
     public void deleteProcess(Long id){

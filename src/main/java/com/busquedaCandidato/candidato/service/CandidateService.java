@@ -52,7 +52,7 @@ public class CandidateService {
         List<CandidateEntity> candidates = candidateRepository.findByIdIn(candidateIds);
 
         return candidates.stream()
-                .map(mapperCandidateResponse::CandidateToCandidateResponse)
+                .map(mapperCandidateResponse::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -64,19 +64,19 @@ public class CandidateService {
         }
 
         return candidateEntities.stream()
-                .map(mapperCandidateResponse::CandidateToCandidateResponse)
+                .map(mapperCandidateResponse::toDto)
                 .collect(Collectors.toList());
     }
 
     public CandidateResponseDto getByIdCandidate(Long id){
         return candidateRepository.findById(id)
-                .map(mapperCandidateResponse::CandidateToCandidateResponse)
+                .map(mapperCandidateResponse::toDto)
                 .orElseThrow(CandidateNoExistException::new);
     }
 
     public List<CandidateResponseDto> getAllCandidate(){
         return candidateRepository.findAll().stream()
-                .map(mapperCandidateResponse::CandidateToCandidateResponse)
+                .map(mapperCandidateResponse::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -84,11 +84,14 @@ public class CandidateService {
         if(candidateRepository.existsByCard(candidateRequestDto.getCard())){
             throw new IdCardAlreadyExistException();
         }
+        if(candidateRepository.existsByPhone(candidateRequestDto.getPhone())){
+            throw new PhoneAlreadyExistException();
+        }
 
-        CandidateEntity candidateEntity = mapperCandidateRequest.CandidateRequestToCandidate(candidateRequestDto);
+        CandidateEntity candidateEntity = mapperCandidateRequest.toEntity(candidateRequestDto);
         CandidateEntity candidateEntitySave = candidateRepository.save(candidateEntity);
 
-        return mapperCandidateResponse.CandidateToCandidateResponse(candidateEntitySave);
+        return mapperCandidateResponse.toDto(candidateEntitySave);
     }
 
     public Optional<CandidateResponseDto> updateCandidate(Long id, CandidateRequestDto candidateRequestDto) {
@@ -103,7 +106,7 @@ public class CandidateService {
         existingEntity.setCity(candidateRequestDto.getCity());
         existingEntity.setEmail(candidateRequestDto.getEmail());
 
-        return Optional.of(mapperCandidateResponse.CandidateToCandidateResponse(candidateRepository.save(existingEntity)));
+        return Optional.of(mapperCandidateResponse.toDto(candidateRepository.save(existingEntity)));
     }
 
     public void deleteCandidate(Long id){

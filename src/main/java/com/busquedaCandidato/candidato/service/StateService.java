@@ -23,13 +23,13 @@ public class StateService {
 
     public StateResponseDto getState(Long id){
         return stateRepository.findById(id)
-                .map(mapperStateResponse::StateToStateResponse)
+                .map(mapperStateResponse::toDto)
                 .orElseThrow(EntityNoExistException::new);
     }
 
     public List<StateResponseDto> getAllState(){
         return stateRepository.findAll().stream()
-                .map(mapperStateResponse::StateToStateResponse)
+                .map(mapperStateResponse::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -38,10 +38,10 @@ public class StateService {
             throw new EntityAlreadyExistsException();
         }
 
-        StateEntity stateEntity = mapperStateRequest.StateResquestToState(stateRequestDto);
+        StateEntity stateEntity = mapperStateRequest.toEntity(stateRequestDto);
         StateEntity stateEntitySave = stateRepository.save(stateEntity);
 
-        return mapperStateResponse.StateToStateResponse(stateEntitySave);
+        return mapperStateResponse.toDto(stateEntitySave);
     }
 
     public StateResponseDto updateState(Long id, StateRequestDto stateRequestDto) {
@@ -51,7 +51,7 @@ public class StateService {
         existingState.setName(stateRequestDto.getName());
         StateEntity updatedState = stateRepository.save(existingState);
 
-        return mapperStateResponse.StateToStateResponse(updatedState);
+        return mapperStateResponse.toDto(updatedState);
     }
 
     public void deleteState(Long id){

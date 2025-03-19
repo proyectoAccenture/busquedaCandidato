@@ -23,13 +23,13 @@ public class RoleIDService {
 
     public RoleIDResponseDto getRolID(Long id) {
         return roleIDRepository.findById(id)
-                .map(mapperRolIDResponse::RolIdToRolIdResponse)
+                .map(mapperRolIDResponse::toDto)
                 .orElseThrow(EntityNoExistException::new);
     }
 
     public List<RoleIDResponseDto> getAllRolID() {
         return roleIDRepository.findAll().stream()
-                .map(mapperRolIDResponse::RolIdToRolIdResponse)
+                .map(mapperRolIDResponse::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -38,10 +38,10 @@ public class RoleIDService {
             throw new EntityAlreadyExistsException();
         }
 
-        RoleIDEntity roleIDEntity = mapperRolIDRequest.RolIDRequestToStatus(rolIDRequestDto);
+        RoleIDEntity roleIDEntity = mapperRolIDRequest.toEntity(rolIDRequestDto);
         RoleIDEntity roleIDEntitySave = roleIDRepository.save(roleIDEntity);
 
-        return mapperRolIDResponse.RolIdToRolIdResponse(roleIDEntitySave);
+        return mapperRolIDResponse.toDto(roleIDEntitySave);
     }
 
     public RoleIDResponseDto updateRolID(Long id, RoleIDRequestDto rolIDRequestDto) {
@@ -51,7 +51,7 @@ public class RoleIDService {
         existingRolId.setName(rolIDRequestDto.getName());
         RoleIDEntity updatedRolId = roleIDRepository.save(existingRolId);
 
-        return mapperRolIDResponse.RolIdToRolIdResponse(updatedRolId);
+        return mapperRolIDResponse.toDto(updatedRolId);
     }
 
     public void deleteRolID(Long id) {

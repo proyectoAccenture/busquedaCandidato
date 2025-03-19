@@ -9,5 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface ICandidatePhasesRepository extends JpaRepository<CandidatePhasesEntity, Long> {
-    Optional<CandidatePhasesEntity> findTopByProcessOrderByAssignedDateDesc(ProcessEntity process);
+    Optional<CandidatePhasesEntity> findTopByProcessOrderByIdDesc(ProcessEntity process);
 }

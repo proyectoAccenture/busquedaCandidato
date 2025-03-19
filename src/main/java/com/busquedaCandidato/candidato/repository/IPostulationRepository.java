@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface IPostulationRepository extends JpaRepository<PostulationEntity, Long> {
     List<PostulationEntity> findByVacancyCompanyIdIn(List<Long> vacancyIds);
+
+    boolean existsByCandidate_IdAndVacancyCompany_IdAndStatus(Long candidateId, Long vacancyCompanyId, Boolean status);
 }

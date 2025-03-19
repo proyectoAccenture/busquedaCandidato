@@ -40,11 +40,23 @@ public class PostulationService {
         CandidateEntity candidateEntity = candidateRepository.findById(postulationRequestDto.getCandidateId())
                 .orElseThrow(EntityNoExistException::new);
 
+        if (!postulationRequestDto.getStatus()) {
+            throw new IllegalStateException("No se puede postular, ya que la postulación está inactiva.");
+        }
+
+        boolean alreadyApplied = postulationRepository
+                .existsByCandidate_IdAndVacancyCompany_IdAndStatus(candidateEntity.getId(), vacancyCompanyEntity.getId(), true);
+
+        if (alreadyApplied) {
+            throw new IllegalStateException("Ya realizaste una postulación activa para esta vacante.");
+        }
+
         PostulationEntity postulationEntityNew = new PostulationEntity();
         postulationEntityNew.setDatePresentation(postulationRequestDto.getDatePresentation());
         postulationEntityNew.setSalaryAspiration(postulationRequestDto.getSalaryAspiration());
         postulationEntityNew.setVacancyCompany(vacancyCompanyEntity);
         postulationEntityNew.setCandidate(candidateEntity);
+        postulationEntityNew.setStatus(true);
 
         PostulationEntity postulationEntitySave = postulationRepository.save(postulationEntityNew);
         return mapperPostulationResponse.toDto(postulationEntitySave);

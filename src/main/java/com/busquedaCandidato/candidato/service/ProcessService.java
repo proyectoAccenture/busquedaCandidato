@@ -30,19 +30,17 @@ public class ProcessService {
      public Optional<ProcessResponseDto> getProcesByIdCandidate(Long id){
         CandidateEntity candidateEntity = candidateRepository.findById(id).get();
         return processRepository.findById(candidateEntity.getId())
-                .map(mapperProcessResponse::ProcessToProcessResponse);
+                .map(mapperProcessResponse::toDto);
     }
-
-
 
     public Optional<ProcessResponseDto> getByIdProcess(Long id){
         return processRepository.findById(id)
-                .map(mapperProcessResponse::ProcessToProcessResponse);
+                .map(mapperProcessResponse::toDto);
     }
 
     public List<ProcessResponseDto> getAllProcess(){
         return processRepository.findAll().stream()
-                .map(mapperProcessResponse::ProcessToProcessResponse)
+                .map(mapperProcessResponse::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -60,7 +58,7 @@ public class ProcessService {
         newCandidateStatusHistory.setPostulation(postulationEntity);
 
         ProcessEntity processEntitySave = processRepository.save(newCandidateStatusHistory);
-        return mapperProcessResponse.ProcessToProcessResponse(processEntitySave);
+        return mapperProcessResponse.toDto(processEntitySave);
     }
 
     public Optional<ProcessResponseDto> updateProcess(Long id, ProcessRequestDto processRequestDto) {
@@ -70,11 +68,10 @@ public class ProcessService {
                     PostulationEntity postulation = postulationRepository.findById(processRequestDto.getPostulationId())
                             .orElseThrow(CandidateNoPostulationException::new);
 
-
                     existingEntity.setPostulation(postulation);
                     existingEntity.setDescription(processRequestDto.getDescription());
                     existingEntity.setAssignmentDate(processRequestDto.getAssignedDate());
-                    return mapperProcessResponse.ProcessToProcessResponse(processRepository.save(existingEntity));
+                    return mapperProcessResponse.toDto(processRepository.save(existingEntity));
                 });
     }
 

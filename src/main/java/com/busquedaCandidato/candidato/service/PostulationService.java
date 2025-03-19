@@ -22,16 +22,17 @@ public class PostulationService {
 
     public Optional<PostulationResponseDto> getPostulation(Long id){
         return postulationRepository.findById(id)
-                .map(mapperPostulationResponse::PostulationToPostulationResponse);
+                .map(mapperPostulationResponse::toDto);
     }
 
     public List<PostulationResponseDto> getAllPostulation(){
         return postulationRepository.findAll().stream()
-                .map(mapperPostulationResponse::PostulationToPostulationResponse)
+                .map(mapperPostulationResponse::toDto)
                 .collect(Collectors.toList());
     }
 
     public PostulationResponseDto savePostulation(PostulationRequestDto postulationRequestDto) {
+
         VacancyCompanyEntity vacancyCompanyEntity = vacancyCompanyRepository.findById(postulationRequestDto.getVacancyCompanyId())
                 .orElseThrow(EntityNoExistException::new);
 
@@ -46,7 +47,7 @@ public class PostulationService {
 
 
         PostulationEntity postulationEntitySave = postulationRepository.save(postulationEntityNew);
-        return mapperPostulationResponse.PostulationToPostulationResponse(postulationEntitySave);
+        return mapperPostulationResponse.toDto(postulationEntitySave);
     }
 
     public Optional<PostulationResponseDto> updatePostulation(Long id, PostulationRequestDto postulationRequestDto) {
@@ -65,7 +66,7 @@ public class PostulationService {
                     existingEntity.setCandidate(candidateEntity);
 
 
-                    return mapperPostulationResponse.PostulationToPostulationResponse(postulationRepository.save(existingEntity));
+                    return mapperPostulationResponse.toDto(postulationRepository.save(existingEntity));
                 });
     }
 

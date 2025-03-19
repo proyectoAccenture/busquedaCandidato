@@ -12,6 +12,6 @@ public interface IMapperCandidatePhasesResponse {
     @Mapping(source = "phase.name", target = "phaseName")
     @Mapping(source = "state.id", target = "stateId")
     @Mapping(source = "state.name", target = "stateName")
-    CandidatePhasesResponseDto CandidatePhasesToCandidatePhasesResponse(CandidatePhasesEntity candidatePhasesEntity);
+    CandidatePhasesResponseDto toDto(CandidatePhasesEntity candidatePhasesEntity);
 }
 

@@ -22,14 +22,14 @@ public class JobProfileService {
 
     public JobProfileResponseDto getJobProfile(Long id){
         return jobProfileRepository.findById(id)
-                .map(mapperJobProfileResponse::JobProfileToJobProfileResponse)
+                .map(mapperJobProfileResponse::toDto)
                 .orElseThrow(EntityNoExistException::new);
 
     }
 
     public List<JobProfileResponseDto> getAllJobProfile(){
         return jobProfileRepository.findAll().stream()
-                .map(mapperJobProfileResponse::JobProfileToJobProfileResponse)
+                .map(mapperJobProfileResponse::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -37,24 +37,27 @@ public class JobProfileService {
         if(jobProfileRepository.existsByName(jobProfileRequestDto.getName())){
             throw new EntityAlreadyExistsException();
         }
-        JobProfileEntity jobProfileEntity = mapperJobProfileRequest.JobProfileResquestToJobProfile(jobProfileRequestDto);
+        JobProfileEntity jobProfileEntity = mapperJobProfileRequest.toEntity(jobProfileRequestDto);
         JobProfileEntity jobProfileEntitySave = jobProfileRepository.save(jobProfileEntity);
-        return mapperJobProfileResponse.JobProfileToJobProfileResponse(jobProfileEntitySave);
+        return mapperJobProfileResponse.toDto(jobProfileEntitySave);
     }
 
     public JobProfileResponseDto updateJobProfile(Long id, JobProfileRequestDto jobProfileRequestDto) {
         JobProfileEntity existingJob = jobProfileRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
+
         existingJob.setName(jobProfileRequestDto.getName());
+
         JobProfileEntity updatedJob = jobProfileRepository.save(existingJob);
-        return mapperJobProfileResponse.JobProfileToJobProfileResponse(updatedJob);
+        return mapperJobProfileResponse.toDto(updatedJob);
     }
 
-    public void deleteJobProfile(Long id){
-        JobProfileEntity existingJob = jobProfileRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
-        jobProfileRepository.delete(existingJob);
-
+    public boolean deleteJobProfile(Long id){
+        if (jobProfileRepository.existsById(id)) {
+            jobProfileRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 
 }

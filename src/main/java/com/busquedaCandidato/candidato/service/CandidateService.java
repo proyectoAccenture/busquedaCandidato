@@ -8,6 +8,7 @@ import com.busquedaCandidato.candidato.entity.RoleIDEntity;
 import com.busquedaCandidato.candidato.entity.VacancyCompanyEntity;
 import com.busquedaCandidato.candidato.exception.type.CandidateNoExistException;
 import com.busquedaCandidato.candidato.exception.type.IdCardAlreadyExistException;
+import com.busquedaCandidato.candidato.exception.type.PhoneAlreadyExistException;
 import com.busquedaCandidato.candidato.exception.type.RoleIdNoExistException;
 import com.busquedaCandidato.candidato.mapper.IMapperCandidateRequest;
 import com.busquedaCandidato.candidato.mapper.IMapperCandidateResponse;
@@ -56,7 +57,7 @@ public class CandidateService {
         List<CandidateEntity> candidates = candidateRepository.findByIdIn(candidateIds);
 
         return candidates.stream()
-                .map(mapperCandidateResponse::CandidateToCandidateResponse)
+                .map(mapperCandidateResponse::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -68,19 +69,19 @@ public class CandidateService {
         }
 
         return candidateEntities.stream()
-                .map(mapperCandidateResponse::CandidateToCandidateResponse)
+                .map(mapperCandidateResponse::toDto)
                 .collect(Collectors.toList());
     }
 
     public CandidateResponseDto getByIdCandidate(Long id){
         return candidateRepository.findById(id)
-                .map(mapperCandidateResponse::CandidateToCandidateResponse)
+                .map(mapperCandidateResponse::toDto)
                 .orElseThrow(CandidateNoExistException::new);
     }
 
     public List<CandidateResponseDto> getAllCandidate(){
         return candidateRepository.findAll().stream()
-                .map(mapperCandidateResponse::CandidateToCandidateResponse)
+                .map(mapperCandidateResponse::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -88,9 +89,12 @@ public class CandidateService {
         if(candidateRepository.existsByCard(candidateRequestDto.getCard())){
             throw new IdCardAlreadyExistException();
         }
-        CandidateEntity candidateEntity = mapperCandidateRequest.CandidateRequestToCandidate(candidateRequestDto);
+        if(candidateRepository.existsByPhone(candidateRequestDto.getPhone())){
+            throw new PhoneAlreadyExistException();
+        }
+        CandidateEntity candidateEntity = mapperCandidateRequest.toEntity(candidateRequestDto);
         CandidateEntity candidateEntitySave = candidateRepository.save(candidateEntity);
-        return mapperCandidateResponse.CandidateToCandidateResponse(candidateEntitySave);
+        return mapperCandidateResponse.toDto(candidateEntitySave);
     }
 
     public Optional<CandidateResponseDto> updateCandidate(Long id, CandidateRequestDto candidateRequestDto) {
@@ -104,7 +108,7 @@ public class CandidateService {
                     existingEntity.setCity(candidateRequestDto.getCity());
                     existingEntity.setEmail(candidateRequestDto.getEmail());
 
-                    return mapperCandidateResponse.CandidateToCandidateResponse(candidateRepository.save(existingEntity));
+                    return mapperCandidateResponse.toDto(candidateRepository.save(existingEntity));
                 });
     }
 

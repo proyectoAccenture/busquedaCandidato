@@ -28,7 +28,7 @@ public class CandidateEntity {
     @Column(unique = true, nullable = false)
     private Long card;
 
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
     private Long phone;
 
     @Column(nullable = false)

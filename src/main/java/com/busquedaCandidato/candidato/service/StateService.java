@@ -4,6 +4,7 @@ import com.busquedaCandidato.candidato.dto.request.StateRequestDto;
 import com.busquedaCandidato.candidato.dto.response.StateResponseDto;
 import com.busquedaCandidato.candidato.entity.StateEntity;
 import com.busquedaCandidato.candidato.exception.type.EntityAlreadyExistsException;
+import com.busquedaCandidato.candidato.exception.type.IdCardAlreadyExistException;
 import com.busquedaCandidato.candidato.mapper.IMapperStateRequest;
 import com.busquedaCandidato.candidato.mapper.IMapperStateResponse;
 import com.busquedaCandidato.candidato.repository.IStateRepository;
@@ -24,12 +25,12 @@ public class StateService {
 
     public Optional<StateResponseDto> getState(Long id){
         return stateRepository.findById(id)
-                .map(mapperStateResponse::StateToStateResponse);
+                .map(mapperStateResponse::toDto);
     }
 
     public List<StateResponseDto> getAllState(){
         return stateRepository.findAll().stream()
-                .map(mapperStateResponse::StateToStateResponse)
+                .map(mapperStateResponse::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -37,16 +38,16 @@ public class StateService {
         if(stateRepository.existsByName(stateRequestDto.getName())){
             throw new EntityAlreadyExistsException();
         }
-        StateEntity stateEntity = mapperStateRequest.StateResquestToState(stateRequestDto);
+        StateEntity stateEntity = mapperStateRequest.toEntity(stateRequestDto);
         StateEntity stateEntitySave = stateRepository.save(stateEntity);
-        return mapperStateResponse.StateToStateResponse(stateEntitySave);
+        return mapperStateResponse.toDto(stateEntitySave);
     }
 
     public Optional<StateResponseDto> updateState(Long id, StateRequestDto stateRequestDto) {
         return stateRepository.findById(id)
                 .map(existingEntity -> {
                     existingEntity.setName(stateRequestDto.getName());
-                    return mapperStateResponse.StateToStateResponse(stateRepository.save(existingEntity));
+                    return mapperStateResponse.toDto(stateRepository.save(existingEntity));
                 });
     }
 

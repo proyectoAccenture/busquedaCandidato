@@ -32,7 +32,7 @@ public class CandidatePhasesService {
         ProcessEntity processEntity = processRepository.findById(candidatePhasesRequestDto.getProcessId())
                 .orElseThrow(ProcessNoExistException::new);
 
-        Optional<CandidatePhasesEntity> currentPhaseOptional = candidatePhasesRepository.findTopByProcessOrderByAssignedDateDesc(processEntity);
+        Optional<CandidatePhasesEntity> currentPhaseOptional = candidatePhasesRepository.findTopByProcessOrderByIdDesc(processEntity);
 
         if (currentPhaseOptional.isPresent()) {
             CandidatePhasesEntity lastCandidatePhases = currentPhaseOptional.get();
@@ -57,20 +57,20 @@ public class CandidatePhasesService {
         newCandidateProcess.setAssignedDate(candidatePhasesRequestDto.getAssignedDate());
 
         CandidatePhasesEntity savedEntity = candidatePhasesRepository.save(newCandidateProcess);
-        return mapperCandidatePhasesResponse.CandidatePhasesToCandidatePhasesResponse(savedEntity);
+        return mapperCandidatePhasesResponse.toDto(savedEntity);
     }
 
     public CandidatePhasesResponseDto getCandidatePhasesById(Long processId){
          CandidatePhasesEntity candidatePhases = candidatePhasesRepository.findById(processId)
                 .orElseThrow(ProcessNoExistException::new);
 
-        return mapperCandidatePhasesResponse.CandidatePhasesToCandidatePhasesResponse(candidatePhases);
+        return mapperCandidatePhasesResponse.toDto(candidatePhases);
     }
 
 
     public List<CandidatePhasesResponseDto> getAllCandidatePhases(){
         return candidatePhasesRepository.findAll().stream()
-                .map(mapperCandidatePhasesResponse::CandidatePhasesToCandidatePhasesResponse)
+                .map(mapperCandidatePhasesResponse::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -87,7 +87,7 @@ public class CandidatePhasesService {
                     existingEntity.setAssignedDate(candidatePhasesRequestUpdateDto.getAssignedDate());
 
                     CandidatePhasesEntity updatedEntity = candidatePhasesRepository.save(existingEntity);
-                    return mapperCandidatePhasesResponse.CandidatePhasesToCandidatePhasesResponse(updatedEntity);
+                    return mapperCandidatePhasesResponse.toDto(updatedEntity);
                 });
     }
 

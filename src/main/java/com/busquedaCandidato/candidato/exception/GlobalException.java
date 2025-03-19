@@ -71,7 +71,7 @@ public class GlobalException {
     @ExceptionHandler(IdCardAlreadyExistException.class)
     public ResponseEntity<Map<String, String>> IdCardAlreadyExistException(IdCardAlreadyExistException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.IDCARD_ALREADY_EXISTS.getMessage()));
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ID_CARD_ALREADY_EXISTS.getMessage()));
     }
 
     @ExceptionHandler(CannotBeCreateCandidateProcessException.class)
@@ -83,13 +83,13 @@ public class GlobalException {
     @ExceptionHandler(EntityNoExistException.class)
     public ResponseEntity<Map<String, String>> EntityNoExistException(EntityNoExistException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ENTITY_DOESNOT_EXIST.getMessage()));
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ENTITY_DOES_NOT_EXIST.getMessage()));
     }
 
     @ExceptionHandler(CandidateNoPostulationException.class)
     public ResponseEntity<Map<String, String>> CandidateNoPostulationException(CandidateNoPostulationException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.CANDIDATE_DOESNOT_POSTULATION.getMessage()));
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.CANDIDATE_DOES_NOT_POSTULATION.getMessage()));
     }
 
     @ExceptionHandler(ProcessAlreadyExistException.class)
@@ -101,13 +101,19 @@ public class GlobalException {
     @ExceptionHandler(CandidateNoExistException.class)
     public ResponseEntity<Map<String, String>> CandidateNoExistException(CandidateNoExistException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.CANDIDATE_DOESNOT_EXIST.getMessage()));
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.CANDIDATE_DOES_NOT_EXIST.getMessage()));
     }
 
     @ExceptionHandler(RoleIdNoExistException.class)
     public ResponseEntity<Map<String, String>> RoleIdNoExistException(RoleIdNoExistException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ROLEID_DOESNOT_EXIST.getMessage()));
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ROLE_ID_DOES_NOT_EXIST.getMessage()));
+    }
+
+    @ExceptionHandler(PhoneAlreadyExistException.class)
+    public ResponseEntity<Map<String, String>> PhoneAlreadyExistException(PhoneAlreadyExistException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.PHONE_ALREADY_EXISTS.getMessage()));
     }
 
 

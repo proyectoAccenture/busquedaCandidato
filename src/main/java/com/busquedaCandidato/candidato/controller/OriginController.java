@@ -84,6 +84,7 @@ public class OriginController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrigin(@PathVariable Long id){
-        return originService.deleteOrigin(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        originService.deleteOrigin(id);
+        return ResponseEntity.noContent().build();
     }
 }

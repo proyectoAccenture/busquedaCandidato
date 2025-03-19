@@ -73,9 +73,8 @@ public class JobProfileController {
     })
     @PutMapping("/{id}")
     public ResponseEntity<JobProfileResponseDto> updateJobProfile(@Valid @PathVariable Long id, @RequestBody JobProfileRequestDto jobProfileRequestDto){
-        return jobProfileService.updateJobProfile(id, jobProfileRequestDto)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        JobProfileResponseDto updatedJobProfile = jobProfileService.updateJobProfile(id, jobProfileRequestDto);
+        return ResponseEntity.ok(updatedJobProfile);
     }
 
     @Operation(summary = "Delete a job profile by its ID")
@@ -85,6 +84,7 @@ public class JobProfileController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteJobProfile(@PathVariable Long id){
-        return jobProfileService.deleteJobProfile(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        jobProfileService.deleteJobProfile(id);
+        return ResponseEntity.noContent().build();
     }
 }

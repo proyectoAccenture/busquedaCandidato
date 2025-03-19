@@ -39,9 +39,8 @@ public class VacancyCompanyController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<VacancyCompanyResponseDto> getVacancy(@PathVariable Long id){
-        return vacancyCompanyService.getVacancyCompany(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        VacancyCompanyResponseDto vacancyCompanyResponseDto  = vacancyCompanyService.getVacancyCompany(id);
+        return ResponseEntity.ok(vacancyCompanyResponseDto);
     }
 
     @Operation(summary = "Get all the vacancy")
@@ -86,6 +85,7 @@ public class VacancyCompanyController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteVacancy(@PathVariable Long id){
-        return vacancyCompanyService.deleteVacancyCompany(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        vacancyCompanyService.deleteVacancyCompany(id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -37,10 +37,9 @@ public class ProcessController {
             @ApiResponse(responseCode = "404", description = "ProcessEntity not found", content = @Content)
     })
     @GetMapping("/candidate/{id}")
-    public ResponseEntity<ProcessResponseDto> getProcessByIdPostulation(@PathVariable Long id){
-        return processService.getProcesByIdCandidate(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<ProcessResponseDto> getProcessByPostulationId(@PathVariable Long id){
+        ProcessResponseDto processResponseDto  = processService.getProcessByIdCandidate(id);
+        return ResponseEntity.ok(processResponseDto );
     }
 
     @Operation(summary = "Get a candidate status history by their Number")
@@ -52,9 +51,8 @@ public class ProcessController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<ProcessResponseDto> getByIdCandidateStatusHistory(@PathVariable Long id){
-        return processService.getByIdProcess(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        ProcessResponseDto processResponseDto  = processService.getByIdProcess(id);
+        return ResponseEntity.ok(processResponseDto );
     }
 
     @Operation(summary = "Get all the candidate status history")
@@ -99,7 +97,8 @@ public class ProcessController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCandidateStatusHistory(@PathVariable Long id){
-        return processService.deleteProcess(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        processService.deleteProcess(id);
+        return ResponseEntity.noContent().build();
     }
 }
 

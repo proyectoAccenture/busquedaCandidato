@@ -86,6 +86,7 @@ public class CandidatePhasesController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCandidatePhases(@PathVariable Long id){
-        return candidatePhasesService.deleteCandidatePhases(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        candidatePhasesService.deleteCandidatePhases(id);
+        return ResponseEntity.noContent().build();
     }
 }

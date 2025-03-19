@@ -2,10 +2,7 @@ package com.busquedaCandidato.candidato.service;
 
 import com.busquedaCandidato.candidato.dto.request.VacancyCompanyRequestDto;
 import com.busquedaCandidato.candidato.dto.response.VacancyCompanyResponseDto;
-import com.busquedaCandidato.candidato.entity.JobProfileEntity;
-import com.busquedaCandidato.candidato.entity.OriginEntity;
-import com.busquedaCandidato.candidato.entity.RoleIDEntity;
-import com.busquedaCandidato.candidato.entity.VacancyCompanyEntity;
+import com.busquedaCandidato.candidato.entity.*;
 import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
 import com.busquedaCandidato.candidato.mapper.IMapperVacancyCompanyResponse;
 import com.busquedaCandidato.candidato.repository.IJobProfileRepository;
@@ -14,6 +11,7 @@ import com.busquedaCandidato.candidato.repository.IRoleIDRepository;
 import com.busquedaCandidato.candidato.repository.IVacancyCompanyRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,9 +25,10 @@ public class VacancyCompanyService {
     private final IOriginRepository originRepository;
     private final IMapperVacancyCompanyResponse mapperVacancyCompanyResponse;
 
-    public Optional<VacancyCompanyResponseDto> getVacancyCompany(Long id){
+    public VacancyCompanyResponseDto getVacancyCompany(Long id){
         return vacancyCompanyRepository.findById(id)
-                .map(mapperVacancyCompanyResponse::toDto);
+                .map(mapperVacancyCompanyResponse::toDto)
+                .orElseThrow(EntityNoExistException::new);
     }
 
     public List<VacancyCompanyResponseDto> getAllVacancyCompany(){
@@ -66,40 +65,37 @@ public class VacancyCompanyService {
     }
 
     public Optional<VacancyCompanyResponseDto> updateVacancyCompany(Long id, VacancyCompanyRequestDto vacancyCompanyRequestDto) {
-        return vacancyCompanyRepository.findById(id)
-                .map(existingEntity -> {
+        VacancyCompanyEntity existingEntity  = vacancyCompanyRepository.findById(id)
+                .orElseThrow(EntityNoExistException::new);
 
-                    RoleIDEntity roleIDEntity = roleIDRepository.findById(vacancyCompanyRequestDto.getRole())
-                            .orElseThrow(EntityNoExistException::new);
+        RoleIDEntity roleIDEntity = roleIDRepository.findById(vacancyCompanyRequestDto.getRole())
+                .orElseThrow(EntityNoExistException::new);
 
-                    JobProfileEntity jobProfileEntity = jobProfileRepository.findById(vacancyCompanyRequestDto.getJobProfile())
-                            .orElseThrow(EntityNoExistException::new);
+        JobProfileEntity jobProfileEntity = jobProfileRepository.findById(vacancyCompanyRequestDto.getJobProfile())
+                .orElseThrow(EntityNoExistException::new);
 
-                    OriginEntity originEntity = originRepository.findById(vacancyCompanyRequestDto.getOrigin())
-                            .orElseThrow(EntityNoExistException::new);
+        OriginEntity originEntity = originRepository.findById(vacancyCompanyRequestDto.getOrigin())
+                .orElseThrow(EntityNoExistException::new);
 
-                    existingEntity.setContract(vacancyCompanyRequestDto.getContract());
-                    existingEntity.setSalary(vacancyCompanyRequestDto.getSalary());
-                    existingEntity.setExperience(vacancyCompanyRequestDto.getExperience());
-                    existingEntity.setLevel(vacancyCompanyRequestDto.getLevel());
-                    existingEntity.setSkills(vacancyCompanyRequestDto.getSkills());
-                    existingEntity.setDescription(vacancyCompanyRequestDto.getDescription());
-                    existingEntity.setDatePublication(vacancyCompanyRequestDto.getDatePublication());
-                    existingEntity.setSource(vacancyCompanyRequestDto.getSource());
-                    existingEntity.setRole(roleIDEntity);
-                    existingEntity.setJobProfile(jobProfileEntity);
-                    existingEntity.setOrigin(originEntity);
+        existingEntity.setContract(vacancyCompanyRequestDto.getContract());
+        existingEntity.setSalary(vacancyCompanyRequestDto.getSalary());
+        existingEntity.setExperience(vacancyCompanyRequestDto.getExperience());
+        existingEntity.setLevel(vacancyCompanyRequestDto.getLevel());
+        existingEntity.setSkills(vacancyCompanyRequestDto.getSkills());
+        existingEntity.setDescription(vacancyCompanyRequestDto.getDescription());
+        existingEntity.setDatePublication(vacancyCompanyRequestDto.getDatePublication());
+        existingEntity.setSource(vacancyCompanyRequestDto.getSource());
+        existingEntity.setRole(roleIDEntity);
+        existingEntity.setJobProfile(jobProfileEntity);
+        existingEntity.setOrigin(originEntity);
 
-
-                    return mapperVacancyCompanyResponse.toDto(vacancyCompanyRepository.save(existingEntity));
-                });
+        return Optional.of(mapperVacancyCompanyResponse.toDto(vacancyCompanyRepository.save(existingEntity)));
     }
 
-    public boolean deleteVacancyCompany(Long id){
-        if (vacancyCompanyRepository.existsById(id)) {
-            vacancyCompanyRepository.deleteById(id);
-            return true;
-        }
-        return false;
+    public void deleteVacancyCompany(Long id){
+        VacancyCompanyEntity existingVacancyCompany = vacancyCompanyRepository.findById(id)
+                .orElseThrow(EntityNoExistException::new);
+
+        vacancyCompanyRepository.delete(existingVacancyCompany);
     }
 }

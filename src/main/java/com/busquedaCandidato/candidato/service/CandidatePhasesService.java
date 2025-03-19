@@ -67,7 +67,6 @@ public class CandidatePhasesService {
         return mapperCandidatePhasesResponse.toDto(candidatePhases);
     }
 
-
     public List<CandidatePhasesResponseDto> getAllCandidatePhases(){
         return candidatePhasesRepository.findAll().stream()
                 .map(mapperCandidatePhasesResponse::toDto)
@@ -75,28 +74,26 @@ public class CandidatePhasesService {
     }
 
     public Optional<CandidatePhasesResponseDto> updateCandidatePhases(Long id, CandidatePhasesRequestUpdateDto candidatePhasesRequestUpdateDto) {
-        return candidatePhasesRepository.findById(id)
-                .map(existingEntity -> {
+        CandidatePhasesEntity existingEntity  = candidatePhasesRepository.findById(id)
+                .orElseThrow(EntityNoExistException::new);
 
-                    StateEntity newState = stateRepository.findById(candidatePhasesRequestUpdateDto.getStateId())
-                            .orElseThrow(StateNoFoundException::new);
+        StateEntity newState = stateRepository.findById(candidatePhasesRequestUpdateDto.getStateId())
+                .orElseThrow(StateNoFoundException::new);
 
-                    existingEntity.setState(newState);
-                    existingEntity.setDescription(candidatePhasesRequestUpdateDto.getDescription());
-                    existingEntity.setStatus(candidatePhasesRequestUpdateDto.getStatus());
-                    existingEntity.setAssignedDate(candidatePhasesRequestUpdateDto.getAssignedDate());
+        existingEntity.setState(newState);
+        existingEntity.setDescription(candidatePhasesRequestUpdateDto.getDescription());
+        existingEntity.setStatus(candidatePhasesRequestUpdateDto.getStatus());
+        existingEntity.setAssignedDate(candidatePhasesRequestUpdateDto.getAssignedDate());
+        CandidatePhasesEntity updatedEntity = candidatePhasesRepository.save(existingEntity);
 
-                    CandidatePhasesEntity updatedEntity = candidatePhasesRepository.save(existingEntity);
-                    return mapperCandidatePhasesResponse.toDto(updatedEntity);
-                });
+        return Optional.of(mapperCandidatePhasesResponse.toDto(updatedEntity));
     }
 
-    public boolean deleteCandidatePhases(Long id){
-        if (candidatePhasesRepository.existsById(id)) {
-            candidatePhasesRepository.deleteById(id);
-            return true;
-        }
-        return false;
+    public void deleteCandidatePhases(Long id){
+        CandidatePhasesEntity existingCandidatePhase = candidatePhasesRepository.findById(id)
+                .orElseThrow(EntityNoExistException::new);
+
+        candidatePhasesRepository.delete(existingCandidatePhase);
     }
 
 }

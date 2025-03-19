@@ -39,9 +39,8 @@ public class PostulationController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<PostulationResponseDto> getPostulation(@PathVariable Long id){
-        return postulationService.getPostulation(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        PostulationResponseDto getByIdPostulation = postulationService.getPostulation(id);
+        return ResponseEntity.ok(getByIdPostulation);
     }
 
     @Operation(summary = "Get all the postulation")
@@ -86,6 +85,7 @@ public class PostulationController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePostulation(@PathVariable Long id){
-        return postulationService.deletePostulation(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        postulationService.deletePostulation(id);
+        return ResponseEntity.noContent().build();
     }
 }

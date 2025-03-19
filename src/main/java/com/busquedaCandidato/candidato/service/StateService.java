@@ -4,15 +4,13 @@ import com.busquedaCandidato.candidato.dto.request.StateRequestDto;
 import com.busquedaCandidato.candidato.dto.response.StateResponseDto;
 import com.busquedaCandidato.candidato.entity.StateEntity;
 import com.busquedaCandidato.candidato.exception.type.EntityAlreadyExistsException;
-import com.busquedaCandidato.candidato.exception.type.IdCardAlreadyExistException;
+import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
 import com.busquedaCandidato.candidato.mapper.IMapperStateRequest;
 import com.busquedaCandidato.candidato.mapper.IMapperStateResponse;
 import com.busquedaCandidato.candidato.repository.IStateRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,9 +21,10 @@ public class StateService {
     private final IMapperStateResponse mapperStateResponse;
     private final IMapperStateRequest mapperStateRequest;
 
-    public Optional<StateResponseDto> getState(Long id){
+    public StateResponseDto getState(Long id){
         return stateRepository.findById(id)
-                .map(mapperStateResponse::toDto);
+                .map(mapperStateResponse::toDto)
+                .orElseThrow(EntityNoExistException::new);
     }
 
     public List<StateResponseDto> getAllState(){
@@ -38,24 +37,27 @@ public class StateService {
         if(stateRepository.existsByName(stateRequestDto.getName())){
             throw new EntityAlreadyExistsException();
         }
+
         StateEntity stateEntity = mapperStateRequest.toEntity(stateRequestDto);
         StateEntity stateEntitySave = stateRepository.save(stateEntity);
+
         return mapperStateResponse.toDto(stateEntitySave);
     }
 
-    public Optional<StateResponseDto> updateState(Long id, StateRequestDto stateRequestDto) {
-        return stateRepository.findById(id)
-                .map(existingEntity -> {
-                    existingEntity.setName(stateRequestDto.getName());
-                    return mapperStateResponse.toDto(stateRepository.save(existingEntity));
-                });
+    public StateResponseDto updateState(Long id, StateRequestDto stateRequestDto) {
+        StateEntity existingState = stateRepository.findById(id)
+                .orElseThrow(EntityNoExistException::new);
+
+        existingState.setName(stateRequestDto.getName());
+        StateEntity updatedState = stateRepository.save(existingState);
+
+        return mapperStateResponse.toDto(updatedState);
     }
 
-    public boolean deleteState(Long id){
-        if (stateRepository.existsById(id)) {
-            stateRepository.deleteById(id);
-            return true;
-        }
-        return false;
+    public void deleteState(Long id){
+        StateEntity existingState = stateRepository.findById(id)
+                .orElseThrow(EntityNoExistException::new);
+
+        stateRepository.delete(existingState);
     }
 }

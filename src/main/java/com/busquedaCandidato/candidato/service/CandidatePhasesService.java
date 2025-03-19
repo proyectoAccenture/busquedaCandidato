@@ -32,6 +32,16 @@ public class CandidatePhasesService {
         ProcessEntity processEntity = processRepository.findById(candidatePhasesRequestDto.getProcessId())
                 .orElseThrow(ProcessNoExistException::new);
 
+        if (processEntity.getPostulation() == null || processEntity.getPostulation().getCandidate() == null) {
+            throw new RuntimeException("Postulación sin candidato asociado");
+        }
+        CandidateEntity candidate = processEntity.getPostulation().getCandidate();
+        PostulationEntity postulation = processEntity.getPostulation();
+
+        if (candidatePhasesRepository.existsByCandidateAndPostulationAndProcess(candidate, postulation, processEntity)) {
+            throw new PostulationProcessException("Candidato tie proceso activo en esta postulación.");
+        }
+
         Optional<CandidatePhasesEntity> currentPhaseOptional = candidatePhasesRepository.findTopByProcessOrderByIdDesc(processEntity);
 
         if (currentPhaseOptional.isPresent()) {

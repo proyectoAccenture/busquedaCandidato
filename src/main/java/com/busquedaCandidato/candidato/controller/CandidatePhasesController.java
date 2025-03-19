@@ -30,7 +30,6 @@ public class CandidatePhasesController {
             @ApiResponse(responseCode = "201", description = "Phase created", content = @Content),
             @ApiResponse(responseCode = "409", description = "Phase already exists", content = @Content)
     })
-
     @PostMapping("/")
     public ResponseEntity<CandidatePhasesResponseDto> saveCandidatePhases(@Valid @RequestBody CandidatePhasesRequestDto candidatePhasesRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(candidatePhasesService.addPhaseToProcess(candidatePhasesRequestDto));
@@ -43,7 +42,6 @@ public class CandidatePhasesController {
                             schema = @Schema(implementation = CandidatePhasesResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "phase not found", content = @Content)
     })
-
     @GetMapping("/{id}")
     public ResponseEntity<CandidatePhasesResponseDto> getCandidatePhases(@PathVariable Long id) {
         CandidatePhasesResponseDto candidatePhasesResponseDto = candidatePhasesService.getCandidatePhasesById(id);
@@ -57,7 +55,6 @@ public class CandidatePhasesController {
                             array = @ArraySchema(schema = @Schema(implementation = CandidatePhasesResponseDto.class)))),
             @ApiResponse(responseCode = "404", description = "No data found", content = @Content)
     })
-
     @GetMapping("/")
     public ResponseEntity<List<CandidatePhasesResponseDto>> getAllCandidatePhases(){
         List<CandidatePhasesResponseDto> states = candidatePhasesService.getAllCandidatePhases();
@@ -69,7 +66,6 @@ public class CandidatePhasesController {
             @ApiResponse(responseCode = "200", description = "State updated", content = @Content),
             @ApiResponse(responseCode = "404", description = "State not found", content = @Content)
     })
-
     @PutMapping("/{id}")
     public ResponseEntity<CandidatePhasesResponseDto> updateCandidatePhases(@Valid @PathVariable Long id, @RequestBody CandidatePhasesRequestUpdateDto candidatePhasesRequestUpdateDto){
         return candidatePhasesService.updateCandidatePhases(id, candidatePhasesRequestUpdateDto)
@@ -82,9 +78,9 @@ public class CandidatePhasesController {
             @ApiResponse(responseCode = "200", description = "candidate phase deleted", content = @Content),
             @ApiResponse(responseCode = "404", description = "candidate phase not found", content = @Content)
     })
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCandidatePhases(@PathVariable Long id){
-        return candidatePhasesService.deleteCandidatePhases(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        candidatePhasesService.deleteCandidatePhases(id);
+        return ResponseEntity.noContent().build();
     }
 }

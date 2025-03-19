@@ -33,7 +33,6 @@ public class StateController {
                             schema = @Schema(implementation = StateResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "State not found", content = @Content)
     })
-
     @GetMapping("/{id}")
     public ResponseEntity<StateResponseDto> getState(@PathVariable Long id){
         StateResponseDto stateResponseDto  = stateService.getState(id);
@@ -47,7 +46,6 @@ public class StateController {
                             array = @ArraySchema(schema = @Schema(implementation = StateResponseDto.class)))),
             @ApiResponse(responseCode = "404", description = "No data found", content = @Content)
     })
-
     @GetMapping("/")
     public ResponseEntity<List<StateResponseDto>> getAllState(){
         List<StateResponseDto> states = stateService.getAllState();
@@ -59,7 +57,6 @@ public class StateController {
             @ApiResponse(responseCode = "201", description = "State created", content = @Content),
             @ApiResponse(responseCode = "409", description = "State already exists", content = @Content)
     })
-
     @PostMapping("/")
     public ResponseEntity<StateResponseDto> saveState(@Valid @RequestBody StateRequestDto stateRequestDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(stateService.saveState(stateRequestDto));
@@ -81,7 +78,6 @@ public class StateController {
             @ApiResponse(responseCode = "200", description = "State deleted", content = @Content),
             @ApiResponse(responseCode = "404", description = "State not found", content = @Content)
     })
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteState(@PathVariable Long id){
         stateService.deleteState(id);

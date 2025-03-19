@@ -23,6 +23,7 @@ public class PostulationService {
     public PostulationResponseDto getPostulation(Long id){
         PostulationEntity postulationEntity = postulationRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
+
         return mapperPostulationResponse.PostulationToPostulationResponse(postulationEntity);
     }
 
@@ -45,7 +46,6 @@ public class PostulationService {
         postulationEntityNew.setVacancyCompany(vacancyCompanyEntity);
         postulationEntityNew.setCandidate(candidateEntity);
 
-
         PostulationEntity postulationEntitySave = postulationRepository.save(postulationEntityNew);
         return mapperPostulationResponse.PostulationToPostulationResponse(postulationEntitySave);
     }
@@ -66,12 +66,12 @@ public class PostulationService {
                     existingEntity.setCandidate(candidateEntity);
 
                     return Optional.of(mapperPostulationResponse.PostulationToPostulationResponse(postulationRepository.save(existingEntity)));
-
     }
 
     public void deletePostulation(Long id){
         PostulationEntity existingPostulation = postulationRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
+
         postulationRepository.delete(existingPostulation);
     }
 }

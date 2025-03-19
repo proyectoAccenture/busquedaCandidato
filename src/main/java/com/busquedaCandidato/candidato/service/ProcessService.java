@@ -15,7 +15,6 @@ import com.busquedaCandidato.candidato.repository.IPostulationRepository;
 import com.busquedaCandidato.candidato.repository.IProcessRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,6 +31,7 @@ public class ProcessService {
      public ProcessResponseDto getProcessByIdCandidate(Long id){
         CandidateEntity candidateEntity = candidateRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
+
         return processRepository.findById(candidateEntity.getId())
                 .map(mapperProcessResponse::ProcessToProcessResponse)
                 .orElseThrow(EntityNoExistException::new);
@@ -51,7 +51,7 @@ public class ProcessService {
 
     public ProcessResponseDto saveProcess(ProcessRequestDto processRequestDto) {
 
-        ProcessEntity processEntityExist = processRepository.findById(processRequestDto.getPostulationId())
+        ProcessEntity processEntity = processRepository.findById(processRequestDto.getPostulationId())
                 .orElseThrow(ProcessAlreadyExistException::new);
 
         PostulationEntity postulationEntity = postulationRepository.findById(processRequestDto.getPostulationId())
@@ -83,6 +83,7 @@ public class ProcessService {
     public void deleteProcess(Long id){
         PostulationEntity existingPostulation = postulationRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
+
         postulationRepository.delete(existingPostulation);
     }
 }

@@ -1,7 +1,6 @@
 package com.busquedaCandidato.candidato.controller;
 
 import com.busquedaCandidato.candidato.dto.request.VacancyCompanyRequestDto;
-import com.busquedaCandidato.candidato.dto.response.StateResponseDto;
 import com.busquedaCandidato.candidato.dto.response.VacancyCompanyResponseDto;
 import com.busquedaCandidato.candidato.service.VacancyCompanyService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,7 +31,6 @@ public class VacancyCompanyController {
                             schema = @Schema(implementation = VacancyCompanyResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "Candidate not found", content = @Content)
     })
-
     @GetMapping("/{id}")
     public ResponseEntity<VacancyCompanyResponseDto> getVacancy(@PathVariable Long id){
         VacancyCompanyResponseDto vacancyCompanyResponseDto  = vacancyCompanyService.getVacancyCompany(id);
@@ -46,7 +44,6 @@ public class VacancyCompanyController {
                             array = @ArraySchema(schema = @Schema(implementation = VacancyCompanyResponseDto.class)))),
             @ApiResponse(responseCode = "404", description = "No data found", content = @Content)
     })
-
     @GetMapping("/")
     public ResponseEntity<List<VacancyCompanyResponseDto>> getAllVacancy(){
         List<VacancyCompanyResponseDto> states = vacancyCompanyService.getAllVacancyCompany();
@@ -58,7 +55,6 @@ public class VacancyCompanyController {
             @ApiResponse(responseCode = "201", description = "Vacancy created", content = @Content),
             @ApiResponse(responseCode = "409", description = "Vacancy already exists", content = @Content)
     })
-
     @PostMapping("/")
     public ResponseEntity<VacancyCompanyResponseDto> saveVacancy(@Valid @RequestBody VacancyCompanyRequestDto vacancyCompanyRequestDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(vacancyCompanyService.saveVacancyCompany(vacancyCompanyRequestDto));
@@ -69,7 +65,6 @@ public class VacancyCompanyController {
             @ApiResponse(responseCode = "200", description = "Vacancy updated", content = @Content),
             @ApiResponse(responseCode = "404", description = "Vacancy not found", content = @Content)
     })
-
     @PutMapping("/{id}")
     public ResponseEntity<VacancyCompanyResponseDto> updateCandidate(@Valid @PathVariable Long id, @RequestBody VacancyCompanyRequestDto vacancyCompanyRequestDto){
         return vacancyCompanyService.updateVacancyCompany(id, vacancyCompanyRequestDto)
@@ -82,7 +77,6 @@ public class VacancyCompanyController {
             @ApiResponse(responseCode = "200", description = "Vacancy deleted", content = @Content),
             @ApiResponse(responseCode = "404", description = "Vacancy not found", content = @Content)
     })
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteVacancy(@PathVariable Long id){
         vacancyCompanyService.deleteVacancyCompany(id);

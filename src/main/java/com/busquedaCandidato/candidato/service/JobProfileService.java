@@ -24,7 +24,6 @@ public class JobProfileService {
         return jobProfileRepository.findById(id)
                 .map(mapperJobProfileResponse::JobProfileToJobProfileResponse)
                 .orElseThrow(EntityNoExistException::new);
-
     }
 
     public List<JobProfileResponseDto> getAllJobProfile(){
@@ -37,24 +36,28 @@ public class JobProfileService {
         if(jobProfileRepository.existsByName(jobProfileRequestDto.getName())){
             throw new EntityAlreadyExistsException();
         }
+
         JobProfileEntity jobProfileEntity = mapperJobProfileRequest.JobProfileResquestToJobProfile(jobProfileRequestDto);
         JobProfileEntity jobProfileEntitySave = jobProfileRepository.save(jobProfileEntity);
+
         return mapperJobProfileResponse.JobProfileToJobProfileResponse(jobProfileEntitySave);
     }
 
     public JobProfileResponseDto updateJobProfile(Long id, JobProfileRequestDto jobProfileRequestDto) {
         JobProfileEntity existingJob = jobProfileRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
+
         existingJob.setName(jobProfileRequestDto.getName());
         JobProfileEntity updatedJob = jobProfileRepository.save(existingJob);
+
         return mapperJobProfileResponse.JobProfileToJobProfileResponse(updatedJob);
     }
 
     public void deleteJobProfile(Long id){
         JobProfileEntity existingJob = jobProfileRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
-        jobProfileRepository.delete(existingJob);
 
+        jobProfileRepository.delete(existingJob);
     }
 
 }

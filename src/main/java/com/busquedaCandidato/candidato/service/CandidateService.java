@@ -2,13 +2,8 @@ package com.busquedaCandidato.candidato.service;
 
 import com.busquedaCandidato.candidato.dto.request.CandidateRequestDto;
 import com.busquedaCandidato.candidato.dto.response.CandidateResponseDto;
-import com.busquedaCandidato.candidato.entity.CandidateEntity;
-import com.busquedaCandidato.candidato.entity.PostulationEntity;
-import com.busquedaCandidato.candidato.entity.RoleIDEntity;
-import com.busquedaCandidato.candidato.entity.VacancyCompanyEntity;
-import com.busquedaCandidato.candidato.exception.type.CandidateNoExistException;
-import com.busquedaCandidato.candidato.exception.type.IdCardAlreadyExistException;
-import com.busquedaCandidato.candidato.exception.type.RoleIdNoExistException;
+import com.busquedaCandidato.candidato.entity.*;
+import com.busquedaCandidato.candidato.exception.type.*;
 import com.busquedaCandidato.candidato.mapper.IMapperCandidateRequest;
 import com.busquedaCandidato.candidato.mapper.IMapperCandidateResponse;
 import com.busquedaCandidato.candidato.repository.ICandidateRepository;
@@ -41,6 +36,7 @@ public class CandidateService {
         Long roleId = roleOptional.getId();
 
         List<VacancyCompanyEntity> vacancies = vacancyCompanyRepository.findByRoleId(roleId);
+
         List<Long> vacancyIds = vacancies.stream()
                 .map(VacancyCompanyEntity::getId)
                 .toList();
@@ -88,31 +84,32 @@ public class CandidateService {
         if(candidateRepository.existsByCard(candidateRequestDto.getCard())){
             throw new IdCardAlreadyExistException();
         }
+
         CandidateEntity candidateEntity = mapperCandidateRequest.CandidateRequestToCandidate(candidateRequestDto);
         CandidateEntity candidateEntitySave = candidateRepository.save(candidateEntity);
+
         return mapperCandidateResponse.CandidateToCandidateResponse(candidateEntitySave);
     }
 
     public Optional<CandidateResponseDto> updateCandidate(Long id, CandidateRequestDto candidateRequestDto) {
-        return candidateRepository.findById(id)
-                .map(existingEntity -> {
-                    existingEntity.setName(candidateRequestDto.getName());
-                    existingEntity.setLastName(candidateRequestDto.getLastName());
-                    existingEntity.setCard(candidateRequestDto.getCard());
-                    existingEntity.setBirthdate(candidateRequestDto.getBirthdate());
-                    existingEntity.setPhone(candidateRequestDto.getPhone());
-                    existingEntity.setCity(candidateRequestDto.getCity());
-                    existingEntity.setEmail(candidateRequestDto.getEmail());
+        CandidateEntity existingEntity  = candidateRepository.findById(id)
+                .orElseThrow(EntityNoExistException::new);
 
-                    return mapperCandidateResponse.CandidateToCandidateResponse(candidateRepository.save(existingEntity));
-                });
+        existingEntity.setName(candidateRequestDto.getName());
+        existingEntity.setLastName(candidateRequestDto.getLastName());
+        existingEntity.setCard(candidateRequestDto.getCard());
+        existingEntity.setBirthdate(candidateRequestDto.getBirthdate());
+        existingEntity.setPhone(candidateRequestDto.getPhone());
+        existingEntity.setCity(candidateRequestDto.getCity());
+        existingEntity.setEmail(candidateRequestDto.getEmail());
+
+        return Optional.of(mapperCandidateResponse.CandidateToCandidateResponse(candidateRepository.save(existingEntity)));
     }
 
-    public boolean deleteCandidate(Long id){
-        if (candidateRepository.existsById(id)) {
-            candidateRepository.deleteById(id);
-            return true;
-        }
-        return false;
+    public void deleteCandidate(Long id){
+        CandidateEntity existingCandidate = candidateRepository.findById(id)
+                .orElseThrow(EntityNoExistException::new);
+
+        candidateRepository.delete(existingCandidate);
     }
 }

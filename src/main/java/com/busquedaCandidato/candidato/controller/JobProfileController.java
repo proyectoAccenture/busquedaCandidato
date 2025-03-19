@@ -32,7 +32,6 @@ public class JobProfileController {
             schema = @Schema(implementation = JobProfileResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "Job profile not found",content = @Content)
     })
-
     @GetMapping("/{id}")
     public ResponseEntity<JobProfileResponseDto> getByIdJobProfile(@PathVariable Long id){
         JobProfileResponseDto jobProfileResponseDto = jobProfileService.getJobProfile(id);
@@ -46,7 +45,6 @@ public class JobProfileController {
                             array = @ArraySchema(schema = @Schema(implementation = JobProfileResponseDto.class)))),
             @ApiResponse(responseCode = "404", description = "No data found", content = @Content)
     })
-
     @GetMapping("/")
     public ResponseEntity<List<JobProfileResponseDto>> getAllJobProfile(){
         List<JobProfileResponseDto> job = jobProfileService.getAllJobProfile();
@@ -58,7 +56,6 @@ public class JobProfileController {
             @ApiResponse(responseCode = "201", description = "Job profile created", content = @Content),
             @ApiResponse(responseCode = "409", description = "Job profile already exists", content = @Content)
     })
-
     @PostMapping("/")
     public ResponseEntity<JobProfileResponseDto> saveJobProfile(@Valid @RequestBody JobProfileRequestDto jobProfileRequestDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(jobProfileService.saveJobProfile(jobProfileRequestDto));
@@ -69,7 +66,6 @@ public class JobProfileController {
             @ApiResponse(responseCode = "200", description = "Job profile updated", content = @Content),
             @ApiResponse(responseCode = "404", description = "Job profile not found", content = @Content)
     })
-
     @PutMapping("/{id}")
     public ResponseEntity<JobProfileResponseDto> updateJobProfile(@Valid @PathVariable Long id, @RequestBody JobProfileRequestDto jobProfileRequestDto){
         JobProfileResponseDto updatedJobProfile = jobProfileService.updateJobProfile(id, jobProfileRequestDto);
@@ -81,9 +77,8 @@ public class JobProfileController {
             @ApiResponse(responseCode = "200", description = "Job profile deleted", content = @Content),
             @ApiResponse(responseCode = "404", description = "Job profile not found", content = @Content)
     })
-
     @DeleteMapping("/{id}")
-    public ResponseEntity<JobProfileResponseDto> deleteJobProfile(@PathVariable Long id){
+    public ResponseEntity<Void> deleteJobProfile(@PathVariable Long id){
         jobProfileService.deleteJobProfile(id);
         return ResponseEntity.noContent().build();
     }

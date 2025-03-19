@@ -89,7 +89,6 @@ public class VacancyCompanyService {
         existingEntity.setJobProfile(jobProfileEntity);
         existingEntity.setOrigin(originEntity);
 
-
         return Optional.of(mapperVacancyCompanyResponse.VacancyCompanyToVacancyCompanyResponse(vacancyCompanyRepository.save(existingEntity)));
 
     }
@@ -97,6 +96,7 @@ public class VacancyCompanyService {
     public void deleteVacancyCompany(Long id){
         VacancyCompanyEntity existingVacancyCompany = vacancyCompanyRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
+
         vacancyCompanyRepository.delete(existingVacancyCompany);
     }
 }

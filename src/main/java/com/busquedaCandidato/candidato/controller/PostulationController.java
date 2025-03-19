@@ -1,7 +1,6 @@
 package com.busquedaCandidato.candidato.controller;
 
 import com.busquedaCandidato.candidato.dto.request.PostulationRequestDto;
-import com.busquedaCandidato.candidato.dto.response.PhaseResponseDto;
 import com.busquedaCandidato.candidato.dto.response.PostulationResponseDto;
 import com.busquedaCandidato.candidato.service.PostulationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 
 @RestController
 @RequestMapping("/api/postulation")

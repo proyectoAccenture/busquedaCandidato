@@ -1,14 +1,10 @@
 package com.busquedaCandidato.candidato.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
-
-import com.busquedaCandidato.candidato.entity.JobProfileEntity;
 import com.busquedaCandidato.candidato.entity.OriginEntity;
 import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
 import org.springframework.stereotype.Service;
-
 import com.busquedaCandidato.candidato.dto.request.OriginRequestDto;
 import com.busquedaCandidato.candidato.dto.response.OriginResponseDto;
 import com.busquedaCandidato.candidato.exception.type.EntityAlreadyExistsException;
@@ -31,7 +27,6 @@ public class OriginService {
         return originRepository.findById(id)
                 .map(mapperOriginResponse:: OriginToOriginResponse)
                 .orElseThrow(EntityNoExistException::new);
-
     }
 
     public List<OriginResponseDto> getAllOrigin(){
@@ -44,22 +39,27 @@ public class OriginService {
         if(originRepository.existsByName(originRequestDto.getName())){
             throw new EntityAlreadyExistsException();
         }
+
         OriginEntity originEntity = mapperOriginRequest.OriginRequestToOrigin(originRequestDto);
         OriginEntity originEntitySave = originRepository.save(originEntity);
+
         return mapperOriginResponse.OriginToOriginResponse(originEntitySave);
     }
 
     public OriginResponseDto updateOrigin(Long id, OriginRequestDto originRequestDto) {
         OriginEntity existingOrigin = originRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
+
         existingOrigin.setName(originRequestDto.getName());
         OriginEntity updatedOrigin = originRepository.save(existingOrigin);
+
         return mapperOriginResponse.OriginToOriginResponse(updatedOrigin);
     }
 
     public void deleteOrigin(Long id){
         OriginEntity existingOrigin = originRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
+
         originRepository.delete(existingOrigin);
     }
 

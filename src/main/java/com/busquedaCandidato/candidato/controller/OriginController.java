@@ -34,7 +34,6 @@ public class OriginController {
                             schema = @Schema(implementation = OriginResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "Origin not found", content = @Content)
     })
-
     @GetMapping("/{id}")
     public ResponseEntity<OriginResponseDto> getOrigin(@PathVariable Long id) {
         OriginResponseDto originResponseDto = originService.getOrigin(id);
@@ -48,7 +47,6 @@ public class OriginController {
                             array = @ArraySchema(schema = @Schema(implementation = OriginResponseDto.class)))),
             @ApiResponse(responseCode = "404", description = "No data found", content = @Content)
     })
-
     @GetMapping("/")
     public ResponseEntity<List<OriginResponseDto>> getAllOrigin(){
          List<OriginResponseDto> origin = originService.getAllOrigin();
@@ -60,7 +58,6 @@ public class OriginController {
             @ApiResponse(responseCode = "201", description = "Origin created", content = @Content),
             @ApiResponse(responseCode = "409", description = "Origin already exists", content = @Content)
     })
-
     @PostMapping("/")
     public ResponseEntity<OriginResponseDto> saveOrigin(@Valid @RequestBody OriginRequestDto originRequestDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(originService.saveOrigin(originRequestDto));
@@ -71,7 +68,6 @@ public class OriginController {
             @ApiResponse(responseCode = "200", description = "Origin updated", content = @Content),
             @ApiResponse(responseCode = "404", description = "Origin not found", content = @Content)
     })
-
     @PutMapping("/{id}")
     public ResponseEntity<OriginResponseDto> updateOrigin(@Valid @PathVariable Long id, @RequestBody OriginRequestDto originRequestDto){
          OriginResponseDto updatedOrigin = originService.updateOrigin(id, originRequestDto);
@@ -83,7 +79,6 @@ public class OriginController {
             @ApiResponse(responseCode = "200", description = "Origin deleted", content = @Content),
             @ApiResponse(responseCode = "404", description = "Origin not found", content = @Content)
     })
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrigin(@PathVariable Long id){
         originService.deleteOrigin(id);

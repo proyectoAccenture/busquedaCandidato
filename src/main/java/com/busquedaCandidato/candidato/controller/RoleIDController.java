@@ -1,9 +1,6 @@
 package com.busquedaCandidato.candidato.controller;
 
-
 import com.busquedaCandidato.candidato.dto.request.RoleIDRequestDto;
-import com.busquedaCandidato.candidato.dto.response.OriginResponseDto;
-import com.busquedaCandidato.candidato.dto.response.ProcessResponseDto;
 import com.busquedaCandidato.candidato.dto.response.RoleIDResponseDto;
 import com.busquedaCandidato.candidato.service.RoleIDService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,8 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
-
-
 @RestController
 @RequestMapping("/api/roleid")
 @RequiredArgsConstructor
@@ -35,7 +30,6 @@ public class RoleIDController {
                             schema = @Schema(implementation = RoleIDResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "Role ID not found", content = @Content)
     })
-
     @GetMapping("/{id}")
     public ResponseEntity<RoleIDResponseDto> getByIdRoleID(@PathVariable Long id){
         RoleIDResponseDto roleIDResponseDto  = roleIDService.getRolID(id);
@@ -48,9 +42,7 @@ public class RoleIDController {
                     content = @Content(mediaType = "application/json",
                             array = @ArraySchema(schema = @Schema(implementation = RoleIDResponseDto.class)))),
             @ApiResponse(responseCode = "404", description = "No data found", content = @Content)
-
     })
-
     @GetMapping("/")
     public ResponseEntity<List<RoleIDResponseDto>> getAllRoleID(){
         List<RoleIDResponseDto> roleid = roleIDService.getAllRolID();
@@ -62,7 +54,6 @@ public class RoleIDController {
             @ApiResponse(responseCode = "201", description = "Rol id created", content = @Content),
             @ApiResponse(responseCode = "409", description = "Rol id already exists", content = @Content)
     })
-
     @PostMapping("/")
     public ResponseEntity<RoleIDResponseDto> saveRoleID(@Valid @RequestBody RoleIDRequestDto rolIDRequestDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(roleIDService.saveRolID(rolIDRequestDto));
@@ -73,7 +64,6 @@ public class RoleIDController {
             @ApiResponse(responseCode = "200", description = "Role ID updated", content = @Content),
             @ApiResponse(responseCode = "404", description = "Role ID not found", content = @Content)
     })
-
     @PutMapping("/{id}")
     public ResponseEntity<RoleIDResponseDto> updateRoleID(@Valid @PathVariable Long id, @RequestBody RoleIDRequestDto rolIDRequestDto){
         RoleIDResponseDto updatedRolId = roleIDService.updateRolID(id, rolIDRequestDto);
@@ -85,7 +75,6 @@ public class RoleIDController {
             @ApiResponse(responseCode = "200", description = "Role id deleted", content = @Content),
             @ApiResponse(responseCode = "404", description = "Role id not found", content = @Content)
     })
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRoleID(@PathVariable Long id){
         roleIDService.deleteRolID(id);

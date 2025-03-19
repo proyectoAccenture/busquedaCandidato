@@ -3,12 +3,9 @@ package com.busquedaCandidato.candidato.service;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import com.busquedaCandidato.candidato.entity.OriginEntity;
 import com.busquedaCandidato.candidato.entity.PhaseEntity;
 import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
 import org.springframework.stereotype.Service;
-
 import com.busquedaCandidato.candidato.dto.request.PhaseRequestDto;
 import com.busquedaCandidato.candidato.dto.response.PhaseResponseDto;
 import com.busquedaCandidato.candidato.exception.type.EntityAlreadyExistsException;
@@ -42,22 +39,27 @@ public class PhaseService {
         if(phaseRepository.existsByName(phaseRequestDto.getName())){
             throw new EntityAlreadyExistsException();
         }
+
         PhaseEntity phaseEntity = mapperPhaseRequest.PhaseRequestToPhase(phaseRequestDto);
         PhaseEntity phaseEntitySave = phaseRepository.save(phaseEntity);
+
         return mapperPhaseResponse.PhaseToPhaseResponse(phaseEntitySave);
     }
 
      public PhaseResponseDto updatePhase(Long id, PhaseRequestDto phaseRequestDto) {
          PhaseEntity existingPhase = phaseRepository.findById(id)
                  .orElseThrow(EntityNoExistException::new);
+
          existingPhase.setName(phaseRequestDto.getName());
          PhaseEntity updatedPhase = phaseRepository.save(existingPhase);
+
          return mapperPhaseResponse.PhaseToPhaseResponse(updatedPhase);
     }
 
     public void deletePhase(Long id){
         PhaseEntity existingPhase = phaseRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
+
         phaseRepository.delete(existingPhase);
     }
 

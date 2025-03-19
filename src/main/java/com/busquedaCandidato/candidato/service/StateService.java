@@ -2,8 +2,10 @@ package com.busquedaCandidato.candidato.service;
 
 import com.busquedaCandidato.candidato.dto.request.StateRequestDto;
 import com.busquedaCandidato.candidato.dto.response.StateResponseDto;
+import com.busquedaCandidato.candidato.entity.RoleIDEntity;
 import com.busquedaCandidato.candidato.entity.StateEntity;
 import com.busquedaCandidato.candidato.exception.type.EntityAlreadyExistsException;
+import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
 import com.busquedaCandidato.candidato.mapper.IMapperStateRequest;
 import com.busquedaCandidato.candidato.mapper.IMapperStateResponse;
 import com.busquedaCandidato.candidato.repository.IStateRepository;
@@ -22,9 +24,10 @@ public class StateService {
     private final IMapperStateResponse mapperStateResponse;
     private final IMapperStateRequest mapperStateRequest;
 
-    public Optional<StateResponseDto> getState(Long id){
+    public StateResponseDto getState(Long id){
         return stateRepository.findById(id)
-                .map(mapperStateResponse::StateToStateResponse);
+                .map(mapperStateResponse::StateToStateResponse)
+                .orElseThrow(EntityNoExistException::new);
     }
 
     public List<StateResponseDto> getAllState(){
@@ -42,19 +45,17 @@ public class StateService {
         return mapperStateResponse.StateToStateResponse(stateEntitySave);
     }
 
-    public Optional<StateResponseDto> updateState(Long id, StateRequestDto stateRequestDto) {
-        return stateRepository.findById(id)
-                .map(existingEntity -> {
-                    existingEntity.setName(stateRequestDto.getName());
-                    return mapperStateResponse.StateToStateResponse(stateRepository.save(existingEntity));
-                });
+    public StateResponseDto updateState(Long id, StateRequestDto stateRequestDto) {
+        StateEntity existingState = stateRepository.findById(id)
+                .orElseThrow(EntityNoExistException::new);
+        existingState.setName(stateRequestDto.getName());
+        StateEntity updatedState = stateRepository.save(existingState);
+        return mapperStateResponse.StateToStateResponse(updatedState);
     }
 
-    public boolean deleteState(Long id){
-        if (stateRepository.existsById(id)) {
-            stateRepository.deleteById(id);
-            return true;
-        }
-        return false;
+    public void deleteState(Long id){
+        StateEntity existingState = stateRepository.findById(id)
+                .orElseThrow(EntityNoExistException::new);
+        stateRepository.delete(existingState);
     }
 }

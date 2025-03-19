@@ -20,9 +20,10 @@ public class PostulationService {
     private final ICandidateRepository candidateRepository;
     private final IMapperPostulationResponse mapperPostulationResponse;
 
-    public Optional<PostulationResponseDto> getPostulation(Long id){
-        return postulationRepository.findById(id)
-                .map(mapperPostulationResponse::PostulationToPostulationResponse);
+    public PostulationResponseDto getPostulation(Long id){
+        PostulationEntity postulationEntity = postulationRepository.findById(id)
+                .orElseThrow(EntityNoExistException::new);
+        return mapperPostulationResponse.PostulationToPostulationResponse(postulationEntity);
     }
 
     public List<PostulationResponseDto> getAllPostulation(){
@@ -50,8 +51,8 @@ public class PostulationService {
     }
 
     public Optional<PostulationResponseDto> updatePostulation(Long id, PostulationRequestDto postulationRequestDto) {
-        return postulationRepository.findById(id)
-                .map(existingEntity -> {
+                    PostulationEntity existingEntity  = postulationRepository.findById(id)
+                                .orElseThrow(EntityNoExistException::new);
 
                     VacancyCompanyEntity vacancyCompanyEntity = vacancyCompanyRepository.findById(postulationRequestDto.getVacancyCompanyId())
                             .orElseThrow(EntityNoExistException::new);
@@ -64,16 +65,13 @@ public class PostulationService {
                     existingEntity.setVacancyCompany(vacancyCompanyEntity);
                     existingEntity.setCandidate(candidateEntity);
 
+                    return Optional.of(mapperPostulationResponse.PostulationToPostulationResponse(postulationRepository.save(existingEntity)));
 
-                    return mapperPostulationResponse.PostulationToPostulationResponse(postulationRepository.save(existingEntity));
-                });
     }
 
-    public boolean deletePostulation(Long id){
-        if (postulationRepository.existsById(id)) {
-            postulationRepository.deleteById(id);
-            return true;
-        }
-        return false;
+    public void deletePostulation(Long id){
+        PostulationEntity existingPostulation = postulationRepository.findById(id)
+                .orElseThrow(EntityNoExistException::new);
+        postulationRepository.delete(existingPostulation);
     }
 }

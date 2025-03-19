@@ -2,11 +2,16 @@ package com.busquedaCandidato.candidato.service;
 
 import com.busquedaCandidato.candidato.dto.request.RoleIDRequestDto;
 import com.busquedaCandidato.candidato.dto.response.RoleIDResponseDto;
+import com.busquedaCandidato.candidato.entity.OriginEntity;
 import com.busquedaCandidato.candidato.entity.RoleIDEntity;
+import com.busquedaCandidato.candidato.entity.VacancyCompanyEntity;
 import com.busquedaCandidato.candidato.exception.type.EntityAlreadyExistsException;
+import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
+import com.busquedaCandidato.candidato.exception.type.EntityNotFoundException;
 import com.busquedaCandidato.candidato.mapper.IMapperRoleIDRequest;
 import com.busquedaCandidato.candidato.mapper.IMapperRoleIDResponse;
 import com.busquedaCandidato.candidato.repository.IRoleIDRepository;
+import com.busquedaCandidato.candidato.repository.IVacancyCompanyRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,12 +24,14 @@ import java.util.stream.Collectors;
 public class RoleIDService {
 
     private final IRoleIDRepository roleIDRepository;
+    private  final IVacancyCompanyRepository vacancyCompanyRepository;
     private final IMapperRoleIDResponse mapperRolIDResponse;
     private final IMapperRoleIDRequest mapperRolIDRequest;
 
-    public Optional<RoleIDResponseDto> getRolID(Long id) {
+    public RoleIDResponseDto getRolID(Long id) {
         return roleIDRepository.findById(id)
-                .map(mapperRolIDResponse::RolIdToRolIdResponse);
+                .map(mapperRolIDResponse::RolIdToRolIdResponse)
+                .orElseThrow(EntityNoExistException::new);
     }
 
     public List<RoleIDResponseDto> getAllRolID() {
@@ -40,23 +47,20 @@ public class RoleIDService {
         RoleIDEntity roleIDEntity = mapperRolIDRequest.RolIDRequestToStatus(rolIDRequestDto);
         RoleIDEntity roleIDEntitySave = roleIDRepository.save(roleIDEntity);
         return mapperRolIDResponse.RolIdToRolIdResponse(roleIDEntitySave);
-
     }
 
-    public Optional<RoleIDResponseDto> updateRolID(Long id, RoleIDRequestDto rolIDRequestDto) {
-        return roleIDRepository.findById(id)
-                .map(existing -> {
-                    existing.setName(rolIDRequestDto.getName());
-                    return mapperRolIDResponse.RolIdToRolIdResponse(roleIDRepository.save(existing));
-                });
+    public RoleIDResponseDto updateRolID(Long id, RoleIDRequestDto rolIDRequestDto) {
+        RoleIDEntity existingRolId = roleIDRepository.findById(id)
+                .orElseThrow(EntityNoExistException::new);
+        existingRolId.setName(rolIDRequestDto.getName());
+        RoleIDEntity updatedRolId = roleIDRepository.save(existingRolId);
+        return mapperRolIDResponse.RolIdToRolIdResponse(updatedRolId);
     }
 
-    public boolean deleteRolID(Long id) {
-        if (roleIDRepository.existsById(id)) {
-            roleIDRepository.deleteById(id);
-            return true;
-        }
-        return false;
+    public void deleteRolID(Long id) {
+        RoleIDEntity existingRolId = roleIDRepository.findById(id)
+                .orElseThrow(EntityNoExistException::new);
+        roleIDRepository.delete(existingRolId);
     }
 
 }

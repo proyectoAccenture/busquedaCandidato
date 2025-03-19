@@ -2,6 +2,8 @@ package com.busquedaCandidato.candidato.controller;
 
 
 import com.busquedaCandidato.candidato.dto.request.RoleIDRequestDto;
+import com.busquedaCandidato.candidato.dto.response.OriginResponseDto;
+import com.busquedaCandidato.candidato.dto.response.ProcessResponseDto;
 import com.busquedaCandidato.candidato.dto.response.RoleIDResponseDto;
 import com.busquedaCandidato.candidato.service.RoleIDService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,9 +38,8 @@ public class RoleIDController {
 
     @GetMapping("/{id}")
     public ResponseEntity<RoleIDResponseDto> getByIdRoleID(@PathVariable Long id){
-        return roleIDService.getRolID(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        RoleIDResponseDto roleIDResponseDto  = roleIDService.getRolID(id);
+        return ResponseEntity.ok(roleIDResponseDto);
     }
 
     @Operation(summary = "Get all the rolID")
@@ -75,9 +76,8 @@ public class RoleIDController {
 
     @PutMapping("/{id}")
     public ResponseEntity<RoleIDResponseDto> updateRoleID(@Valid @PathVariable Long id, @RequestBody RoleIDRequestDto rolIDRequestDto){
-        return roleIDService.updateRolID(id, rolIDRequestDto)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        RoleIDResponseDto updatedRolId = roleIDService.updateRolID(id, rolIDRequestDto);
+        return ResponseEntity.ok(updatedRolId);
     }
 
     @Operation(summary = "Delete a role id by its ID")
@@ -88,7 +88,8 @@ public class RoleIDController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRoleID(@PathVariable Long id){
-        return roleIDService.deleteRolID(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        roleIDService.deleteRolID(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

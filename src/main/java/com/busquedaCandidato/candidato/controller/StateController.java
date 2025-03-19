@@ -2,6 +2,7 @@ package com.busquedaCandidato.candidato.controller;
 
 
 import com.busquedaCandidato.candidato.dto.request.StateRequestDto;
+import com.busquedaCandidato.candidato.dto.response.RoleIDResponseDto;
 import com.busquedaCandidato.candidato.dto.response.StateResponseDto;
 import com.busquedaCandidato.candidato.service.StateService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,9 +36,8 @@ public class StateController {
 
     @GetMapping("/{id}")
     public ResponseEntity<StateResponseDto> getState(@PathVariable Long id){
-        return stateService.getState(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        StateResponseDto stateResponseDto  = stateService.getState(id);
+        return ResponseEntity.ok(stateResponseDto);
     }
 
     @Operation(summary = "Get all the state")
@@ -72,9 +72,8 @@ public class StateController {
     })
     @PutMapping("/{id}")
     public ResponseEntity<StateResponseDto> updateState(@Valid @PathVariable Long id, @RequestBody StateRequestDto stateRequestDto){
-        return stateService.updateState(id, stateRequestDto)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        StateResponseDto updatedState = stateService.updateState(id, stateRequestDto);
+        return ResponseEntity.ok(updatedState);
     }
 
     @Operation(summary = "Delete a state by their Number")
@@ -85,6 +84,7 @@ public class StateController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteState(@PathVariable Long id){
-        return stateService.deleteState(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        stateService.deleteState(id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -1,6 +1,7 @@
 package com.busquedaCandidato.candidato.controller;
 
 import com.busquedaCandidato.candidato.dto.request.PostulationRequestDto;
+import com.busquedaCandidato.candidato.dto.response.PhaseResponseDto;
 import com.busquedaCandidato.candidato.dto.response.PostulationResponseDto;
 import com.busquedaCandidato.candidato.service.PostulationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,12 +33,10 @@ public class PostulationController {
                             schema = @Schema(implementation = PostulationResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "Postulation not found", content = @Content)
     })
-
     @GetMapping("/{id}")
     public ResponseEntity<PostulationResponseDto> getPostulation(@PathVariable Long id){
-        return postulationService.getPostulation(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        PostulationResponseDto getByIdPostulation = postulationService.getPostulation(id);
+        return ResponseEntity.ok(getByIdPostulation);
     }
 
     @Operation(summary = "Get all the postulation")
@@ -47,7 +46,6 @@ public class PostulationController {
                             array = @ArraySchema(schema = @Schema(implementation = PostulationResponseDto.class)))),
             @ApiResponse(responseCode = "404", description = "No data found", content = @Content)
     })
-
     @GetMapping("/")
     public ResponseEntity<List<PostulationResponseDto>> getAllPostulation(){
         List<PostulationResponseDto> states = postulationService.getAllPostulation();
@@ -59,7 +57,6 @@ public class PostulationController {
             @ApiResponse(responseCode = "201", description = "Postulation created", content = @Content),
             @ApiResponse(responseCode = "409", description = "Postulation already exists", content = @Content)
     })
-
     @PostMapping("/")
     public ResponseEntity<PostulationResponseDto> savePostulation(@Valid @RequestBody PostulationRequestDto postulationRequestDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(postulationService.savePostulation(postulationRequestDto));
@@ -70,7 +67,6 @@ public class PostulationController {
             @ApiResponse(responseCode = "200", description = "Postulation updated", content = @Content),
             @ApiResponse(responseCode = "404", description = "Postulation not found", content = @Content)
     })
-
     @PutMapping("/{id}")
     public ResponseEntity<PostulationResponseDto> updatePostulation(@Valid @PathVariable Long id, @RequestBody PostulationRequestDto postulationRequestDto){
         return postulationService.updatePostulation(id, postulationRequestDto)
@@ -83,9 +79,9 @@ public class PostulationController {
             @ApiResponse(responseCode = "200", description = "Postulation deleted", content = @Content),
             @ApiResponse(responseCode = "404", description = "Postulation not found", content = @Content)
     })
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePostulation(@PathVariable Long id){
-        return postulationService.deletePostulation(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        postulationService.deletePostulation(id);
+        return ResponseEntity.noContent().build();
     }
 }

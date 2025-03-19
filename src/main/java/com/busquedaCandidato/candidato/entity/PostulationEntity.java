@@ -23,6 +23,9 @@ public class PostulationEntity {
     @Column(nullable = false)
     private LocalDate datePresentation;
 
+    @Column(nullable = false)
+    private Boolean status;
+
     @ManyToOne
     @JoinColumn(name = "candidate_id", nullable = false)
     private CandidateEntity candidate;

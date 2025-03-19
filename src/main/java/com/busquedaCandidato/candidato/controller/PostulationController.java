@@ -59,11 +59,16 @@ public class PostulationController {
     @Operation(summary = "Add a new postulation")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Postulation created", content = @Content),
-            @ApiResponse(responseCode = "409", description = "Postulation already exists", content = @Content)
+            @ApiResponse(responseCode = "409", description = "Active postulation already exists", content = @Content)
     })
     @PostMapping("/")
-    public ResponseEntity<PostulationResponseDto> savePostulation(@Valid @RequestBody PostulationRequestDto postulationRequestDto){
-        return ResponseEntity.status(HttpStatus.CREATED).body(postulationService.savePostulation(postulationRequestDto));
+    public ResponseEntity<?> savePostulation(@Valid @RequestBody PostulationRequestDto postulationRequestDto) {
+        try {
+            PostulationResponseDto response = postulationService.savePostulation(postulationRequestDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
     }
 
     @Operation(summary = "Update an existing postulation")

@@ -106,7 +106,7 @@ public class ProcessController {
             @ApiResponse(responseCode = "404", description = "process not found", content = @Content)
     })
     @PutMapping("/{id}")
-    public ResponseEntity<ProcessResponseDto> updateCandidateStatusHistory(@Valid @PathVariable Long id, @RequestBody ProcessRequestDto processRequestDto){
+    public ResponseEntity<ProcessResponseDto> updateCandidateStatusHistory(@Valid @PathVariable Long id, @Valid @RequestBody ProcessRequestDto processRequestDto){
         return processService.updateProcess(id, processRequestDto)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());

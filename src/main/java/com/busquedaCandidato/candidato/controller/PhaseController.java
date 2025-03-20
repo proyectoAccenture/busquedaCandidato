@@ -1,6 +1,8 @@
 package com.busquedaCandidato.candidato.controller;
 
 import java.util.List;
+
+import com.busquedaCandidato.candidato.dto.response.OriginResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,11 +40,10 @@ public class PhaseController {
                             schema = @Schema(implementation = PhaseResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "Phase not found", content = @Content)
     })
-     @GetMapping("/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<PhaseResponseDto> getState(@PathVariable Long id){
-        return phaseService.getPhase(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        PhaseResponseDto phaseResponseDto = phaseService.getPhase(id);
+        return ResponseEntity.ok(phaseResponseDto);
     }
 
     @Operation(summary = "Get all the phase")

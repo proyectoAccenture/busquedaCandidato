@@ -141,7 +141,7 @@ public class CandidateController {
             @ApiResponse(responseCode = "404", description = "State not found", content = @Content)
     })
     @PutMapping("/{id}")
-    public ResponseEntity<CandidateResponseDto> updateCandidate(@Valid @PathVariable Long id, @RequestBody CandidateRequestDto candidateRequestDto){
+    public ResponseEntity<CandidateResponseDto> updateCandidate(@Valid @PathVariable Long id,@Valid @RequestBody CandidateRequestDto candidateRequestDto){
         return candidateService.updateCandidate(id, candidateRequestDto)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());

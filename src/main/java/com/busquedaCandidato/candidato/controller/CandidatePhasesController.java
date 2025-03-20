@@ -73,7 +73,7 @@ public class CandidatePhasesController {
             @ApiResponse(responseCode = "404", description = "State not found", content = @Content)
     })
     @PutMapping("/{id}")
-    public ResponseEntity<CandidatePhasesResponseDto> updateCandidatePhases(@Valid @PathVariable Long id, @RequestBody CandidatePhasesRequestUpdateDto candidatePhasesRequestUpdateDto){
+    public ResponseEntity<CandidatePhasesResponseDto> updateCandidatePhases(@Valid @PathVariable Long id, @Valid @RequestBody CandidatePhasesRequestUpdateDto candidatePhasesRequestUpdateDto){
         return candidatePhasesService.updateCandidatePhases(id, candidatePhasesRequestUpdateDto)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());

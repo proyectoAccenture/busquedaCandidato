@@ -21,7 +21,7 @@ public class OriginService {
     private final IMapperOriginResponse mapperOriginResponse;
     private final IMapperOriginRequest mapperOriginRequest;
 
-    public OriginResponseDto getOrigin(Long id){
+    public OriginResponseDto getOriginById(Long id){
         return originRepository.findById(id)
                 .map(mapperOriginResponse::toDto)
                 .orElseThrow(EntityNoExistException::new);

@@ -29,6 +29,8 @@ public class ProcessService {
         CandidateEntity candidateEntity = candidateRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 
+        // yan
+
         return processRepository.findById(candidateEntity.getId())
                 .map(mapperProcessResponse::toDto)
                 .orElseThrow(EntityNoExistException::new);
@@ -69,6 +71,10 @@ public class ProcessService {
 
     public ProcessResponseDto saveProcess(ProcessRequestDto processRequestDto) {
 
+         // falta
+        /* PostulationEntity postulationEntity = postulationRepository.findById(processRequestDto.getPostulationId())
+                .orElseThrow();
+        */
         processRepository.findById(processRequestDto.getPostulationId())
                 .orElseThrow(ProcessAlreadyExistException::new);
 

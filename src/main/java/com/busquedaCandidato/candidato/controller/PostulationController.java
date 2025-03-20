@@ -69,12 +69,8 @@ public class PostulationController {
     })
     @PostMapping("/")
     public ResponseEntity<?> savePostulation(@Valid @RequestBody PostulationRequestDto postulationRequestDto) {
-        try {
             PostulationResponseDto response = postulationService.savePostulation(postulationRequestDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
     }
 
     @Operation(summary = "Update an existing postulation")

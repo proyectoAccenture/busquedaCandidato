@@ -39,7 +39,7 @@ public class OriginController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<OriginResponseDto> getOrigin(@PathVariable Long id) {
-        OriginResponseDto originResponseDto = originService.getOrigin(id);
+        OriginResponseDto originResponseDto = originService.getOriginById(id);
         return ResponseEntity.ok(originResponseDto);
     }
 
@@ -72,7 +72,7 @@ public class OriginController {
             @ApiResponse(responseCode = "404", description = "Origin not found", content = @Content)
     })
     @PutMapping("/{id}")
-    public ResponseEntity<OriginResponseDto> updateOrigin(@Valid @PathVariable Long id, @RequestBody OriginRequestDto originRequestDto){
+    public ResponseEntity<OriginResponseDto> updateOrigin(@Valid @PathVariable Long id, @Valid @RequestBody OriginRequestDto originRequestDto){
          OriginResponseDto updatedOrigin = originService.updateOrigin(id, originRequestDto);
          return ResponseEntity.ok(updatedOrigin);
     }

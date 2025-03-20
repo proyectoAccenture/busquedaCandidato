@@ -178,6 +178,7 @@ public class CandidateService {
         if(candidateRepository.existsByCard(candidateRequestDto.getCard())){
             throw new IdCardAlreadyExistException();
         }
+
         if(candidateRepository.existsByPhone(candidateRequestDto.getPhone())){
             throw new PhoneAlreadyExistException();
         }

@@ -33,4 +33,8 @@ public class PostulationEntity {
     @ManyToOne
     @JoinColumn(name = "company_vacancy_id", nullable = false)
     private VacancyCompanyEntity  vacancyCompany;
+
+    @OneToOne(mappedBy = "postulation")
+    private ProcessEntity process;
+
 }

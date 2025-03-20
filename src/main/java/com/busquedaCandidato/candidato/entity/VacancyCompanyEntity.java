@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 
 @Entity
@@ -54,4 +55,7 @@ public class VacancyCompanyEntity {
     @ManyToOne
     @JoinColumn(name = "origin_id", nullable = false)
     private OriginEntity origin;
+
+    @OneToMany(mappedBy = "vacancyCompany", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<PostulationEntity> postulations;
 }

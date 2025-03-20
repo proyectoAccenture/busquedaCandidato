@@ -3,10 +3,14 @@ package com.busquedaCandidato.candidato.service;
 import com.busquedaCandidato.candidato.dto.request.PostulationRequestDto;
 import com.busquedaCandidato.candidato.dto.response.PostulationResponseDto;
 import com.busquedaCandidato.candidato.entity.*;
+import com.busquedaCandidato.candidato.exception.type.BadRequestException;
 import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
+import com.busquedaCandidato.candidato.exception.type.ResourceNotFoundException;
 import com.busquedaCandidato.candidato.mapper.IMapperPostulationResponse;
 import com.busquedaCandidato.candidato.repository.*;
 import lombok.AllArgsConstructor;
+
+
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +33,17 @@ public class PostulationService {
 
     public List<PostulationResponseDto> getAllPostulation(){
         return postulationRepository.findAll().stream()
+                .map(mapperPostulationResponse::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<PostulationResponseDto> getSearchPostulationsByCandidate(String query) {
+        validationQuery(query);
+
+        List<PostulationEntity> postulations = postulationRepository.searchByCandidateNameOrLastName(query);
+        validationListPostulation(postulations);
+
+        return postulations.stream()
                 .map(mapperPostulationResponse::toDto)
                 .collect(Collectors.toList());
     }
@@ -85,5 +100,17 @@ public class PostulationService {
                 .orElseThrow(EntityNoExistException::new);
 
         postulationRepository.delete(existingPostulation);
+    }
+
+    private void validationQuery(String query){
+        if (query == null || query.trim().isEmpty()) {
+            throw new BadRequestException("The search query cannot be empty.");
+        }
+    }
+
+    private void validationListPostulation(List<PostulationEntity> postulations){
+        if (postulations.isEmpty()) {
+            throw new ResourceNotFoundException("No postulations found for the given search criteria.");
+        }
     }
 }

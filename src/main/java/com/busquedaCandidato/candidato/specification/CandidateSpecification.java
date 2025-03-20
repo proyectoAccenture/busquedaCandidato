@@ -22,7 +22,7 @@ import org.springframework.util.StringUtils;
 public class CandidateSpecification {
     public static Specification<CandidateEntity> filterBySingleField(String searchValue) {
         return (Root<CandidateEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
-            // Joins con otras entidades
+
             Join<CandidateEntity, PostulationEntity> postulationJoin = root.join("postulations", JoinType.LEFT);
             Join<PostulationEntity, VacancyCompanyEntity> vacancyJoin = postulationJoin.join("vacancyCompany", JoinType.LEFT);
             Join<VacancyCompanyEntity, RoleIDEntity> roleJoin = vacancyJoin.join("role", JoinType.LEFT);
@@ -30,10 +30,6 @@ public class CandidateSpecification {
             Join<ProcessEntity, CandidatePhasesEntity> phaseJoin = processJoin.join("processPhases", JoinType.LEFT);
             Join<CandidatePhasesEntity, PhaseEntity> phaseTypeJoin = phaseJoin.join("phase", JoinType.LEFT);
             Join<CandidatePhasesEntity, StateEntity> stateJoin = phaseJoin.join("state", JoinType.LEFT);
-
-
-
-
 
             Predicate predicate = cb.conjunction();
 

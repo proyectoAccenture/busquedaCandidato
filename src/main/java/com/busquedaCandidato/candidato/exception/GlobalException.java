@@ -116,6 +116,12 @@ public class GlobalException {
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.PHONE_ALREADY_EXISTS.getMessage()));
     }
 
+    @ExceptionHandler(PostulationIsOffException.class)
+    public ResponseEntity<Map<String, String>> PostulationIsOffException(PostulationIsOffException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.POSTULATION_IS_OFF.getMessage()));
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Map<String, String>> handleResourceNotFound(ResourceNotFoundException ex) {
         Map<String, String> response = new HashMap<>();
@@ -137,11 +143,28 @@ public class GlobalException {
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-
     @ExceptionHandler(EntityAlreadyHasRelationException.class)
     public ResponseEntity<Map<String, String>> EntityAlreadyHasRelationException(EntityAlreadyHasRelationException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.IT_HAS_RELATION.getMessage()));
+    }
+
+    @ExceptionHandler(CannotApplyException.class)
+    public ResponseEntity<Map<String, String>> CannotApplyException(CannotApplyException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.CANNOT_APPLY.getMessage()));
+    }
+
+    @ExceptionHandler(ItAlreadyExistPostulationException.class)
+    public ResponseEntity<Map<String, String>> ItAlreadyExistException(ItAlreadyExistPostulationException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.IT_ALREADY_EXIST_POSTULATION.getMessage()));
+    }
+
+    @ExceptionHandler(ItAlreadyProcessWithIdPostulation.class)
+    public ResponseEntity<Map<String, String>> ItAlreadyProcessWithIdPostulation(ItAlreadyProcessWithIdPostulation ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.IT_ALREADY_PROCESS_POSTULATION.getMessage()));
     }
 }
 

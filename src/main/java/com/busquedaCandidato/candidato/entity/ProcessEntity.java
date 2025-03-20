@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,5 +32,5 @@ public class ProcessEntity {
 
     @OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private List<CandidatePhasesEntity> processPhases = new ArrayList<>();
+    private List<CandidatePhasesEntity> candidatePhases = new ArrayList<>();
 }

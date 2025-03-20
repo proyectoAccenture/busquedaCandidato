@@ -9,11 +9,7 @@ import com.busquedaCandidato.candidato.entity.CandidateEntity;
 import com.busquedaCandidato.candidato.entity.PostulationEntity;
 import com.busquedaCandidato.candidato.entity.RoleIDEntity;
 import com.busquedaCandidato.candidato.entity.VacancyCompanyEntity;
-import com.busquedaCandidato.candidato.exception.type.CandidateNoExistException;
-import com.busquedaCandidato.candidato.exception.type.IdCardAlreadyExistException;
-import com.busquedaCandidato.candidato.exception.type.PhoneAlreadyExistException;
-import com.busquedaCandidato.candidato.exception.type.RoleIdNoExistException;
-import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
+import com.busquedaCandidato.candidato.exception.type.*;
 import com.busquedaCandidato.candidato.mapper.IMapperCandidateRequest;
 import com.busquedaCandidato.candidato.mapper.IMapperCandidateResponse;
 import com.busquedaCandidato.candidato.repository.ICandidateRepository;
@@ -118,7 +114,7 @@ public class CandidateService {
 
         return candidates.stream().map(candidate -> {
             List<CandidatePhasesResponseDto> phases = candidate.getPostulations().stream()
-                    .flatMap(postulation -> postulation.getProcess().getProcessPhases().stream())
+                    .flatMap(postulation -> postulation.getProcess().getCandidatePhases().stream())
                     .map(phase -> new CandidatePhasesResponseDto(
                             phase.getId(),
                             phase.getProcess().getId(),

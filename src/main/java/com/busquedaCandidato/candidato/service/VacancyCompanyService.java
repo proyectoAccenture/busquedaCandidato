@@ -95,7 +95,7 @@ public class VacancyCompanyService {
         VacancyCompanyEntity existingVacancyCompany = vacancyCompanyRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 
-        if (postulationRepository.existsByCompanyVacancyId(id)) {
+        if (postulationRepository.existsByVacancyCompanyId(id)) {
             throw new EntityAlreadyHasRelationException();
         }
 

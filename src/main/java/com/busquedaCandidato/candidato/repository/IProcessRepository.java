@@ -19,5 +19,4 @@ public interface IProcessRepository extends JpaRepository<ProcessEntity, Long> {
             "OR LOWER(c.name) LIKE LOWER(CONCAT('%', :query, '%')) " +
             "OR LOWER(c.lastName) LIKE LOWER(CONCAT('%', :query, '%'))")
     List<ProcessEntity> searchByCandidateNameOrLastName(@Param("query") String query);
-
 }

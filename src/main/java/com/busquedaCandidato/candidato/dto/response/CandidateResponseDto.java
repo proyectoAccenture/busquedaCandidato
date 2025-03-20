@@ -41,6 +41,7 @@ public class CandidateResponseDto {
     @Schema(name = "email", description = "email of the candidate")
     private String email;
 
+    // raro
     @Schema(name = "phases", description = "List of phases where the candidate is in")
     private List<CandidatePhasesResponseDto> phases;
 }

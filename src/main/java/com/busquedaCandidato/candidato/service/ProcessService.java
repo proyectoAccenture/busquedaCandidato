@@ -68,17 +68,22 @@ public class ProcessService {
     }
 
     public ProcessResponseDto saveProcess(ProcessRequestDto processRequestDto) {
-
-        processRepository.findById(processRequestDto.getPostulationId())
-                .orElseThrow(ProcessAlreadyExistException::new);
-
         PostulationEntity postulationEntity = postulationRepository.findById(processRequestDto.getPostulationId())
                 .orElseThrow(CandidateNoPostulationException::new);
+
+        if(postulationEntity != null){
+            throw new ItAlreadyProcessWithIdPostulation();
+        }
+
+        if(!postulationEntity.getStatus()){
+            throw new PostulationIsOffException();
+        }
 
         ProcessEntity newCandidateStatusHistory = new ProcessEntity();
         newCandidateStatusHistory.setDescription(processRequestDto.getDescription());
         newCandidateStatusHistory.setAssignmentDate(processRequestDto.getAssignedDate());
         newCandidateStatusHistory.setPostulation(postulationEntity);
+
         ProcessEntity processEntitySave = processRepository.save(newCandidateStatusHistory);
 
         return mapperProcessResponse.toDto(processEntitySave);

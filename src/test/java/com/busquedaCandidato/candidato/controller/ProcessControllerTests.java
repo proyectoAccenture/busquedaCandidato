@@ -1,8 +1,6 @@
 package com.busquedaCandidato.candidato.controller;
 
-import com.busquedaCandidato.candidato.dto.request.PostulationRequestDto;
 import com.busquedaCandidato.candidato.dto.request.ProcessRequestDto;
-import com.busquedaCandidato.candidato.dto.response.PostulationResponseDto;
 import com.busquedaCandidato.candidato.dto.response.ProcessResponseDto;
 import com.busquedaCandidato.candidato.entity.*;
 import com.busquedaCandidato.candidato.repository.*;
@@ -97,7 +95,7 @@ public class ProcessControllerTests {
         CandidatePhasesEntity candidatePhasesEntity = new CandidatePhasesEntity(null, "description", true, LocalDate.of(2025, 1, 20), phaseSave, stateSave, processSave);
         CandidatePhasesEntity candidatePhasesSave = candidatePhasesRepository.save(candidatePhasesEntity);
 
-        processSave.getProcessPhases().add(candidatePhasesSave);
+        processSave.getCandidatePhases().add(candidatePhasesSave);
         processSave = processRepository.save(processSave);
 
         ResponseEntity<ProcessResponseDto> response = restTemplate.exchange(
@@ -184,7 +182,7 @@ public class ProcessControllerTests {
         CandidatePhasesEntity candidatePhasesEntity = new CandidatePhasesEntity(null, "description", true, LocalDate.of(2025, 1, 20), phaseSave, stateSave, processSave);
         CandidatePhasesEntity candidatePhasesSave = candidatePhasesRepository.save(candidatePhasesEntity);
 
-        processSave.getProcessPhases().add(candidatePhasesSave);
+        processSave.getCandidatePhases().add(candidatePhasesSave);
         processSave = processRepository.save(processSave);
 
         ProcessRequestDto requestDto = new ProcessRequestDto();

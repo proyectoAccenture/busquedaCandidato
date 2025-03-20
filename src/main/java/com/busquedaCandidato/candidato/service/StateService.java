@@ -61,7 +61,7 @@ public class StateService {
         StateEntity existingState = stateRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 
-        if (candidatePhasesRepository.e(id)) {
+        if (candidatePhasesRepository.existsByStateId(id)) {
             throw new EntityAlreadyHasRelationException();
         }
 

@@ -3,10 +3,7 @@ package com.busquedaCandidato.candidato.service;
 import com.busquedaCandidato.candidato.dto.request.PostulationRequestDto;
 import com.busquedaCandidato.candidato.dto.response.PostulationResponseDto;
 import com.busquedaCandidato.candidato.entity.*;
-import com.busquedaCandidato.candidato.exception.type.BadRequestException;
-import com.busquedaCandidato.candidato.exception.type.EntityAlreadyHasRelationException;
-import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
-import com.busquedaCandidato.candidato.exception.type.ResourceNotFoundException;
+import com.busquedaCandidato.candidato.exception.type.*;
 import com.busquedaCandidato.candidato.mapper.IMapperPostulationResponse;
 import com.busquedaCandidato.candidato.repository.*;
 import lombok.AllArgsConstructor;
@@ -56,14 +53,14 @@ public class PostulationService {
                 .orElseThrow(EntityNoExistException::new);
 
         if (!postulationRequestDto.getStatus()) {
-            throw new IllegalStateException("No se puede postular, ya que la postulación está inactiva.");
+            throw new CannotApplyException();
         }
 
         boolean alreadyApplied = postulationRepository
                 .existsByCandidate_IdAndVacancyCompany_IdAndStatus(candidateEntity.getId(), vacancyCompanyEntity.getId(), true);
 
         if (alreadyApplied) {
-            throw new IllegalStateException("Ya realizaste una postulación activa para esta vacante.");
+            throw new ItAlreadyExistPostulationException();
         }
 
         PostulationEntity postulationEntityNew = new PostulationEntity();
@@ -71,7 +68,7 @@ public class PostulationService {
         postulationEntityNew.setSalaryAspiration(postulationRequestDto.getSalaryAspiration());
         postulationEntityNew.setVacancyCompany(vacancyCompanyEntity);
         postulationEntityNew.setCandidate(candidateEntity);
-        postulationEntityNew.setStatus(true);
+        postulationEntityNew.setStatus(postulationRequestDto.getStatus());
 
         PostulationEntity postulationEntitySave = postulationRepository.save(postulationEntityNew);
         return mapperPostulationResponse.toDto(postulationEntitySave);
@@ -90,6 +87,7 @@ public class PostulationService {
         existingEntity.setDatePresentation(postulationRequestDto.getDatePresentation());
         existingEntity.setSalaryAspiration(postulationRequestDto.getSalaryAspiration());
         existingEntity.setVacancyCompany(vacancyCompanyEntity);
+        existingEntity.setStatus(postulationRequestDto.getStatus());
         existingEntity.setCandidate(candidateEntity);
 
         return Optional.of(mapperPostulationResponse.toDto(postulationRepository.save(existingEntity)));

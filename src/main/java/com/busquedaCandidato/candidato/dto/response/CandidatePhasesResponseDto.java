@@ -2,12 +2,15 @@ package com.busquedaCandidato.candidato.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-
-@Schema(name = "CandidatePhasesResponse",description = "Model representing a candidate phases process in the database")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Schema(name = "CandidatePhasesResponse",description = "Model representing a candidate phases process in the database")
 public class CandidatePhasesResponseDto {
     @Schema(name = "id",defaultValue = "1", description = "Unique Id of the candidate phases process in the database")
     private Long id;
@@ -35,4 +38,13 @@ public class CandidatePhasesResponseDto {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate assignedDate;
+
+    @Schema(name = "vacancyId", description = "Id of the vacancy")
+    private Long vacancyId;
+
+    @Schema(name = "roleName", description = "Role name of the vacancy")
+    private String roleName;
+
+    @Schema(name = "companyName", description = "Company associated with the vacancy")
+    private String companyName;
 }

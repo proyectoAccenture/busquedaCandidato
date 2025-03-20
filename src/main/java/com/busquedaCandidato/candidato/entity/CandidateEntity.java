@@ -42,4 +42,7 @@ public class CandidateEntity {
 
     @Column(nullable = false)
     private LocalDate registrationDate;
+
+    @OneToMany(mappedBy = "candidate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<PostulationEntity> postulations;
 }

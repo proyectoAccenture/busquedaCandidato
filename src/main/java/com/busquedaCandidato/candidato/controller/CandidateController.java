@@ -1,6 +1,7 @@
 package com.busquedaCandidato.candidato.controller;
 
 import com.busquedaCandidato.candidato.dto.request.CandidateRequestDto;
+import com.busquedaCandidato.candidato.dto.response.CandidateResponse;
 import com.busquedaCandidato.candidato.dto.response.CandidateResponseDto;
 import com.busquedaCandidato.candidato.service.CandidateService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,17 +11,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 
@@ -67,6 +64,52 @@ public class CandidateController {
     public ResponseEntity<List<CandidateResponseDto>> getByNameCandidate(@PathVariable String name){
         List<CandidateResponseDto> candidates = candidateService.getByNameCandidate(name);
         return ResponseEntity.ok(candidates);
+    }
+
+    @Operation(summary = "Get a candidate by any field")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Candidate found",
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = CandidateResponseDto.class)))),
+            @ApiResponse(responseCode = "400", description = "Invalid query parameters", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Candidate not found", content = @Content)
+    })
+    @GetMapping("/search")
+    public ResponseEntity<CandidateResponse> getSearchCandidates(
+            @RequestParam @NotBlank String query,
+            @RequestParam(defaultValue = "0") @Min(0)int page,
+            @RequestParam(defaultValue = "10")@Min(1)  int size) {
+        return ResponseEntity.ok(candidateService.getSearchCandidates(query, page, size));
+    }
+
+    @Operation(summary = "Get candidates by full name")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Candidates found",
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = CandidateResponseDto.class)))),
+            @ApiResponse(responseCode = "400", description = "Invalid query", content = @Content),
+            @ApiResponse(responseCode = "404", description = "No candidates found", content = @Content)
+    })
+    @GetMapping("/search-fullName/{query}")
+    public ResponseEntity<CandidateResponse> getSearchCandidatesFullName(@PathVariable @NotBlank String query) {
+        CandidateResponse candidateResponse = candidateService.getSearchCandidatesFullName(query);
+        if (candidateResponse.toString().isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(candidateResponse);
+    }
+
+    @Operation(summary = "Get candidates by full name or role ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Candidates found",
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = CandidateResponseDto.class)))),
+            @ApiResponse(responseCode = "400", description = "Invalid query", content = @Content),
+            @ApiResponse(responseCode = "404", description = "No candidates found", content = @Content)
+    })
+    @GetMapping("/search/fullName/roleId")
+    public List<CandidateResponseDto> getSearchCandidatesByNameOrRoleId(@RequestParam String searchValue) {
+        return candidateService.getSearchCandidatesByNameOrRoleId(searchValue);
     }
 
     @Operation(summary = "Get all the candidate")

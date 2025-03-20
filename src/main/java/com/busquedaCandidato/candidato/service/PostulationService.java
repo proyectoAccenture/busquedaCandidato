@@ -3,8 +3,10 @@ package com.busquedaCandidato.candidato.service;
 import com.busquedaCandidato.candidato.dto.request.PostulationRequestDto;
 import com.busquedaCandidato.candidato.dto.response.PostulationResponseDto;
 import com.busquedaCandidato.candidato.entity.*;
+import com.busquedaCandidato.candidato.exception.type.BadRequestException;
 import com.busquedaCandidato.candidato.exception.type.EntityAlreadyHasRelationException;
 import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
+import com.busquedaCandidato.candidato.exception.type.ResourceNotFoundException;
 import com.busquedaCandidato.candidato.mapper.IMapperPostulationResponse;
 import com.busquedaCandidato.candidato.repository.*;
 import lombok.AllArgsConstructor;
@@ -35,6 +37,17 @@ public class PostulationService {
                 .collect(Collectors.toList());
     }
 
+    public List<PostulationResponseDto> getSearchPostulationsByCandidate(String query) {
+        validationQuery(query);
+
+        List<PostulationEntity> postulations = postulationRepository.searchByCandidateNameOrLastName(query);
+        validationListPostulation(postulations);
+
+        return postulations.stream()
+                .map(mapperPostulationResponse::toDto)
+                .collect(Collectors.toList());
+    }
+
     public PostulationResponseDto savePostulation(PostulationRequestDto postulationRequestDto) {
         VacancyCompanyEntity vacancyCompanyEntity = vacancyCompanyRepository.findById(postulationRequestDto.getVacancyCompanyId())
                 .orElseThrow(EntityNoExistException::new);
@@ -42,11 +55,23 @@ public class PostulationService {
         CandidateEntity candidateEntity = candidateRepository.findById(postulationRequestDto.getCandidateId())
                 .orElseThrow(EntityNoExistException::new);
 
+        if (!postulationRequestDto.getStatus()) {
+            throw new IllegalStateException("No se puede postular, ya que la postulación está inactiva.");
+        }
+
+        boolean alreadyApplied = postulationRepository
+                .existsByCandidate_IdAndVacancyCompany_IdAndStatus(candidateEntity.getId(), vacancyCompanyEntity.getId(), true);
+
+        if (alreadyApplied) {
+            throw new IllegalStateException("Ya realizaste una postulación activa para esta vacante.");
+        }
+
         PostulationEntity postulationEntityNew = new PostulationEntity();
         postulationEntityNew.setDatePresentation(postulationRequestDto.getDatePresentation());
         postulationEntityNew.setSalaryAspiration(postulationRequestDto.getSalaryAspiration());
         postulationEntityNew.setVacancyCompany(vacancyCompanyEntity);
         postulationEntityNew.setCandidate(candidateEntity);
+        postulationEntityNew.setStatus(true);
 
         PostulationEntity postulationEntitySave = postulationRepository.save(postulationEntityNew);
         return mapperPostulationResponse.toDto(postulationEntitySave);
@@ -79,5 +104,17 @@ public class PostulationService {
         }
 
         postulationRepository.delete(existingPostulation);
+    }
+
+    private void validationQuery(String query){
+        if (query == null || query.trim().isEmpty()) {
+            throw new BadRequestException("The search query cannot be empty.");
+        }
+    }
+
+    private void validationListPostulation(List<PostulationEntity> postulations){
+        if (postulations.isEmpty()) {
+            throw new ResourceNotFoundException("No postulations found for the given search criteria.");
+        }
     }
 }

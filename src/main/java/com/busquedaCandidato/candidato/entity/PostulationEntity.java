@@ -23,6 +23,9 @@ public class PostulationEntity {
     @Column(nullable = false)
     private LocalDate datePresentation;
 
+    @Column(nullable = false)
+    private Boolean status;
+
     @ManyToOne
     @JoinColumn(name = "candidate_id", nullable = false)
     private CandidateEntity candidate;
@@ -30,4 +33,8 @@ public class PostulationEntity {
     @ManyToOne
     @JoinColumn(name = "company_vacancy_id", nullable = false)
     private VacancyCompanyEntity  vacancyCompany;
+
+    @OneToOne(mappedBy = "postulation")
+    private ProcessEntity process;
+
 }

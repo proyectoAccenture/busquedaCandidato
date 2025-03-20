@@ -5,10 +5,7 @@ import com.busquedaCandidato.candidato.dto.response.ProcessResponseDto;
 import com.busquedaCandidato.candidato.entity.CandidateEntity;
 import com.busquedaCandidato.candidato.entity.ProcessEntity;
 import com.busquedaCandidato.candidato.entity.PostulationEntity;
-import com.busquedaCandidato.candidato.exception.type.CandidateNoExistException;
-import com.busquedaCandidato.candidato.exception.type.CandidateNoPostulationException;
-import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
-import com.busquedaCandidato.candidato.exception.type.ProcessAlreadyExistException;
+import com.busquedaCandidato.candidato.exception.type.*;
 import com.busquedaCandidato.candidato.mapper.IMapperProcessResponse;
 import com.busquedaCandidato.candidato.repository.ICandidateRepository;
 import com.busquedaCandidato.candidato.repository.IPostulationRepository;
@@ -49,9 +46,30 @@ public class ProcessService {
                 .collect(Collectors.toList());
     }
 
+    public List<ProcessResponseDto> getProcessByPostulationId(Long postulationId) {
+        validateLongId(postulationId);
+
+        List<ProcessEntity> processes = processRepository.findByPostulationId(postulationId);
+        validateListProcess(processes);
+
+        return processes.stream()
+                .map(mapperProcessResponse::toDto).collect(Collectors.toList());
+    }
+
+    public List<ProcessResponseDto> getSearchProcessesByCandidateFullName(String query) {
+        validateStringQuery(query);
+
+        List<ProcessEntity> processes = processRepository.searchByCandidateNameOrLastName(query);
+        validateListProcess(processes);
+
+        return processes.stream()
+                .map(mapperProcessResponse::toDto)
+                .collect(Collectors.toList());
+    }
+
     public ProcessResponseDto saveProcess(ProcessRequestDto processRequestDto) {
 
-        ProcessEntity processEntity = processRepository.findById(processRequestDto.getPostulationId())
+        processRepository.findById(processRequestDto.getPostulationId())
                 .orElseThrow(ProcessAlreadyExistException::new);
 
         PostulationEntity postulationEntity = postulationRepository.findById(processRequestDto.getPostulationId())
@@ -85,5 +103,27 @@ public class ProcessService {
                 .orElseThrow(EntityNoExistException::new);
 
         postulationRepository.delete(existingPostulation);
+    }
+
+    private void validateLongId(Long id){
+        if (id == null || id <= 0) {
+            throw new BadRequestException("The application ID must be a positive number.");
+        }
+
+        if (!postulationRepository.existsById(id)) {
+            throw new ResourceNotFoundException("No postulation found with ID: " + id);
+        }
+    }
+
+    private void validateListProcess(List<ProcessEntity> processEntities) {
+        if (processEntities.isEmpty()) {
+            throw new ResourceNotFoundException("No processes found for the given search criteria.");
+        }
+    }
+
+    private void validateStringQuery(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            throw new BadRequestException("The search query cannot be empty.");
+        }
     }
 }

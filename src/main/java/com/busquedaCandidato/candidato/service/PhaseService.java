@@ -26,9 +26,10 @@ public class PhaseService {
     private final IMapperPhaseResponse mapperPhaseResponse;
     private final IMapperPhaseRequest mapperPhaseRequest;
 
-    public Optional<PhaseResponseDto> getPhase(Long id){
+    public PhaseResponseDto getPhase(Long id){
         return phaseRepository.findById(id)
-                .map(mapperPhaseResponse::toDto );
+                .map(mapperPhaseResponse::toDto)
+                .orElseThrow(EntityNoExistException::new);
     }
 
     public List<PhaseResponseDto> getAllPhase(){

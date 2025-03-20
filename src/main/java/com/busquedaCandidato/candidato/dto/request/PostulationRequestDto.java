@@ -33,4 +33,7 @@ public class PostulationRequestDto {
     @Schema(name = "candidateId",description = "Id of candidate that appliqued", example = "1")
     @NotNull(message = "candidateId cannot be null")
     private Long candidateId;
+
+    @Schema(name = "status", description = "Status of the postulation (true if active, false if closed)", example = "false")
+    private Boolean status = false;
 }

@@ -72,7 +72,7 @@ public class JobProfileController {
             @ApiResponse(responseCode = "404", description = "Job profile not found", content = @Content)
     })
     @PutMapping("/{id}")
-    public ResponseEntity<JobProfileResponseDto> updateJobProfile(@Valid @PathVariable Long id, @RequestBody JobProfileRequestDto jobProfileRequestDto){
+    public ResponseEntity<JobProfileResponseDto> updateJobProfile(@Valid @PathVariable Long id, @Valid @RequestBody JobProfileRequestDto jobProfileRequestDto){
         JobProfileResponseDto updatedJobProfile = jobProfileService.updateJobProfile(id, jobProfileRequestDto);
         return ResponseEntity.ok(updatedJobProfile);
     }

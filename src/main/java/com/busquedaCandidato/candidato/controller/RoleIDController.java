@@ -72,7 +72,7 @@ public class RoleIDController {
             @ApiResponse(responseCode = "404", description = "Role ID not found", content = @Content)
     })
     @PutMapping("/{id}")
-    public ResponseEntity<RoleIDResponseDto> updateRoleID(@Valid @PathVariable Long id, @RequestBody RoleIDRequestDto rolIDRequestDto){
+    public ResponseEntity<RoleIDResponseDto> updateRoleID(@Valid @PathVariable Long id, @Valid @RequestBody RoleIDRequestDto rolIDRequestDto){
         RoleIDResponseDto updatedRolId = roleIDService.updateRolID(id, rolIDRequestDto);
         return ResponseEntity.ok(updatedRolId);
     }

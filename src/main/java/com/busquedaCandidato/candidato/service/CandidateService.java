@@ -10,6 +10,7 @@ import com.busquedaCandidato.candidato.entity.PostulationEntity;
 import com.busquedaCandidato.candidato.entity.RoleIDEntity;
 import com.busquedaCandidato.candidato.entity.VacancyCompanyEntity;
 import com.busquedaCandidato.candidato.exception.type.*;
+import com.busquedaCandidato.candidato.mapper.IMapperCandidatePhasesResponse;
 import com.busquedaCandidato.candidato.mapper.IMapperCandidateRequest;
 import com.busquedaCandidato.candidato.mapper.IMapperCandidateResponse;
 import com.busquedaCandidato.candidato.repository.ICandidateRepository;
@@ -18,6 +19,7 @@ import com.busquedaCandidato.candidato.repository.IRoleIDRepository;
 import com.busquedaCandidato.candidato.repository.IVacancyCompanyRepository;
 import com.busquedaCandidato.candidato.specification.CandidateSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -37,6 +39,7 @@ public class CandidateService {
     private final IRoleIDRepository roleIDRepository;
     private final IMapperCandidateResponse mapperCandidateResponse;
     private final IMapperCandidateRequest mapperCandidateRequest;
+    private final IMapperCandidatePhasesResponse phasesMappers;
 
     public List<CandidateResponseDto> getCandidateByRole(String roleName) {
 
@@ -165,9 +168,31 @@ public class CandidateService {
     }
 
     public List<CandidateResponseDto> getAllCandidate(){
-        return candidateRepository.findAll().stream()
-                .map(mapperCandidateResponse::toDto)
+        List<CandidateEntity> candidates = candidateRepository.findAll();
+
+        return candidates.stream()
+                .map(candidate -> mapCandidateToResponse(candidate))
                 .collect(Collectors.toList());
+
+
+    }
+    private CandidateResponseDto mapCandidateToResponse(CandidateEntity candidate) {
+        CandidateResponseDto response = mapperCandidateResponse.toDto(candidate);
+
+
+        if (candidate.getPostulations() != null) {
+            List<CandidatePhasesResponseDto> phases = candidate.getPostulations().stream()
+                    .map(PostulationEntity::getProcess)
+                    .filter(Objects::nonNull)
+                    .flatMap(process -> process.getCandidatePhases().stream()) // Obtiene todas las fases
+                    .filter(Objects::nonNull)
+                    .map(phasesMappers::toDto)
+                    .collect(Collectors.toList());
+
+            response.setPhases(phases);
+        }
+
+        return response;
     }
 
     public CandidateResponseDto saveCandidate(CandidateRequestDto candidateRequestDto) {

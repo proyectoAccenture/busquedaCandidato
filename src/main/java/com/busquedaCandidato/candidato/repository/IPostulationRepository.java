@@ -1,5 +1,6 @@
 package com.busquedaCandidato.candidato.repository;
 
+import com.busquedaCandidato.candidato.entity.CandidateEntity;
 import com.busquedaCandidato.candidato.entity.PostulationEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -11,6 +12,7 @@ public interface IPostulationRepository extends JpaRepository<PostulationEntity,
     List<PostulationEntity> findByVacancyCompanyIdIn(List<Long> vacancyIds);
     Boolean existsByCandidateId(Long candidateId);
     Boolean existsByVacancyCompanyId(Long vacancyCompany);
+    List<PostulationEntity> findByCandidate(CandidateEntity candidate);
 
     boolean existsByCandidate_IdAndVacancyCompany_IdAndStatus(Long candidateId, Long vacancyCompanyId, Boolean status);
 

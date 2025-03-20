@@ -25,14 +25,21 @@ public class ProcessService {
     private final IPostulationRepository postulationRepository;
     private final IMapperProcessResponse mapperProcessResponse;
 
-     public ProcessResponseDto getProcessByIdCandidate(Long id){
+    public ProcessResponseDto getProcessByIdCandidate(Long id){
+
         CandidateEntity candidateEntity = candidateRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 
-        return processRepository.findById(candidateEntity.getId())
+        List<PostulationEntity> postulations = postulationRepository.findByCandidate(candidateEntity);
+
+        if (postulations.isEmpty()) {
+            throw new CandidateNoPostulationException();
+        }
+        PostulationEntity postulation = postulations.get(0);
+        return processRepository.findByPostulation(postulation)
                 .map(mapperProcessResponse::toDto)
                 .orElseThrow(EntityNoExistException::new);
-    }
+     }
 
     public ProcessResponseDto getByIdProcess(Long id){
         return processRepository.findById(id)

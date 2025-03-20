@@ -27,7 +27,7 @@ public class CandidateSpecification {
             Join<PostulationEntity, VacancyCompanyEntity> vacancyJoin = postulationJoin.join("vacancyCompany", JoinType.LEFT);
             Join<VacancyCompanyEntity, RoleIDEntity> roleJoin = vacancyJoin.join("role", JoinType.LEFT);
             Join<PostulationEntity, ProcessEntity> processJoin = postulationJoin.join("process", JoinType.LEFT);
-            Join<ProcessEntity, CandidatePhasesEntity> phaseJoin = processJoin.join("processPhases", JoinType.LEFT);
+            Join<ProcessEntity, CandidatePhasesEntity> phaseJoin = processJoin.join("candidatePhases", JoinType.LEFT);
             Join<CandidatePhasesEntity, PhaseEntity> phaseTypeJoin = phaseJoin.join("phase", JoinType.LEFT);
             Join<CandidatePhasesEntity, StateEntity> stateJoin = phaseJoin.join("state", JoinType.LEFT);
 

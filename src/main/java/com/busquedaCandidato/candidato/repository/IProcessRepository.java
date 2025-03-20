@@ -1,16 +1,19 @@
 package com.busquedaCandidato.candidato.repository;
 
+import com.busquedaCandidato.candidato.entity.PostulationEntity;
 import com.busquedaCandidato.candidato.entity.ProcessEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface IProcessRepository extends JpaRepository<ProcessEntity, Long> {
     Boolean existsByPostulationId(Long phaseId);
     Boolean existsByCandidatePhasesId(Long phaseId);
     List<ProcessEntity> findByPostulationId(Long id);
+    Optional<ProcessEntity> findByPostulation(PostulationEntity postulation);
 
     @Query("SELECT p FROM ProcessEntity p " +
             "JOIN p.postulation po " +

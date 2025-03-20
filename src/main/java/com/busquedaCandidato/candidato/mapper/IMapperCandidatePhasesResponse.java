@@ -4,9 +4,13 @@ import com.busquedaCandidato.candidato.dto.response.CandidatePhasesResponseDto;
 import com.busquedaCandidato.candidato.entity.CandidatePhasesEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
 public interface IMapperCandidatePhasesResponse {
+
+    IMapperCandidatePhasesResponse INSTANCE = Mappers.getMapper(IMapperCandidatePhasesResponse.class);
+
     @Mapping(source = "process.id", target = "processId")
     @Mapping(source = "phase.id", target = "phaseId")
     @Mapping(source = "phase.name", target = "phaseName")

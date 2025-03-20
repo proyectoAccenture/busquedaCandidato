@@ -4,10 +4,12 @@ import com.busquedaCandidato.candidato.dto.request.RoleIDRequestDto;
 import com.busquedaCandidato.candidato.dto.response.RoleIDResponseDto;
 import com.busquedaCandidato.candidato.entity.RoleIDEntity;
 import com.busquedaCandidato.candidato.exception.type.EntityAlreadyExistsException;
+import com.busquedaCandidato.candidato.exception.type.EntityAlreadyHasRelationException;
 import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
 import com.busquedaCandidato.candidato.mapper.IMapperRoleIDRequest;
 import com.busquedaCandidato.candidato.mapper.IMapperRoleIDResponse;
 import com.busquedaCandidato.candidato.repository.IRoleIDRepository;
+import com.busquedaCandidato.candidato.repository.IVacancyCompanyRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
 public class RoleIDService {
 
     private final IRoleIDRepository roleIDRepository;
+    private final IVacancyCompanyRepository vacancyCompanyRepository;
     private final IMapperRoleIDResponse mapperRolIDResponse;
     private final IMapperRoleIDRequest mapperRolIDRequest;
 
@@ -57,6 +60,10 @@ public class RoleIDService {
     public void deleteRolID(Long id) {
         RoleIDEntity existingRolId = roleIDRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
+
+        if (vacancyCompanyRepository.existsByRoleId(id)) {
+            throw new EntityAlreadyHasRelationException();
+        }
 
         roleIDRepository.delete(existingRolId);
     }

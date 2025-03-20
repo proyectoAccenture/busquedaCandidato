@@ -14,7 +14,8 @@ public enum ExceptionResponse {
     PROCESS_ALREADY_EXIST("It already exist a process of the candidate with that postulation"),
     CANDIDATE_DOES_NOT_EXIST("The candidate does not exist"),
     ROLE_ID_DOES_NOT_EXIST("No role id found"),
-    PHONE_ALREADY_EXISTS("There is already a candidate with that phone"),;
+    PHONE_ALREADY_EXISTS("There is already a candidate with that phone"),
+    IT_HAS_RELATION("This entity already has relation with another entity");
 
 
     private final String message;

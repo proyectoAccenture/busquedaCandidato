@@ -116,6 +116,10 @@ public class GlobalException {
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.PHONE_ALREADY_EXISTS.getMessage()));
     }
 
-
+    @ExceptionHandler(EntityAlreadyHasRelationException.class)
+    public ResponseEntity<Map<String, String>> EntityAlreadyHasRelationException(EntityAlreadyHasRelationException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.IT_HAS_RELATION.getMessage()));
+    }
 }
 

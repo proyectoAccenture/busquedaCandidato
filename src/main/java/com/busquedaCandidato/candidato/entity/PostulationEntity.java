@@ -18,7 +18,7 @@ public class PostulationEntity {
     private Long id;
 
     @Column(nullable = false)
-    private String salaryAspiration;
+    private Long salaryAspiration;
 
     @Column(nullable = false)
     private LocalDate datePresentation;

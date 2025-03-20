@@ -23,7 +23,7 @@ public class VacancyCompanyEntity {
     private String contract;
 
     @Column(nullable = false)
-    private String salary;
+    private Long salary;
 
     @Column(nullable = false)
     private String experience;

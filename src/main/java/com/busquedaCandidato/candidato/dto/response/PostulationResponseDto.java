@@ -16,8 +16,8 @@ public class PostulationResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate datePresentation;
 
-    @Schema(name = "salaryAspiration", description = "the salary you hope to have ", example = "0.000.000")
-    private String salaryAspiration;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "#,###")
+    private Long salaryAspiration;
 
     @Schema(name = "vacancyCompanyId",description = "Id of tha vacancy",example = "1")
     private Long vacancyCompanyId;

@@ -3,6 +3,7 @@ package com.busquedaCandidato.candidato.service;
 import com.busquedaCandidato.candidato.dto.request.PostulationRequestDto;
 import com.busquedaCandidato.candidato.dto.response.PostulationResponseDto;
 import com.busquedaCandidato.candidato.entity.*;
+import com.busquedaCandidato.candidato.exception.type.EntityAlreadyHasRelationException;
 import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
 import com.busquedaCandidato.candidato.mapper.IMapperPostulationResponse;
 import com.busquedaCandidato.candidato.repository.*;
@@ -18,6 +19,7 @@ public class PostulationService {
     private final IPostulationRepository postulationRepository;
     private final IVacancyCompanyRepository vacancyCompanyRepository;
     private final ICandidateRepository candidateRepository;
+    private final IProcessRepository processRepository;
     private final IMapperPostulationResponse mapperPostulationResponse;
 
     public PostulationResponseDto getPostulation(Long id){
@@ -71,6 +73,10 @@ public class PostulationService {
     public void deletePostulation(Long id){
         PostulationEntity existingPostulation = postulationRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
+
+        if (processRepository.existsByPostulationId(id)) {
+            throw new EntityAlreadyHasRelationException();
+        }
 
         postulationRepository.delete(existingPostulation);
     }

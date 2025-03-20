@@ -4,7 +4,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import com.busquedaCandidato.candidato.entity.PhaseEntity;
+import com.busquedaCandidato.candidato.exception.type.EntityAlreadyHasRelationException;
 import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
+import com.busquedaCandidato.candidato.repository.ICandidatePhasesRepository;
+import com.busquedaCandidato.candidato.repository.IVacancyCompanyRepository;
 import org.springframework.stereotype.Service;
 import com.busquedaCandidato.candidato.dto.request.PhaseRequestDto;
 import com.busquedaCandidato.candidato.dto.response.PhaseResponseDto;
@@ -19,6 +22,7 @@ import lombok.AllArgsConstructor;
 public class PhaseService {
 
     private final IPhaseRepository phaseRepository;
+    private final ICandidatePhasesRepository candidatePhasesRepository;
     private final IMapperPhaseResponse mapperPhaseResponse;
     private final IMapperPhaseRequest mapperPhaseRequest;
 
@@ -57,6 +61,10 @@ public class PhaseService {
     public void deletePhase(Long id){
         PhaseEntity existingPhase = phaseRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
+
+        if (candidatePhasesRepository.existsByPhaseId(id)) {
+            throw new EntityAlreadyHasRelationException();
+        }
 
         phaseRepository.delete(existingPhase);
     }

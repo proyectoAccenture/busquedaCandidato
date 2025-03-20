@@ -51,7 +51,7 @@ public class ProcessService {
 
     public ProcessResponseDto saveProcess(ProcessRequestDto processRequestDto) {
 
-        processRepository.findById(processRequestDto.getPostulationId())
+        ProcessEntity processEntity = processRepository.findById(processRequestDto.getPostulationId())
                 .orElseThrow(ProcessAlreadyExistException::new);
 
         PostulationEntity postulationEntity = postulationRepository.findById(processRequestDto.getPostulationId())

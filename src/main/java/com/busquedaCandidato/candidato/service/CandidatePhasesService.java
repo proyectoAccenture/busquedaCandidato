@@ -103,6 +103,10 @@ public class CandidatePhasesService {
         CandidatePhasesEntity existingCandidatePhase = candidatePhasesRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 
+        if (processRepository.existsByCandidatePhasesId(id)) {
+            throw new EntityAlreadyHasRelationException();
+        }
+
         candidatePhasesRepository.delete(existingCandidatePhase);
     }
 

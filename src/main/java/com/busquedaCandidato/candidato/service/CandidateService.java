@@ -113,6 +113,10 @@ public class CandidateService {
         CandidateEntity existingCandidate = candidateRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 
+        if (postulationRepository.existsByCandidateId(id)) {
+            throw new EntityAlreadyHasRelationException();
+        }
+
         candidateRepository.delete(existingCandidate);
     }
 }

@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
 
 @Entity
@@ -18,7 +17,7 @@ public class PostulationEntity {
     private Long id;
 
     @Column(nullable = false)
-    private String salaryAspiration;
+    private Long salaryAspiration;
 
     @Column(nullable = false)
     private LocalDate datePresentation;
@@ -36,5 +35,4 @@ public class PostulationEntity {
 
     @OneToOne(mappedBy = "postulation")
     private ProcessEntity process;
-
 }

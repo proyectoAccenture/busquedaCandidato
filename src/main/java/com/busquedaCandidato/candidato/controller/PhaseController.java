@@ -38,11 +38,10 @@ public class PhaseController {
                             schema = @Schema(implementation = PhaseResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "Phase not found", content = @Content)
     })
-     @GetMapping("/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<PhaseResponseDto> getState(@PathVariable Long id){
-        return phaseService.getPhase(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        PhaseResponseDto phaseResponseDto = phaseService.getPhase(id);
+        return ResponseEntity.ok(phaseResponseDto);
     }
 
     @Operation(summary = "Get all the phase")
@@ -63,7 +62,7 @@ public class PhaseController {
             @ApiResponse(responseCode = "201", description = "Phase created", content = @Content),
             @ApiResponse(responseCode = "409", description = "Phase already exists", content = @Content)
     })
-     @PostMapping("/")
+    @PostMapping("/")
     public ResponseEntity<PhaseResponseDto> savePhase(@Valid @RequestBody PhaseRequestDto phaseRequestDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(phaseService.savePhase(phaseRequestDto));
     }
@@ -89,5 +88,4 @@ public class PhaseController {
         phaseService.deletePhase(id);
         return ResponseEntity.noContent().build();
     }
-
 }

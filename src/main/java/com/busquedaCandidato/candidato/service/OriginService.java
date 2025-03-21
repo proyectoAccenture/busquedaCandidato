@@ -3,7 +3,9 @@ package com.busquedaCandidato.candidato.service;
 import java.util.List;
 import java.util.stream.Collectors;
 import com.busquedaCandidato.candidato.entity.OriginEntity;
+import com.busquedaCandidato.candidato.exception.type.EntityAlreadyHasRelationException;
 import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
+import com.busquedaCandidato.candidato.repository.IVacancyCompanyRepository;
 import org.springframework.stereotype.Service;
 import com.busquedaCandidato.candidato.dto.request.OriginRequestDto;
 import com.busquedaCandidato.candidato.dto.response.OriginResponseDto;
@@ -18,10 +20,11 @@ import lombok.AllArgsConstructor;
 public class OriginService {
 
     private final IOriginRepository originRepository;
+    private final IVacancyCompanyRepository vacancyCompanyRepository;
     private final IMapperOriginResponse mapperOriginResponse;
     private final IMapperOriginRequest mapperOriginRequest;
 
-    public OriginResponseDto getOrigin(Long id){
+    public OriginResponseDto getOriginById(Long id){
         return originRepository.findById(id)
                 .map(mapperOriginResponse::toDto)
                 .orElseThrow(EntityNoExistException::new);
@@ -57,6 +60,10 @@ public class OriginService {
     public void deleteOrigin(Long id){
         OriginEntity existingOrigin = originRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
+
+        if (vacancyCompanyRepository.existsByOriginId(id)) {
+            throw new EntityAlreadyHasRelationException();
+        }
 
         originRepository.delete(existingOrigin);
     }

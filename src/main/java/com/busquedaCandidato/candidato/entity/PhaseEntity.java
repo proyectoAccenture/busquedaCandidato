@@ -17,5 +17,4 @@ public class PhaseEntity {
 
     @Column(unique = true, nullable = false)
     private String name;
-
 }

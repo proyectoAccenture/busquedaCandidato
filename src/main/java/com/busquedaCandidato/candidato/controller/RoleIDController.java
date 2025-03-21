@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/roleid")
+@RequestMapping("/api/role_id")
 @RequiredArgsConstructor
 public class RoleIDController {
 
@@ -72,7 +72,7 @@ public class RoleIDController {
             @ApiResponse(responseCode = "404", description = "Role ID not found", content = @Content)
     })
     @PutMapping("/{id}")
-    public ResponseEntity<RoleIDResponseDto> updateRoleID(@Valid @PathVariable Long id, @RequestBody RoleIDRequestDto rolIDRequestDto){
+    public ResponseEntity<RoleIDResponseDto> updateRoleID(@Valid @PathVariable Long id, @Valid @RequestBody RoleIDRequestDto rolIDRequestDto){
         RoleIDResponseDto updatedRolId = roleIDService.updateRolID(id, rolIDRequestDto);
         return ResponseEntity.ok(updatedRolId);
     }
@@ -87,5 +87,4 @@ public class RoleIDController {
         roleIDService.deleteRolID(id);
         return ResponseEntity.noContent().build();
     }
-
 }

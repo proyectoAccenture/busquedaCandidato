@@ -1,10 +1,11 @@
 package com.busquedaCandidato.candidato.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import com.busquedaCandidato.candidato.entity.PhaseEntity;
+import com.busquedaCandidato.candidato.exception.type.EntityAlreadyHasRelationException;
 import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
+import com.busquedaCandidato.candidato.repository.ICandidatePhasesRepository;
 import org.springframework.stereotype.Service;
 import com.busquedaCandidato.candidato.dto.request.PhaseRequestDto;
 import com.busquedaCandidato.candidato.dto.response.PhaseResponseDto;
@@ -19,12 +20,14 @@ import lombok.AllArgsConstructor;
 public class PhaseService {
 
     private final IPhaseRepository phaseRepository;
+    private final ICandidatePhasesRepository candidatePhasesRepository;
     private final IMapperPhaseResponse mapperPhaseResponse;
     private final IMapperPhaseRequest mapperPhaseRequest;
 
-    public Optional<PhaseResponseDto> getPhase(Long id){
+    public PhaseResponseDto getPhase(Long id){
         return phaseRepository.findById(id)
-                .map(mapperPhaseResponse::toDto );
+                .map(mapperPhaseResponse::toDto)
+                .orElseThrow(EntityNoExistException::new);
     }
 
     public List<PhaseResponseDto> getAllPhase(){
@@ -57,6 +60,10 @@ public class PhaseService {
     public void deletePhase(Long id){
         PhaseEntity existingPhase = phaseRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
+
+        if (candidatePhasesRepository.existsByPhaseId(id)) {
+            throw new EntityAlreadyHasRelationException();
+        }
 
         phaseRepository.delete(existingPhase);
     }

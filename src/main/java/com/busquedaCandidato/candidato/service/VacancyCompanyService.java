@@ -2,16 +2,16 @@ package com.busquedaCandidato.candidato.service;
 
 import com.busquedaCandidato.candidato.dto.request.VacancyCompanyRequestDto;
 import com.busquedaCandidato.candidato.dto.response.VacancyCompanyResponseDto;
-import com.busquedaCandidato.candidato.entity.*;
+import com.busquedaCandidato.candidato.entity.OriginEntity;
+import com.busquedaCandidato.candidato.entity.VacancyCompanyEntity;
+import com.busquedaCandidato.candidato.entity.JobProfileEntity;
+import com.busquedaCandidato.candidato.entity.RoleIDEntity;
 import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
+import com.busquedaCandidato.candidato.exception.type.EntityAlreadyHasRelationException;
 import com.busquedaCandidato.candidato.mapper.IMapperVacancyCompanyResponse;
-import com.busquedaCandidato.candidato.repository.IJobProfileRepository;
-import com.busquedaCandidato.candidato.repository.IOriginRepository;
-import com.busquedaCandidato.candidato.repository.IRoleIDRepository;
-import com.busquedaCandidato.candidato.repository.IVacancyCompanyRepository;
+import com.busquedaCandidato.candidato.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,6 +23,7 @@ public class VacancyCompanyService {
     private final IRoleIDRepository roleIDRepository;
     private final IJobProfileRepository jobProfileRepository;
     private final IOriginRepository originRepository;
+    private final IPostulationRepository postulationRepository;
     private final IMapperVacancyCompanyResponse mapperVacancyCompanyResponse;
 
     public VacancyCompanyResponseDto getVacancyCompany(Long id){
@@ -95,6 +96,10 @@ public class VacancyCompanyService {
     public void deleteVacancyCompany(Long id){
         VacancyCompanyEntity existingVacancyCompany = vacancyCompanyRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
+
+        if (postulationRepository.existsByVacancyCompanyId(id)) {
+            throw new EntityAlreadyHasRelationException();
+        }
 
         vacancyCompanyRepository.delete(existingVacancyCompany);
     }

@@ -1,7 +1,9 @@
 package com.busquedaCandidato.candidato.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,5 +17,4 @@ public class OriginRequestDto {
     @Size(min = 1, max = 250, message = "The origin name must be between 1 and 250 characters")
     @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", message = "The origin name must not contain special characters or numbers")
     private String name;
-
 }

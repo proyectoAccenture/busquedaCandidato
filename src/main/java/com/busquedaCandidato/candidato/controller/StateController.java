@@ -72,7 +72,7 @@ public class StateController {
             @ApiResponse(responseCode = "404", description = "State not found", content = @Content)
     })
     @PutMapping("/{id}")
-    public ResponseEntity<StateResponseDto> updateState(@Valid @PathVariable Long id, @RequestBody StateRequestDto stateRequestDto){
+    public ResponseEntity<StateResponseDto> updateState(@Valid @PathVariable Long id, @Valid @RequestBody StateRequestDto stateRequestDto){
         StateResponseDto updatedState = stateService.updateState(id, stateRequestDto);
         return ResponseEntity.ok(updatedState);
     }

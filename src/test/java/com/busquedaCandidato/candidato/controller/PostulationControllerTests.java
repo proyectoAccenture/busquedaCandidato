@@ -65,10 +65,10 @@ public class PostulationControllerTests {
         JobProfileEntity jobProfile = new JobProfileEntity(null, "Dev Backend");
         JobProfileEntity jobProfileSave = jobProfileRepository.save(jobProfile);
 
-        VacancyCompanyEntity vacancyCompany = new VacancyCompanyEntity(null, "Indefinido", "4.000.000", "5 años", "Mid", "Java, Spring", "Desarrollador Backend", LocalDate.now(), "Indeed", roleSave, jobProfileSave, originSave);
+        VacancyCompanyEntity vacancyCompany = new VacancyCompanyEntity(null, "Indefinido", 300000L, "5 años", "Mid", "Java, Spring", "Desarrollador Backend", LocalDate.now(), "Indeed", roleSave, jobProfileSave, originSave);
         VacancyCompanyEntity vacancySave = vacancyCompanyRepository.save(vacancyCompany);
 
-        PostulationEntity postulation = new PostulationEntity(null, "1.000.000", LocalDate.of(1990, 5, 20), candidateSave, vacancySave);
+        PostulationEntity postulation = new PostulationEntity(null, 1000000L, LocalDate.of(2025, 5, 20), true, candidateSave, vacancySave, null);
         PostulationEntity savedPostulation = postulationRepository.save(postulation);
 
         ResponseEntity<PostulationEntity> response = restTemplate.exchange(
@@ -99,11 +99,11 @@ public class PostulationControllerTests {
         JobProfileEntity jobProfile = new JobProfileEntity(null, "Dev Backend");
         JobProfileEntity jobProfileSave = jobProfileRepository.save(jobProfile);
 
-        VacancyCompanyEntity vacancyCompany = new VacancyCompanyEntity(null, "Indefinido", "4.000.000", "5 años", "Mid", "Java, Spring", "Desarrollador Backend", LocalDate.now(), "Indeed", roleSave, jobProfileSave, originSave);
+        VacancyCompanyEntity vacancyCompany = new VacancyCompanyEntity(null, "Indefinido", 300000L, "5 años", "Mid", "Java, Spring", "Desarrollador Backend", LocalDate.now(), "Indeed", roleSave, jobProfileSave, originSave);
         VacancyCompanyEntity vacancySave = vacancyCompanyRepository.save(vacancyCompany);
 
-        postulationRepository.save(new PostulationEntity(null, "3.500.000",  LocalDate.of(2025, 5, 20), candidateSave, vacancySave));
-        postulationRepository.save(new PostulationEntity(null, "4.000.000",  LocalDate.of(2025, 5, 20), candidateSave, vacancySave));
+        postulationRepository.save(new PostulationEntity(null, 3500000L,  LocalDate.of(2025, 5, 20), true, candidateSave, vacancySave, null));
+        postulationRepository.save(new PostulationEntity(null, 4000000L,  LocalDate.of(2025, 5, 20), true, candidateSave, vacancySave, null));
 
         ResponseEntity<List<PostulationEntity>> response = restTemplate.exchange(
                 "/api/postulation/",
@@ -134,12 +134,12 @@ public class PostulationControllerTests {
         JobProfileEntity jobProfile = new JobProfileEntity(null, "Dev Backend");
         JobProfileEntity jobProfileSave = jobProfileRepository.save(jobProfile);
 
-        VacancyCompanyEntity vacancyCompany = new VacancyCompanyEntity(null, "Indefinido", "4.000.000", "5 años", "Mid", "Java, Spring", "Desarrollador Backend", LocalDate.now(), "Indeed", roleSave, jobProfileSave, originSave);
+        VacancyCompanyEntity vacancyCompany = new VacancyCompanyEntity(null, "Indefinido", 300000L, "5 años", "Mid", "Java, Spring", "Desarrollador Backend", LocalDate.now(), "Indeed", roleSave, jobProfileSave, originSave);
         VacancyCompanyEntity vacancySave = vacancyCompanyRepository.save(vacancyCompany);
 
 
         PostulationRequestDto requestDto = new PostulationRequestDto();
-        requestDto.setSalaryAspiration("3.500.000");
+        requestDto.setSalaryAspiration(3500000L);
         requestDto.setDatePresentation(LocalDate.now());
         requestDto.setVacancyCompanyId(vacancySave.getId());
         requestDto.setCandidateId(candidateSave.getId());
@@ -173,14 +173,14 @@ public class PostulationControllerTests {
         JobProfileEntity jobProfile = new JobProfileEntity(null, "Dev Backend");
         JobProfileEntity jobProfileSave = jobProfileRepository.save(jobProfile);
 
-        VacancyCompanyEntity vacancyCompany = new VacancyCompanyEntity(null, "Indefinido", "4.000.000", "5 años", "Mid", "Java, Spring", "Desarrollador Backend", LocalDate.now(), "Indeed", roleSave, jobProfileSave, originSave);
+        VacancyCompanyEntity vacancyCompany = new VacancyCompanyEntity(null, "Indefinido", 300000L, "5 años", "Mid", "Java, Spring", "Desarrollador Backend", LocalDate.now(), "Indeed", roleSave, jobProfileSave, originSave);
         VacancyCompanyEntity vacancySave = vacancyCompanyRepository.save(vacancyCompany);
 
-        PostulationEntity postulation = new PostulationEntity(null, "1.000.000", LocalDate.of(1990, 5, 20), candidateSave, vacancySave);
+        PostulationEntity postulation = new PostulationEntity(null, 1000000L, LocalDate.of(2025, 5, 20), true, candidateSave, vacancySave, null);
         PostulationEntity savedPostulation = postulationRepository.save(postulation);
 
         PostulationRequestDto requestDto = new PostulationRequestDto();
-        requestDto.setSalaryAspiration("3.500.000");
+        requestDto.setSalaryAspiration(3500000L);
         requestDto.setDatePresentation(LocalDate.now());
         requestDto.setVacancyCompanyId(vacancySave.getId());
         requestDto.setCandidateId(candidateSave.getId());
@@ -213,10 +213,10 @@ public class PostulationControllerTests {
         JobProfileEntity jobProfile = new JobProfileEntity(null, "Dev Backend");
         JobProfileEntity jobProfileSave = jobProfileRepository.save(jobProfile);
 
-        VacancyCompanyEntity vacancyCompany = new VacancyCompanyEntity(null, "Indefinido", "4.000.000", "5 años", "Mid", "Java, Spring", "Desarrollador Backend", LocalDate.now(), "Indeed", roleSave, jobProfileSave, originSave);
+        VacancyCompanyEntity vacancyCompany = new VacancyCompanyEntity(null, "Indefinido", 300000L, "5 años", "Mid", "Java, Spring", "Desarrollador Backend", LocalDate.now(), "Indeed", roleSave, jobProfileSave, originSave);
         VacancyCompanyEntity vacancySave = vacancyCompanyRepository.save(vacancyCompany);
 
-        PostulationEntity postulation = new PostulationEntity(null, "1.000.000", LocalDate.of(1990, 5, 20), candidateSave, vacancySave);
+        PostulationEntity postulation = new PostulationEntity(null, 1000000L, LocalDate.of(2025, 5, 20), true, candidateSave, vacancySave, null);
         PostulationEntity savedPostulation = postulationRepository.save(postulation);
 
         ResponseEntity<Void> response = restTemplate.exchange(

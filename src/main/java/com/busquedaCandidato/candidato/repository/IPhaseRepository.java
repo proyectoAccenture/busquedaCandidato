@@ -5,5 +5,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface IPhaseRepository extends JpaRepository<PhaseEntity,Long> {
     boolean existsByName(String name);
-
 }

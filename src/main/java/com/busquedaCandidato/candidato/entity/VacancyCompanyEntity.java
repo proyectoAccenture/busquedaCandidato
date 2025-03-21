@@ -1,14 +1,11 @@
 package com.busquedaCandidato.candidato.entity;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
 import java.util.List;
-
 
 @Entity
 @AllArgsConstructor
@@ -24,7 +21,7 @@ public class VacancyCompanyEntity {
     private String contract;
 
     @Column(nullable = false)
-    private String salary;
+    private Long salary;
 
     @Column(nullable = false)
     private String experience;
@@ -56,6 +53,4 @@ public class VacancyCompanyEntity {
     @JoinColumn(name = "origin_id", nullable = false)
     private OriginEntity origin;
 
-    @OneToMany(mappedBy = "vacancyCompany", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<PostulationEntity> postulations;
 }

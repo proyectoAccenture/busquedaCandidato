@@ -1,18 +1,16 @@
 package com.busquedaCandidato.candidato.service;
 
 import com.busquedaCandidato.candidato.dto.request.ProcessRequestDto;
+import com.busquedaCandidato.candidato.dto.response.CandidateResponseDto;
 import com.busquedaCandidato.candidato.dto.response.ProcessResponseDto;
-import com.busquedaCandidato.candidato.entity.CandidateEntity;
-import com.busquedaCandidato.candidato.entity.ProcessEntity;
-import com.busquedaCandidato.candidato.entity.PostulationEntity;
+import com.busquedaCandidato.candidato.entity.*;
 import com.busquedaCandidato.candidato.exception.type.*;
 import com.busquedaCandidato.candidato.mapper.IMapperProcessResponse;
-import com.busquedaCandidato.candidato.repository.ICandidateRepository;
-import com.busquedaCandidato.candidato.repository.IPostulationRepository;
-import com.busquedaCandidato.candidato.repository.IProcessRepository;
+import com.busquedaCandidato.candidato.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -23,20 +21,50 @@ public class ProcessService {
     private final IProcessRepository processRepository;
     private final ICandidateRepository candidateRepository;
     private final IPostulationRepository postulationRepository;
+    private final IRoleIDRepository roleIDRepository;
+    private final IVacancyCompanyRepository vacancyCompanyRepository;
     private final IMapperProcessResponse mapperProcessResponse;
 
+    public List<ProcessResponseDto> getProcessOfCandidateByRole(String roleName) {
+
+        RoleIDEntity roleOptional = roleIDRepository.findByName(roleName)
+                .orElseThrow(RoleIdNoExistException::new);
+
+        Long roleId = roleOptional.getId();
+
+        List<VacancyCompanyEntity> vacancies = vacancyCompanyRepository.findByRoleId(roleId);
+
+        List<Long> vacancyIds = vacancies.stream()
+                .map(VacancyCompanyEntity::getId)
+                .toList();
+
+        List<PostulationEntity> postulations = postulationRepository.findByVacancyCompanyIdIn(vacancyIds);
+
+        List<Long> processIds = postulations.stream()
+                .map(PostulationEntity::getProcess)
+                .filter(Objects::nonNull)
+                .map(ProcessEntity::getId)
+                .toList();
+
+        List<ProcessEntity> processes = processRepository.findByIdIn(processIds);
+
+        return processes.stream()
+                .map(mapperProcessResponse::toDto)
+                .collect(Collectors.toList());
+    }
+
     public ProcessResponseDto getProcessByIdCandidate(Long id){
+
+        Boolean postulationEntity = postulationRepository.existsByCandidateId(id);
+
+        if(!postulationEntity){
+            throw new EntityNoExistException();
+        }
 
         CandidateEntity candidateEntity = candidateRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 
-        List<PostulationEntity> postulations = postulationRepository.findByCandidate(candidateEntity);
-
-        if (postulations.isEmpty()) {
-            throw new CandidateNoPostulationException();
-        }
-        PostulationEntity postulation = postulations.get(0);
-        return processRepository.findByPostulation(postulation)
+        return processRepository.findById(candidateEntity.getId())
                 .map(mapperProcessResponse::toDto)
                 .orElseThrow(EntityNoExistException::new);
      }
@@ -56,7 +84,7 @@ public class ProcessService {
     public List<ProcessResponseDto> getProcessByPostulationId(Long postulationId) {
         validateLongId(postulationId);
 
-        List<ProcessEntity> processes = processRepository.findByPostulationId(postulationId);
+        Optional<ProcessEntity> processes = processRepository.findByPostulationId(postulationId);
         validateListProcess(processes);
 
         return processes.stream()
@@ -75,12 +103,15 @@ public class ProcessService {
     }
 
     public ProcessResponseDto saveProcess(ProcessRequestDto processRequestDto) {
-        PostulationEntity postulationEntity = postulationRepository.findById(processRequestDto.getPostulationId())
-                .orElseThrow(CandidateNoPostulationException::new);
 
-        if(postulationEntity != null){
+        Optional<ProcessEntity> existingProcess = processRepository.findByPostulationId(processRequestDto.getPostulationId());
+
+        if (existingProcess.isPresent()) {
             throw new ItAlreadyProcessWithIdPostulation();
         }
+
+        PostulationEntity postulationEntity = postulationRepository.findById(processRequestDto.getPostulationId())
+                .orElseThrow(CandidateNoPostulationException::new);
 
         if(!postulationEntity.getStatus()){
             throw new PostulationIsOffException();
@@ -92,7 +123,6 @@ public class ProcessService {
         newCandidateStatusHistory.setPostulation(postulationEntity);
 
         ProcessEntity processEntitySave = processRepository.save(newCandidateStatusHistory);
-
         return mapperProcessResponse.toDto(processEntitySave);
     }
 
@@ -128,6 +158,12 @@ public class ProcessService {
     }
 
     private void validateListProcess(List<ProcessEntity> processEntities) {
+        if (processEntities.isEmpty()) {
+            throw new ResourceNotFoundException("No processes found for the given search criteria.");
+        }
+    }
+
+    private void validateListProcess(Optional<ProcessEntity> processEntities) {
         if (processEntities.isEmpty()) {
             throw new ResourceNotFoundException("No processes found for the given search criteria.");
         }

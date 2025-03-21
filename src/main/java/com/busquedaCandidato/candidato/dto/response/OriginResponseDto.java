@@ -11,5 +11,4 @@ public class OriginResponseDto {
 
     @Schema(name = "name", description = "Origin name")
     private final String name;
-
 }

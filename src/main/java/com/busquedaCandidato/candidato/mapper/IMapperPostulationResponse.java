@@ -11,6 +11,5 @@ public interface IMapperPostulationResponse {
     @Mapping(source = "vacancyCompany.jobProfile.name", target = "vacancyCompanyName")
     @Mapping(source = "candidate.id", target = "candidateId")
     @Mapping(source = "candidate.name", target = "candidateName")
-    @Mapping(source = "status", target = "status")
     PostulationResponseDto toDto(PostulationEntity postulationEntity);
 }

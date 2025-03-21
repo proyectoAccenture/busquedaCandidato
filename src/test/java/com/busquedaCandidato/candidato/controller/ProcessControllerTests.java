@@ -77,10 +77,10 @@ public class ProcessControllerTests {
         JobProfileEntity jobProfile = new JobProfileEntity(null, "Dev Backend");
         JobProfileEntity jobProfileSave = jobProfileRepository.save(jobProfile);
 
-        VacancyCompanyEntity vacancyCompany = new VacancyCompanyEntity(null, "Indefinido", "4.000.000", "5 años", "Mid", "Java, Spring", "Desarrollador Backend", LocalDate.now(), "Indeed", roleSave, jobProfileSave, originSave);
+        VacancyCompanyEntity vacancyCompany = new VacancyCompanyEntity(null, "Indefinido", 300000L, "5 años", "Mid", "Java, Spring", "Desarrollador Backend", LocalDate.now(), "Indeed", roleSave, jobProfileSave, originSave);
         VacancyCompanyEntity vacancySave = vacancyCompanyRepository.save(vacancyCompany);
 
-        PostulationEntity postulation = new PostulationEntity(null, "1.000.000", LocalDate.of(1990, 5, 20), candidateSave, vacancySave);
+        PostulationEntity postulation = new PostulationEntity(null, 1000000L, LocalDate.of(2025, 5, 20), true, candidateSave, vacancySave, null);
         PostulationEntity savedPostulation = postulationRepository.save(postulation);
 
         PhaseEntity phaseEntity = new PhaseEntity(null, "phase");
@@ -90,7 +90,7 @@ public class ProcessControllerTests {
         StateEntity stateSave = stateRepository.save(stateEntity);
 
         ProcessEntity processEntity = new ProcessEntity(null, "description", LocalDate.of(2025, 1, 20), savedPostulation, new ArrayList<>());
-        ProcessEntity processSave = processRepository.save(processEntity); // Guardar en el repositorio correcto
+        ProcessEntity processSave = processRepository.save(processEntity);
 
         CandidatePhasesEntity candidatePhasesEntity = new CandidatePhasesEntity(null, "description", true, LocalDate.of(2025, 1, 20), phaseSave, stateSave, processSave);
         CandidatePhasesEntity candidatePhasesSave = candidatePhasesRepository.save(candidatePhasesEntity);
@@ -126,14 +126,13 @@ public class ProcessControllerTests {
         JobProfileEntity jobProfile = new JobProfileEntity(null, "Dev Backend");
         JobProfileEntity jobProfileSave = jobProfileRepository.save(jobProfile);
 
-        VacancyCompanyEntity vacancyCompany = new VacancyCompanyEntity(null, "Indefinido", "4.000.000", "5 años", "Mid", "Java, Spring", "Desarrollador Backend", LocalDate.now(), "Indeed", roleSave, jobProfileSave, originSave);
+        VacancyCompanyEntity vacancyCompany = new VacancyCompanyEntity(null, "Indefinido", 300000L, "5 años", "Mid", "Java, Spring", "Desarrollador Backend", LocalDate.now(), "Indeed", roleSave, jobProfileSave, originSave);
         VacancyCompanyEntity vacancySave = vacancyCompanyRepository.save(vacancyCompany);
 
-        PostulationEntity postulation = new PostulationEntity(null, "1.000.000", LocalDate.of(2025, 5, 20), candidateSave, vacancySave);
+        PostulationEntity postulation = new PostulationEntity(null, 1000000L, LocalDate.of(2025, 5, 20), true, candidateSave, vacancySave, null);
         PostulationEntity postulationSave = postulationRepository.save(postulation);
 
         processRepository.save(new ProcessEntity(null, "description1", LocalDate.of(2025, 1, 20), postulationSave, new ArrayList<>()));
-        processRepository.save(new ProcessEntity(null, "description2", LocalDate.of(2025, 1, 21), postulationSave, new ArrayList<>()));
 
         ResponseEntity<List<ProcessResponseDto>> response = restTemplate.exchange(
                 "/api/process/",
@@ -145,7 +144,7 @@ public class ProcessControllerTests {
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals(2, response.getBody().size());
+        assertEquals(1, response.getBody().size());
     }
 
     @Test
@@ -164,10 +163,10 @@ public class ProcessControllerTests {
         JobProfileEntity jobProfile = new JobProfileEntity(null, "Dev Backend");
         JobProfileEntity jobProfileSave = jobProfileRepository.save(jobProfile);
 
-        VacancyCompanyEntity vacancyCompany = new VacancyCompanyEntity(null, "Indefinido", "4.000.000", "5 años", "Mid", "Java, Spring", "Desarrollador Backend", LocalDate.now(), "Indeed", roleSave, jobProfileSave, originSave);
+        VacancyCompanyEntity vacancyCompany = new VacancyCompanyEntity(null, "Indefinido", 4000000L, "5 años", "Mid", "Java, Spring", "Desarrollador Backend", LocalDate.now(), "Indeed", roleSave, jobProfileSave, originSave);
         VacancyCompanyEntity vacancySave = vacancyCompanyRepository.save(vacancyCompany);
 
-        PostulationEntity postulation = new PostulationEntity(null, "1.000.000", LocalDate.of(1990, 5, 20), candidateSave, vacancySave);
+        PostulationEntity postulation = new PostulationEntity(null, 1000000L, LocalDate.of(2025, 5, 20), true, candidateSave, vacancySave, null);
         PostulationEntity savedPostulation = postulationRepository.save(postulation);
 
         PhaseEntity phaseEntity = new PhaseEntity(null, "phase");
@@ -183,7 +182,7 @@ public class ProcessControllerTests {
         CandidatePhasesEntity candidatePhasesSave = candidatePhasesRepository.save(candidatePhasesEntity);
 
         processSave.getCandidatePhases().add(candidatePhasesSave);
-        processSave = processRepository.save(processSave);
+        processRepository.save(processSave);
 
         ProcessRequestDto requestDto = new ProcessRequestDto();
         requestDto.setDescription("3.500.000");
@@ -219,10 +218,10 @@ public class ProcessControllerTests {
         JobProfileEntity jobProfile = new JobProfileEntity(null, "Dev Backend");
         JobProfileEntity jobProfileSave = jobProfileRepository.save(jobProfile);
 
-        VacancyCompanyEntity vacancyCompany = new VacancyCompanyEntity(null, "Indefinido", "4.000.000", "5 años", "Mid", "Java, Spring", "Desarrollador Backend", LocalDate.now(), "Indeed", roleSave, jobProfileSave, originSave);
+        VacancyCompanyEntity vacancyCompany = new VacancyCompanyEntity(null, "Indefinido", 300000L, "5 años", "Mid", "Java, Spring", "Desarrollador Backend", LocalDate.now(), "Indeed", roleSave, jobProfileSave, originSave);
         VacancyCompanyEntity vacancySave = vacancyCompanyRepository.save(vacancyCompany);
 
-        PostulationEntity postulation = new PostulationEntity(null, "1.000.000", LocalDate.of(1990, 5, 20), candidateSave, vacancySave);
+        PostulationEntity postulation = new PostulationEntity(null, 1000000L, LocalDate.of(2025, 5, 20), true, candidateSave, vacancySave, null);
         PostulationEntity savedPostulation = postulationRepository.save(postulation);
 
         ProcessEntity processEntity = new ProcessEntity(null, "Old description", LocalDate.of(2025, 1, 20), savedPostulation, new ArrayList<>());
@@ -263,10 +262,10 @@ public class ProcessControllerTests {
         JobProfileEntity jobProfile = new JobProfileEntity(null, "Dev Backend");
         JobProfileEntity jobProfileSave = jobProfileRepository.save(jobProfile);
 
-        VacancyCompanyEntity vacancyCompany = new VacancyCompanyEntity(null, "Indefinido", "4.000.000", "5 años", "Mid", "Java, Spring", "Desarrollador Backend", LocalDate.now(), "Indeed", roleSave, jobProfileSave, originSave);
+        VacancyCompanyEntity vacancyCompany = new VacancyCompanyEntity(null, "Indefinido", 300000L, "5 años", "Mid", "Java, Spring", "Desarrollador Backend", LocalDate.now(), "Indeed", roleSave, jobProfileSave, originSave);
         VacancyCompanyEntity vacancySave = vacancyCompanyRepository.save(vacancyCompany);
 
-        PostulationEntity postulation = new PostulationEntity(null, "1.000.000", LocalDate.of(1990, 5, 20), candidateSave, vacancySave);
+        PostulationEntity postulation = new PostulationEntity(null, 1000000L, LocalDate.of(2025, 5, 20), true, candidateSave, vacancySave, null);
         PostulationEntity savedPostulation = postulationRepository.save(postulation);
 
         ProcessEntity processEntity = new ProcessEntity(null, "Old description", LocalDate.of(2025, 1, 20), savedPostulation, new ArrayList<>());

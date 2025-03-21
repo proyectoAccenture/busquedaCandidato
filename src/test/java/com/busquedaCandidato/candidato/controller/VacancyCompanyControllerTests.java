@@ -58,7 +58,7 @@ public class VacancyCompanyControllerTests {
         JobProfileEntity jobProfileSave = jobProfileRepository.save(jobProfile);
 
         VacancyCompanyEntity vacancyCompany = vacancyCompanyRepository.save(
-                new VacancyCompanyEntity(null, "Temporal", "2.500.000", "3 años", "Mid", "Python, AWS", "Desarrollador backend", LocalDate.now(), "LinkedIn", roleSave, jobProfileSave, originSave)
+                new VacancyCompanyEntity(null, "Temporal", 2500000L, "3 años", "Mid", "Python, AWS", "Desarrollador backend", LocalDate.now(), "LinkedIn", roleSave, jobProfileSave, originSave)
         );
         ResponseEntity<StateResponseDto> response = restTemplate.exchange(
                 "/api/vacancy_company/" + vacancyCompany.getId(),
@@ -87,8 +87,8 @@ public class VacancyCompanyControllerTests {
         JobProfileEntity jobProfile = new JobProfileEntity(null, "Dev Backend");
         JobProfileEntity jobProfileSave = jobProfileRepository.save(jobProfile);
 
-        vacancyCompanyRepository.save(new VacancyCompanyEntity(null, "Temporal", "2.500.000", "3 años", "Mid", "Python, AWS", "Desarrollador backend", LocalDate.now(), "LinkedIn", roleSave, jobProfileSave, originSave));
-        vacancyCompanyRepository.save(new VacancyCompanyEntity(null, "Indefinido", "4.500.000", "7 años", "Senior", "Java, Spring", "Desarrollador Fullstack", LocalDate.now(), "Indeed", roleSave, jobProfileSave, originSave));
+        vacancyCompanyRepository.save(new VacancyCompanyEntity(null, "Temporal", 2500000L, "3 años", "Mid", "Python, AWS", "Desarrollador backend", LocalDate.now(), "LinkedIn", roleSave, jobProfileSave, originSave));
+        vacancyCompanyRepository.save(new VacancyCompanyEntity(null, "Indefinido", 2500000L, "7 años", "Senior", "Java, Spring", "Desarrollador Fullstack", LocalDate.now(), "Indeed", roleSave, jobProfileSave, originSave));
 
         ResponseEntity<List<VacancyCompanyResponseDto>> response = restTemplate.exchange(
                 "/api/vacancy_company/",
@@ -118,7 +118,7 @@ public class VacancyCompanyControllerTests {
 
         VacancyCompanyRequestDto requestDto = new VacancyCompanyRequestDto();
         requestDto.setContract("Indefinido");
-        requestDto.setSalary("3.200.000");
+        requestDto.setSalary(2500000L);
         requestDto.setExperience("5 años");
         requestDto.setLevel("Senior");
         requestDto.setSkills("Java, AWS, Angular");
@@ -155,12 +155,12 @@ public class VacancyCompanyControllerTests {
         JobProfileEntity jobProfileSave = jobProfileRepository.save(jobProfile);
 
         VacancyCompanyEntity vacancyCompany = vacancyCompanyRepository.save(
-                new VacancyCompanyEntity(null, "Temporal", "2.500.000", "3 años", "Mid", "Python, AWS", "Desarrollador backend", LocalDate.now(), "LinkedIn", roleSave, jobProfileSave, originSave)
+                new VacancyCompanyEntity(null, "Temporal", 2500000L, "3 años", "Mid", "Python, AWS", "Desarrollador backend", LocalDate.now(), "LinkedIn", roleSave, jobProfileSave, originSave)
         );
 
         VacancyCompanyRequestDto updateRequest = new VacancyCompanyRequestDto();
         updateRequest.setContract("Indefinido");
-        updateRequest.setSalary("4.500.000");
+        updateRequest.setSalary(2500000L);
         updateRequest.setExperience("7 años");
         updateRequest.setLevel("Senior");
         updateRequest.setSkills("Java, Spring");
@@ -197,7 +197,7 @@ public class VacancyCompanyControllerTests {
         JobProfileEntity jobProfileSave = jobProfileRepository.save(jobProfile);
 
         VacancyCompanyEntity vacancyCompany = vacancyCompanyRepository.save(
-                new VacancyCompanyEntity(null, "Temporal", "2.500.000", "3 años", "Mid", "Python, AWS", "Desarrollador backend", LocalDate.now(), "LinkedIn", roleSave, jobProfileSave, originSave)
+                new VacancyCompanyEntity(null, "Temporal", 2500000L, "3 años", "Mid", "Python, AWS", "Desarrollador backend", LocalDate.now(), "LinkedIn", roleSave, jobProfileSave, originSave)
         );
 
         ResponseEntity<Void> response = restTemplate.exchange(

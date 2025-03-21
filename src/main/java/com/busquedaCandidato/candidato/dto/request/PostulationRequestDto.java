@@ -2,7 +2,8 @@ package com.busquedaCandidato.candidato.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Min;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -35,5 +36,5 @@ public class PostulationRequestDto {
     private Long candidateId;
 
     @Schema(name = "status", description = "Status of the postulation (true if active, false if closed)", example = "false")
-    private Boolean status = false;
+    private Boolean status;
 }

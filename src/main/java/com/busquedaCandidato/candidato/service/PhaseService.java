@@ -1,13 +1,11 @@
 package com.busquedaCandidato.candidato.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import com.busquedaCandidato.candidato.entity.PhaseEntity;
 import com.busquedaCandidato.candidato.exception.type.EntityAlreadyHasRelationException;
 import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
 import com.busquedaCandidato.candidato.repository.ICandidatePhasesRepository;
-import com.busquedaCandidato.candidato.repository.IVacancyCompanyRepository;
 import org.springframework.stereotype.Service;
 import com.busquedaCandidato.candidato.dto.request.PhaseRequestDto;
 import com.busquedaCandidato.candidato.dto.response.PhaseResponseDto;

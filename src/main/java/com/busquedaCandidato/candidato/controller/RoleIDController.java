@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/roleid")
+@RequestMapping("/api/role_id")
 @RequiredArgsConstructor
 public class RoleIDController {
 
@@ -87,5 +87,4 @@ public class RoleIDController {
         roleIDService.deleteRolID(id);
         return ResponseEntity.noContent().build();
     }
-
 }

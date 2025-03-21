@@ -3,8 +3,19 @@ package com.busquedaCandidato.candidato.service;
 import com.busquedaCandidato.candidato.dto.request.CandidatePhasesRequestDto;
 import com.busquedaCandidato.candidato.dto.request.CandidatePhasesRequestUpdateDto;
 import com.busquedaCandidato.candidato.dto.response.CandidatePhasesResponseDto;
-import com.busquedaCandidato.candidato.entity.*;
-import com.busquedaCandidato.candidato.exception.type.*;
+import com.busquedaCandidato.candidato.entity.PostulationEntity;
+import com.busquedaCandidato.candidato.entity.CandidateEntity;
+import com.busquedaCandidato.candidato.entity.ProcessEntity;
+import com.busquedaCandidato.candidato.entity.PhaseEntity;
+import com.busquedaCandidato.candidato.entity.CandidatePhasesEntity;
+import com.busquedaCandidato.candidato.entity.StateEntity;
+import com.busquedaCandidato.candidato.exception.type.ProcessNoExistException;
+import com.busquedaCandidato.candidato.exception.type.StateNoFoundException;
+import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
+import com.busquedaCandidato.candidato.exception.type.PhaseNoFoundException;
+import com.busquedaCandidato.candidato.exception.type.CannotBeCreateCandidateProcessException;
+import com.busquedaCandidato.candidato.exception.type.EntityAlreadyHasRelationException;
+import com.busquedaCandidato.candidato.exception.type.PostulationProcessException;
 import com.busquedaCandidato.candidato.mapper.IMapperCandidatePhasesResponse;
 import com.busquedaCandidato.candidato.repository.IPhaseRepository;
 import com.busquedaCandidato.candidato.repository.ICandidatePhasesRepository;
@@ -12,7 +23,6 @@ import com.busquedaCandidato.candidato.repository.IProcessRepository;
 import com.busquedaCandidato.candidato.repository.IStateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,13 +43,13 @@ public class CandidatePhasesService {
                 .orElseThrow(ProcessNoExistException::new);
 
         if (processEntity.getPostulation() == null || processEntity.getPostulation().getCandidate() == null) {
-            throw new RuntimeException("Postulación sin candidato asociado");
+            throw new RuntimeException("Postulation within candidate associated");
         }
         CandidateEntity candidate = processEntity.getPostulation().getCandidate();
         PostulationEntity postulation = processEntity.getPostulation();
 
         if (candidatePhasesRepository.existsByCandidateAndPostulationAndProcess(candidate, postulation, processEntity)) {
-            throw new PostulationProcessException("Candidato tie proceso activo en esta postulación.");
+            throw new PostulationProcessException("The candidate has process active in this postulation");
         }
 
         Optional<CandidatePhasesEntity> currentPhaseOptional = candidatePhasesRepository.findTopByProcessOrderByIdDesc(processEntity);
@@ -109,5 +119,4 @@ public class CandidatePhasesService {
 
         candidatePhasesRepository.delete(existingCandidatePhase);
     }
-
 }

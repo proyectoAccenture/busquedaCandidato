@@ -3,7 +3,6 @@ package com.busquedaCandidato.candidato.dto.response;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-
 import java.time.LocalDate;
 
 @Schema(name = "PostulationResponse",description = "Model representing a postulation of the candidate on database")

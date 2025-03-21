@@ -5,8 +5,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -38,13 +38,4 @@ public class CandidatePhasesResponseDto {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate assignedDate;
-
-    @Schema(name = "vacancyId", description = "Id of the vacancy")
-    private Long vacancyId;
-
-    @Schema(name = "roleName", description = "Role name of the vacancy")
-    private String roleName;
-
-    @Schema(name = "companyName", description = "Company associated with the vacancy")
-    private String companyName;
 }

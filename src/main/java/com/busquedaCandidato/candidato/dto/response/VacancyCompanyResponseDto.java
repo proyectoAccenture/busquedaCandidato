@@ -3,7 +3,6 @@ package com.busquedaCandidato.candidato.dto.response;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-
 import java.time.LocalDate;
 
 @Data
@@ -53,5 +52,4 @@ public class VacancyCompanyResponseDto {
 
     @Schema(name = "originName",description = "Name of rol")
     private String originName;
-
 }

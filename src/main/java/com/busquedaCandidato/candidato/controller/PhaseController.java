@@ -1,8 +1,6 @@
 package com.busquedaCandidato.candidato.controller;
 
 import java.util.List;
-
-import com.busquedaCandidato.candidato.dto.response.OriginResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -64,7 +62,7 @@ public class PhaseController {
             @ApiResponse(responseCode = "201", description = "Phase created", content = @Content),
             @ApiResponse(responseCode = "409", description = "Phase already exists", content = @Content)
     })
-     @PostMapping("/")
+    @PostMapping("/")
     public ResponseEntity<PhaseResponseDto> savePhase(@Valid @RequestBody PhaseRequestDto phaseRequestDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(phaseService.savePhase(phaseRequestDto));
     }
@@ -90,5 +88,4 @@ public class PhaseController {
         phaseService.deletePhase(id);
         return ResponseEntity.noContent().build();
     }
-
 }

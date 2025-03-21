@@ -1,15 +1,18 @@
 package com.busquedaCandidato.candidato.service;
 
 import com.busquedaCandidato.candidato.dto.request.CandidateRequestDto;
-import com.busquedaCandidato.candidato.dto.response.CandidatePhasesResponseDto;
 import com.busquedaCandidato.candidato.dto.response.CandidateResponse;
 import com.busquedaCandidato.candidato.dto.response.CandidateResponseDto;
-
 import com.busquedaCandidato.candidato.entity.CandidateEntity;
 import com.busquedaCandidato.candidato.entity.PostulationEntity;
 import com.busquedaCandidato.candidato.entity.RoleIDEntity;
 import com.busquedaCandidato.candidato.entity.VacancyCompanyEntity;
-import com.busquedaCandidato.candidato.exception.type.*;
+import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
+import com.busquedaCandidato.candidato.exception.type.PhoneAlreadyExistException;
+import com.busquedaCandidato.candidato.exception.type.RoleIdNoExistException;
+import com.busquedaCandidato.candidato.exception.type.CandidateNoExistException;
+import com.busquedaCandidato.candidato.exception.type.IdCardAlreadyExistException;
+import com.busquedaCandidato.candidato.exception.type.EntityAlreadyHasRelationException;
 import com.busquedaCandidato.candidato.mapper.IMapperCandidatePhasesResponse;
 import com.busquedaCandidato.candidato.mapper.IMapperCandidateRequest;
 import com.busquedaCandidato.candidato.mapper.IMapperCandidateResponse;
@@ -17,14 +20,11 @@ import com.busquedaCandidato.candidato.repository.ICandidateRepository;
 import com.busquedaCandidato.candidato.repository.IPostulationRepository;
 import com.busquedaCandidato.candidato.repository.IRoleIDRepository;
 import com.busquedaCandidato.candidato.repository.IVacancyCompanyRepository;
-import com.busquedaCandidato.candidato.specification.CandidateSpecification;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -110,45 +110,6 @@ public class CandidateService {
         );
     }
 
-    public List<CandidateResponseDto> getSearchCandidatesByNameOrRoleId(String searchValue) {
-        validationQuery(searchValue);
-        List<CandidateEntity> candidates = candidateRepository.findAll(CandidateSpecification.filterBySingleField(searchValue));
-        validationListCandidate(candidates);
-
-        return candidates.stream().map(candidate -> {
-            List<CandidatePhasesResponseDto> phases = candidate.getPostulations().stream()
-                    .flatMap(postulation -> postulation.getProcess().getCandidatePhases().stream())
-                    .map(phase -> new CandidatePhasesResponseDto(
-                            phase.getId(),
-                            phase.getProcess().getId(),
-                            phase.getPhase().getId(),
-                            phase.getPhase().getName(),
-                            phase.getState().getId(),
-                            phase.getState().getName(),
-                            phase.getStatus(),
-                            phase.getDescription(),
-                            phase.getAssignedDate(),
-                            phase.getProcess().getPostulation().getVacancyCompany().getId(),
-                            phase.getProcess().getPostulation().getVacancyCompany().getRole().getName(),
-                            phase.getProcess().getPostulation().getVacancyCompany().getJobProfile().getName()
-                    ))
-                    .collect(Collectors.toList());
-
-            return new CandidateResponseDto(
-                    candidate.getId(),
-                    candidate.getName(),
-                    candidate.getLastName(),
-                    candidate.getCard(),
-                    candidate.getBirthdate(),
-                    candidate.getRegistrationDate(),
-                    candidate.getPhone(),
-                    candidate.getCity(),
-                    candidate.getEmail(),
-                    phases
-            );
-        }).collect(Collectors.toList());
-    }
-
     public List<CandidateResponseDto> getByNameCandidate(String name){
         List<CandidateEntity> candidateEntities = candidateRepository.findByName(name);
 
@@ -171,28 +132,8 @@ public class CandidateService {
         List<CandidateEntity> candidates = candidateRepository.findAll();
 
         return candidates.stream()
-                .map(candidate -> mapCandidateToResponse(candidate))
+                .map(mapperCandidateResponse::toDto)
                 .collect(Collectors.toList());
-
-
-    }
-    private CandidateResponseDto mapCandidateToResponse(CandidateEntity candidate) {
-        CandidateResponseDto response = mapperCandidateResponse.toDto(candidate);
-
-
-        if (candidate.getPostulations() != null) {
-            List<CandidatePhasesResponseDto> phases = candidate.getPostulations().stream()
-                    .map(PostulationEntity::getProcess)
-                    .filter(Objects::nonNull)
-                    .flatMap(process -> process.getCandidatePhases().stream()) // Obtiene todas las fases
-                    .filter(Objects::nonNull)
-                    .map(phasesMappers::toDto)
-                    .collect(Collectors.toList());
-
-            response.setPhases(phases);
-        }
-
-        return response;
     }
 
     public CandidateResponseDto saveCandidate(CandidateRequestDto candidateRequestDto) {
@@ -235,6 +176,7 @@ public class CandidateService {
 
         candidateRepository.delete(existingCandidate);
     }
+
     private void validationQuery(String query){
         if (query == null || query.trim().isEmpty()) {
             throw new IllegalArgumentException("Search query cannot be empty");

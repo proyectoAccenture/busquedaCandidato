@@ -40,4 +40,5 @@ public class CandidateEntity {
 
     @Column(nullable = false)
     private LocalDate registrationDate;
+
 }

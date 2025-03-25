@@ -30,7 +30,7 @@ public class ProcessControllerTests {
     private TestRestTemplate restTemplate;
 
     @Autowired
-    private ICandidatePhasesRepository candidatePhasesRepository;
+    private ICandidateStateRepository candidatePhasesRepository;
 
     @Autowired
     private IProcessRepository processRepository;
@@ -92,8 +92,8 @@ public class ProcessControllerTests {
         ProcessEntity processEntity = new ProcessEntity(null, "description", LocalDate.of(2025, 1, 20), savedPostulation, new ArrayList<>());
         ProcessEntity processSave = processRepository.save(processEntity);
 
-        CandidatePhasesEntity candidatePhasesEntity = new CandidatePhasesEntity(null, "description", true, LocalDate.of(2025, 1, 20), phaseSave, stateSave, processSave);
-        CandidatePhasesEntity candidatePhasesSave = candidatePhasesRepository.save(candidatePhasesEntity);
+        CandidateStateEntity candidateStateEntity = new CandidateStateEntity(null, "description", true, LocalDate.of(2025, 1, 20), phaseSave, stateSave, processSave);
+        CandidateStateEntity candidatePhasesSave = candidatePhasesRepository.save(candidateStateEntity);
 
         processSave.getCandidatePhases().add(candidatePhasesSave);
         processSave = processRepository.save(processSave);
@@ -178,8 +178,8 @@ public class ProcessControllerTests {
         ProcessEntity processEntity = new ProcessEntity(null, "description", LocalDate.of(2025, 1, 20), savedPostulation, new ArrayList<>());
         ProcessEntity processSave = processRepository.save(processEntity);
 
-        CandidatePhasesEntity candidatePhasesEntity = new CandidatePhasesEntity(null, "description", true, LocalDate.of(2025, 1, 20), phaseSave, stateSave, processSave);
-        CandidatePhasesEntity candidatePhasesSave = candidatePhasesRepository.save(candidatePhasesEntity);
+        CandidateStateEntity candidateStateEntity = new CandidateStateEntity(null, "description", true, LocalDate.of(2025, 1, 20), phaseSave, stateSave, processSave);
+        CandidateStateEntity candidatePhasesSave = candidatePhasesRepository.save(candidateStateEntity);
 
         processSave.getCandidatePhases().add(candidatePhasesSave);
         processRepository.save(processSave);

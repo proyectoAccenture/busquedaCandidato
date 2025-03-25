@@ -15,17 +15,12 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @Schema(name = "CandidatePhasesRequest", description = "Model represent a candidate phases process on database")
-public class CandidatePhasesRequestDto {
+public class CandidateStateRequestDto {
 
     @Schema(name = "processId",description = "Id of process of candidate",example = "1")
     @NotNull(message = "processId cannot be null")
     @Min(value = 1, message = "processId must be greater than 0")
     private Long processId;
-
-    @Schema(name = "phaseId", description = "Id of phaseId", example = "1")
-    @NotNull(message = "PhaseId cannot be null")
-    @Min(value = 1, message = "phaseId must be greater than 0")
-    private Long phaseId;
 
     @Schema(name = "stateId", description = "Id of stateId", example = "1")
     @NotNull(message = "State cannot be null")

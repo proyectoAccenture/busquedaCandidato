@@ -1,9 +1,7 @@
 package com.busquedaCandidato.candidato.controller;
 
-import com.busquedaCandidato.candidato.dto.request.CandidatePhasesRequestDto;
-import com.busquedaCandidato.candidato.dto.request.ProcessRequestDto;
-import com.busquedaCandidato.candidato.dto.response.CandidatePhasesResponseDto;
-import com.busquedaCandidato.candidato.dto.response.ProcessResponseDto;
+import com.busquedaCandidato.candidato.dto.request.CandidateStateRequestDto;
+import com.busquedaCandidato.candidato.dto.response.CandidateStateResponseDto;
 import com.busquedaCandidato.candidato.entity.*;
 import com.busquedaCandidato.candidato.repository.*;
 import com.busquedaCandidato.candidato.service.PostulationService;
@@ -32,7 +30,7 @@ public class CandidatePhasesControllerTests {
     private TestRestTemplate restTemplate;
 
     @Autowired
-    private ICandidatePhasesRepository candidatePhasesRepository;
+    private ICandidateStateRepository candidatePhasesRepository;
 
     @Autowired
     private IProcessRepository processRepository;
@@ -94,10 +92,10 @@ public class CandidatePhasesControllerTests {
         ProcessEntity processEntity = new ProcessEntity(null, "description", LocalDate.of(2025, 1, 20), savedPostulation, new ArrayList<>());
         ProcessEntity processSave = processRepository.save(processEntity);
 
-        CandidatePhasesEntity candidatePhasesEntity = new CandidatePhasesEntity(null, "description", true, LocalDate.of(2025, 1, 20), phaseSave, stateSave, processSave);
-        CandidatePhasesEntity candidatePhasesSave = candidatePhasesRepository.save(candidatePhasesEntity);
+        CandidateStateEntity candidateStateEntity = new CandidateStateEntity(null, "description", true, LocalDate.of(2025, 1, 20), phaseSave, stateSave, processSave);
+        CandidateStateEntity candidatePhasesSave = candidatePhasesRepository.save(candidateStateEntity);
 
-        ResponseEntity<CandidatePhasesResponseDto> response = restTemplate.exchange(
+        ResponseEntity<CandidateStateResponseDto> response = restTemplate.exchange(
                 "/api/candidate_phases/" + candidatePhasesSave.getId(),
                 HttpMethod.GET,
                 null,
@@ -140,11 +138,11 @@ public class CandidatePhasesControllerTests {
         ProcessEntity processEntity = new ProcessEntity(null, "description", LocalDate.of(2025, 1, 20), postulationSave, new ArrayList<>());
         ProcessEntity processSave = processRepository.save(processEntity);
 
-        candidatePhasesRepository.save(new CandidatePhasesEntity(null, "description", true, LocalDate.of(2025, 1, 20), phaseSave, stateSave, processSave));
-        candidatePhasesRepository.save(new CandidatePhasesEntity(null, "description", true, LocalDate.of(2025, 1, 20), phaseSave, stateSave, processSave));
+        candidatePhasesRepository.save(new CandidateStateEntity(null, "description", true, LocalDate.of(2025, 1, 20), phaseSave, stateSave, processSave));
+        candidatePhasesRepository.save(new CandidateStateEntity(null, "description", true, LocalDate.of(2025, 1, 20), phaseSave, stateSave, processSave));
 
 
-        ResponseEntity<List<CandidatePhasesResponseDto>> response = restTemplate.exchange(
+        ResponseEntity<List<CandidateStateResponseDto>> response = restTemplate.exchange(
                 "/api/candidate_phases/",
                 HttpMethod.GET,
                 null,
@@ -188,9 +186,9 @@ public class CandidatePhasesControllerTests {
         ProcessEntity processEntity = new ProcessEntity(null, "description", LocalDate.of(2025, 1, 20), savedPostulation, new ArrayList<>());
         ProcessEntity processSave = processRepository.save(processEntity);
 
-        candidatePhasesRepository.save(new CandidatePhasesEntity(null, "description", true, LocalDate.of(2025, 1, 20), phaseSave, stateSave, processSave));
+        candidatePhasesRepository.save(new CandidateStateEntity(null, "description", true, LocalDate.of(2025, 1, 20), phaseSave, stateSave, processSave));
 
-        CandidatePhasesRequestDto requestDto = new CandidatePhasesRequestDto();
+        CandidateStateRequestDto requestDto = new CandidateStateRequestDto();
         requestDto.setDescription("Description");
         requestDto.setStatus(true);
         requestDto.setAssignedDate(LocalDate.now());
@@ -198,7 +196,7 @@ public class CandidatePhasesControllerTests {
         requestDto.setStateId(stateSave.getId());
         requestDto.setProcessId(processSave.getId());
 
-        ResponseEntity<CandidatePhasesResponseDto> response = restTemplate.exchange(
+        ResponseEntity<CandidateStateResponseDto> response = restTemplate.exchange(
                 "/api/candidate_phases/",
                 HttpMethod.POST,
                 new HttpEntity<>(requestDto),
@@ -242,9 +240,9 @@ public class CandidatePhasesControllerTests {
         StateEntity stateEntity = new StateEntity(null, "state");
         StateEntity stateSave = stateRepository.save(stateEntity);
 
-        CandidatePhasesEntity candidatePhasesEntity = candidatePhasesRepository.save(new CandidatePhasesEntity(null, "description", true, LocalDate.of(2025, 1, 20), phaseSave, stateSave, savedProcess));
+        CandidateStateEntity candidateStateEntity = candidatePhasesRepository.save(new CandidateStateEntity(null, "description", true, LocalDate.of(2025, 1, 20), phaseSave, stateSave, savedProcess));
 
-        CandidatePhasesRequestDto requestDto = new CandidatePhasesRequestDto();
+        CandidateStateRequestDto requestDto = new CandidateStateRequestDto();
         requestDto.setDescription("Description new");
         requestDto.setStatus(true);
         requestDto.setAssignedDate(LocalDate.now());
@@ -252,8 +250,8 @@ public class CandidatePhasesControllerTests {
         requestDto.setStateId(stateSave.getId());
         requestDto.setProcessId(savedProcess.getId());
 
-        ResponseEntity<CandidatePhasesResponseDto> response = restTemplate.exchange(
-                "/api/candidate_phases/" + candidatePhasesEntity.getId(),
+        ResponseEntity<CandidateStateResponseDto> response = restTemplate.exchange(
+                "/api/candidate_phases/" + candidateStateEntity.getId(),
                 HttpMethod.PUT,
                 new HttpEntity<>(requestDto),
                 new ParameterizedTypeReference<>() {}
@@ -296,11 +294,11 @@ public class CandidatePhasesControllerTests {
         StateEntity stateEntity = new StateEntity(null, "state");
         StateEntity stateSave = stateRepository.save(stateEntity);
 
-        CandidatePhasesEntity candidatePhasesEntity = candidatePhasesRepository.save(new CandidatePhasesEntity(null, "description", true, LocalDate.of(2025, 1, 20), phaseSave, stateSave, savedProcess));
+        CandidateStateEntity candidateStateEntity = candidatePhasesRepository.save(new CandidateStateEntity(null, "description", true, LocalDate.of(2025, 1, 20), phaseSave, stateSave, savedProcess));
 
 
         ResponseEntity<Void> response = restTemplate.exchange(
-                "/api/candidate_phases/" + candidatePhasesEntity.getId(),
+                "/api/candidate_phases/" + candidateStateEntity.getId(),
                 HttpMethod.DELETE,
                 null,
                 Void.class

@@ -57,6 +57,7 @@ public class VacancyCompanyService {
         vacancyCompanyEntityNew.setDescription(vacancyCompanyRequestDto.getDescription());
         vacancyCompanyEntityNew.setDatePublication(vacancyCompanyRequestDto.getDatePublication());
         vacancyCompanyEntityNew.setSource(vacancyCompanyRequestDto.getSource());
+        vacancyCompanyEntityNew.setSalaryScale(vacancyCompanyRequestDto.getSalaryScale());
         vacancyCompanyEntityNew.setRole(roleIDEntity);
         vacancyCompanyEntityNew.setJobProfile(jobProfileEntity);
         vacancyCompanyEntityNew.setOrigin(originEntity);
@@ -86,6 +87,7 @@ public class VacancyCompanyService {
         existingEntity.setDescription(vacancyCompanyRequestDto.getDescription());
         existingEntity.setDatePublication(vacancyCompanyRequestDto.getDatePublication());
         existingEntity.setSource(vacancyCompanyRequestDto.getSource());
+        existingEntity.setSalaryScale(vacancyCompanyRequestDto.getSalaryScale());
         existingEntity.setRole(roleIDEntity);
         existingEntity.setJobProfile(jobProfileEntity);
         existingEntity.setOrigin(originEntity);

@@ -73,4 +73,8 @@ public class VacancyCompanyRequestDto {
     @Schema(name = "origin",description = "Id of origin", example = "1")
     @NotNull(message = "origin cannot be null")
     private Long origin;
+
+    @Schema(name= "salaryScale",description = "Salary scale", example = "13")
+    @NotNull(message = "Salary scale cannot be null")
+    private Long salaryScale;
 }

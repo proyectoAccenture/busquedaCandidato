@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @Schema(name = "CandidatePhasesRequestUpdate", description = "The same candidate phases model but only for updating")
-public class CandidatePhasesRequestUpdateDto {
+public class CandidateStateRequestUpdateDto {
 
     @Schema(name = "stateId",description = "Id of state", example = "1")
     @NotNull(message = "state cannot be null")

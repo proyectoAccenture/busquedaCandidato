@@ -1,6 +1,6 @@
 package com.busquedaCandidato.candidato.dto.response;
 
-import com.busquedaCandidato.candidato.entity.CandidatePhasesEntity;
+import com.busquedaCandidato.candidato.entity.CandidateStateEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -27,5 +27,5 @@ public class ProcessResponseDto {
     private LocalDate assignmentDate;
 
     @Schema(name = "ListCandidateProcess",description = "List all phases that is the candidate")
-    private List<CandidatePhasesEntity> candidatePhases;
+    private List<CandidateStateEntity> candidatePhases;
 }

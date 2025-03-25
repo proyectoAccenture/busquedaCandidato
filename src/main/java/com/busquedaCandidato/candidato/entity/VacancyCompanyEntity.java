@@ -41,6 +41,9 @@ public class VacancyCompanyEntity {
     @Column(nullable = false)
     private String source;
 
+    @Column(nullable = false, name = "salary_scale")
+    private Long salaryScale;
+
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     private RoleIDEntity role;

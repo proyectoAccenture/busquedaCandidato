@@ -1,24 +1,21 @@
 package com.busquedaCandidato.candidato.service;
 
-import com.busquedaCandidato.candidato.dto.request.CandidatePhasesRequestDto;
-import com.busquedaCandidato.candidato.dto.request.CandidatePhasesRequestUpdateDto;
-import com.busquedaCandidato.candidato.dto.response.CandidatePhasesResponseDto;
+import com.busquedaCandidato.candidato.dto.request.CandidateStateRequestDto;
+import com.busquedaCandidato.candidato.dto.request.CandidateStateRequestUpdateDto;
+import com.busquedaCandidato.candidato.dto.response.CandidateStateResponseDto;
 import com.busquedaCandidato.candidato.entity.PostulationEntity;
 import com.busquedaCandidato.candidato.entity.CandidateEntity;
 import com.busquedaCandidato.candidato.entity.ProcessEntity;
-import com.busquedaCandidato.candidato.entity.PhaseEntity;
-import com.busquedaCandidato.candidato.entity.CandidatePhasesEntity;
+import com.busquedaCandidato.candidato.entity.CandidateStateEntity;
 import com.busquedaCandidato.candidato.entity.StateEntity;
 import com.busquedaCandidato.candidato.exception.type.ProcessNoExistException;
 import com.busquedaCandidato.candidato.exception.type.StateNoFoundException;
 import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
-import com.busquedaCandidato.candidato.exception.type.PhaseNoFoundException;
 import com.busquedaCandidato.candidato.exception.type.CannotBeCreateCandidateProcessException;
 import com.busquedaCandidato.candidato.exception.type.EntityAlreadyHasRelationException;
 import com.busquedaCandidato.candidato.exception.type.PostulationProcessException;
-import com.busquedaCandidato.candidato.mapper.IMapperCandidatePhasesResponse;
-import com.busquedaCandidato.candidato.repository.IPhaseRepository;
-import com.busquedaCandidato.candidato.repository.ICandidatePhasesRepository;
+import com.busquedaCandidato.candidato.mapper.IMapperCandidateStateResponse;
+import com.busquedaCandidato.candidato.repository.ICandidateStateRepository;
 import com.busquedaCandidato.candidato.repository.IProcessRepository;
 import com.busquedaCandidato.candidato.repository.IStateRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,17 +26,16 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class CandidatePhasesService {
+public class CandidateStateService {
 
     private final IProcessRepository processRepository;
-    private final IPhaseRepository phaseRepository;
     private final IStateRepository stateRepository;
-    private final ICandidatePhasesRepository candidatePhasesRepository;
-    private final IMapperCandidatePhasesResponse mapperCandidatePhasesResponse;
+    private final ICandidateStateRepository candidatePhasesRepository;
+    private final IMapperCandidateStateResponse mapperCandidatePhasesResponse;
 
-    public CandidatePhasesResponseDto addPhaseToProcess(CandidatePhasesRequestDto candidatePhasesRequestDto){
+    public CandidateStateResponseDto addPhaseToProcess(CandidateStateRequestDto candidateStateRequestDto){
 
-        ProcessEntity processEntity = processRepository.findById(candidatePhasesRequestDto.getProcessId())
+        ProcessEntity processEntity = processRepository.findById(candidateStateRequestDto.getProcessId())
                 .orElseThrow(ProcessNoExistException::new);
 
         if (processEntity.getPostulation() == null || processEntity.getPostulation().getCandidate() == null) {
@@ -52,65 +48,61 @@ public class CandidatePhasesService {
             throw new PostulationProcessException("The candidate has process active in this postulation");
         }
 
-        Optional<CandidatePhasesEntity> currentPhaseOptional = candidatePhasesRepository.findTopByProcessOrderByIdDesc(processEntity);
+        Optional<CandidateStateEntity> currentPhaseOptional = candidatePhasesRepository.findTopByProcessOrderByIdDesc(processEntity);
 
         if (currentPhaseOptional.isPresent()) {
-            CandidatePhasesEntity lastCandidatePhases = currentPhaseOptional.get();
+            CandidateStateEntity lastCandidatePhases = currentPhaseOptional.get();
 
             if (!lastCandidatePhases.getStatus()) {
                 throw new CannotBeCreateCandidateProcessException();
             }
         }
 
-        PhaseEntity phaseEntity = phaseRepository.findById(candidatePhasesRequestDto.getPhaseId())
-                .orElseThrow(PhaseNoFoundException::new);
-
-        StateEntity stateEntity = stateRepository.findById(candidatePhasesRequestDto.getStateId())
+        StateEntity stateEntity = stateRepository.findById(candidateStateRequestDto.getStateId())
                 .orElseThrow(StateNoFoundException::new);
 
-        CandidatePhasesEntity newCandidateProcess = new CandidatePhasesEntity();
+        CandidateStateEntity newCandidateProcess = new CandidateStateEntity();
         newCandidateProcess.setProcess(processEntity);
-        newCandidateProcess.setPhase(phaseEntity);
         newCandidateProcess.setState(stateEntity);
-        newCandidateProcess.setDescription(candidatePhasesRequestDto.getDescription());
-        newCandidateProcess.setStatus(candidatePhasesRequestDto.getStatus());
-        newCandidateProcess.setAssignedDate(candidatePhasesRequestDto.getAssignedDate());
+        newCandidateProcess.setDescription(candidateStateRequestDto.getDescription());
+        newCandidateProcess.setStatus(candidateStateRequestDto.getStatus());
+        newCandidateProcess.setAssignedDate(candidateStateRequestDto.getAssignedDate());
 
-        CandidatePhasesEntity savedEntity = candidatePhasesRepository.save(newCandidateProcess);
+        CandidateStateEntity savedEntity = candidatePhasesRepository.save(newCandidateProcess);
         return mapperCandidatePhasesResponse.toDto(savedEntity);
     }
 
-    public CandidatePhasesResponseDto getCandidatePhasesById(Long processId){
-         CandidatePhasesEntity candidatePhases = candidatePhasesRepository.findById(processId)
+    public CandidateStateResponseDto getCandidatePhasesById(Long processId){
+         CandidateStateEntity candidatePhases = candidatePhasesRepository.findById(processId)
                 .orElseThrow(ProcessNoExistException::new);
 
         return mapperCandidatePhasesResponse.toDto(candidatePhases);
     }
 
-    public List<CandidatePhasesResponseDto> getAllCandidatePhases(){
+    public List<CandidateStateResponseDto> getAllCandidatePhases(){
         return candidatePhasesRepository.findAll().stream()
                 .map(mapperCandidatePhasesResponse::toDto)
                 .collect(Collectors.toList());
     }
 
-    public Optional<CandidatePhasesResponseDto> updateCandidatePhases(Long id, CandidatePhasesRequestUpdateDto candidatePhasesRequestUpdateDto) {
-        CandidatePhasesEntity existingEntity  = candidatePhasesRepository.findById(id)
+    public Optional<CandidateStateResponseDto> updateCandidatePhases(Long id, CandidateStateRequestUpdateDto candidateStateRequestUpdateDto) {
+        CandidateStateEntity existingEntity  = candidatePhasesRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 
-        StateEntity newState = stateRepository.findById(candidatePhasesRequestUpdateDto.getStateId())
+        StateEntity newState = stateRepository.findById(candidateStateRequestUpdateDto.getStateId())
                 .orElseThrow(StateNoFoundException::new);
 
         existingEntity.setState(newState);
-        existingEntity.setDescription(candidatePhasesRequestUpdateDto.getDescription());
-        existingEntity.setStatus(candidatePhasesRequestUpdateDto.getStatus());
-        existingEntity.setAssignedDate(candidatePhasesRequestUpdateDto.getAssignedDate());
-        CandidatePhasesEntity updatedEntity = candidatePhasesRepository.save(existingEntity);
+        existingEntity.setDescription(candidateStateRequestUpdateDto.getDescription());
+        existingEntity.setStatus(candidateStateRequestUpdateDto.getStatus());
+        existingEntity.setAssignedDate(candidateStateRequestUpdateDto.getAssignedDate());
+        CandidateStateEntity updatedEntity = candidatePhasesRepository.save(existingEntity);
 
         return Optional.of(mapperCandidatePhasesResponse.toDto(updatedEntity));
     }
 
     public void deleteCandidatePhases(Long id){
-        CandidatePhasesEntity existingCandidatePhase = candidatePhasesRepository.findById(id)
+        CandidateStateEntity existingCandidatePhase = candidatePhasesRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 
         if (processRepository.existsByCandidatePhasesId(id)) {

@@ -11,18 +11,12 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(name = "CandidatePhasesResponse",description = "Model representing a candidate phases process in the database")
-public class CandidatePhasesResponseDto {
+public class CandidateStateResponseDto {
     @Schema(name = "id",defaultValue = "1", description = "Unique Id of the candidate phases process in the database")
     private Long id;
 
     @Schema(name = "processId", description = "Id of process of the candidate")
     private Long processId;
-
-    @Schema(name = "phaseId", description = "Id of phase where is of the candidate")
-    private Long phaseId;
-
-    @Schema(name = "phaseName", description = "Name of phase where is of the candidate")
-    private String phaseName;
 
     @Schema(name = "stateId", description = "Id of state where is of the candidate")
     private Long stateId;

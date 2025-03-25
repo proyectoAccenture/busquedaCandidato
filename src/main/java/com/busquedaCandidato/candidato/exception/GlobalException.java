@@ -6,7 +6,6 @@ import com.busquedaCandidato.candidato.exception.type.ProcessClosedException;
 import com.busquedaCandidato.candidato.exception.type.ProcessNoExistException;
 import com.busquedaCandidato.candidato.exception.type.StateNoFoundException;
 import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
-import com.busquedaCandidato.candidato.exception.type.PhaseNoFoundException;
 import com.busquedaCandidato.candidato.exception.type.ItAlreadyProcessWithIdPostulation;
 import com.busquedaCandidato.candidato.exception.type.CannotApplyException;
 import com.busquedaCandidato.candidato.exception.type.PostulationIsOffException;
@@ -16,7 +15,6 @@ import com.busquedaCandidato.candidato.exception.type.CandidateNoExistException;
 import com.busquedaCandidato.candidato.exception.type.ProcessAlreadyExistException;
 import com.busquedaCandidato.candidato.exception.type.CannotBeCreateCandidateProcessException;
 import com.busquedaCandidato.candidato.exception.type.IdCardAlreadyExistException;
-import com.busquedaCandidato.candidato.exception.type.NotPhasesAssignedException;
 import com.busquedaCandidato.candidato.exception.type.BadRequestException;
 import com.busquedaCandidato.candidato.exception.type.CandidateNoPostulationException;
 import com.busquedaCandidato.candidato.exception.type.EntityAlreadyHasRelationException;
@@ -73,18 +71,6 @@ public class GlobalException {
     public ResponseEntity<Map<String, String>> ProcessClosedException(StateNoFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.STATE_NO_FOUND.getMessage()));
-    }
-
-    @ExceptionHandler(PhaseNoFoundException.class)
-    public ResponseEntity<Map<String, String>> ProcessClosedException(PhaseNoFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.PHASE_NO_FOUND.getMessage()));
-    }
-
-    @ExceptionHandler(NotPhasesAssignedException.class)
-    public ResponseEntity<Map<String, String>> StateAlreadyExistsException(NotPhasesAssignedException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.NOT_PHASES_ASSIGNED.getMessage()));
     }
 
     @ExceptionHandler(IdCardAlreadyExistException.class)

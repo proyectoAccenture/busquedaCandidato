@@ -32,5 +32,5 @@ public class ProcessEntity {
 
     @OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private List<CandidatePhasesEntity> candidatePhases = new ArrayList<>();
+    private List<CandidateStateEntity> candidatePhases = new ArrayList<>();
 }

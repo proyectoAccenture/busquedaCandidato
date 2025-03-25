@@ -35,6 +35,9 @@ public class VacancyCompanyResponseDto {
     @Schema(name = "source", description = "source where the vacancy was launched ")
     private String source;
 
+    @Schema(name = "salaryScale", description = "Salary scale")
+    private Long salaryScale;
+
     @Schema(name = "roleId",description = "Id of role")
     private Long roleId;
 

@@ -1,9 +1,9 @@
 package com.busquedaCandidato.candidato.controller;
 
-import com.busquedaCandidato.candidato.dto.request.CandidatePhasesRequestDto;
-import com.busquedaCandidato.candidato.dto.request.CandidatePhasesRequestUpdateDto;
-import com.busquedaCandidato.candidato.dto.response.CandidatePhasesResponseDto;
-import com.busquedaCandidato.candidato.service.CandidatePhasesService;
+import com.busquedaCandidato.candidato.dto.request.CandidateStateRequestDto;
+import com.busquedaCandidato.candidato.dto.request.CandidateStateRequestUpdateDto;
+import com.busquedaCandidato.candidato.dto.response.CandidateStateResponseDto;
+import com.busquedaCandidato.candidato.service.CandidateStateService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -27,9 +27,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/candidate_phases")
 @RequiredArgsConstructor
-public class CandidatePhasesController {
+public class CandidateStateController {
 
-    private final CandidatePhasesService candidatePhasesService;
+    private final CandidateStateService candidatePhasesService;
 
     @Operation(summary = "Add a new phase to process ")
     @ApiResponses(value = {
@@ -37,33 +37,33 @@ public class CandidatePhasesController {
             @ApiResponse(responseCode = "409", description = "Phase already exists", content = @Content)
     })
     @PostMapping("/")
-    public ResponseEntity<CandidatePhasesResponseDto> saveCandidatePhases(@Valid @RequestBody CandidatePhasesRequestDto candidatePhasesRequestDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(candidatePhasesService.addPhaseToProcess(candidatePhasesRequestDto));
+    public ResponseEntity<CandidateStateResponseDto> saveCandidatePhases(@Valid @RequestBody CandidateStateRequestDto candidateStateRequestDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(candidatePhasesService.addPhaseToProcess(candidateStateRequestDto));
     }
 
     @Operation(summary = "Get a phase by their number")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "phase found",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = CandidatePhasesResponseDto.class))),
+                            schema = @Schema(implementation = CandidateStateResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "phase not found", content = @Content)
     })
     @GetMapping("/{id}")
-    public ResponseEntity<CandidatePhasesResponseDto> getCandidatePhases(@PathVariable Long id) {
-        CandidatePhasesResponseDto candidatePhasesResponseDto = candidatePhasesService.getCandidatePhasesById(id);
-        return ResponseEntity.ok(candidatePhasesResponseDto);
+    public ResponseEntity<CandidateStateResponseDto> getCandidatePhases(@PathVariable Long id) {
+        CandidateStateResponseDto candidateStateResponseDto = candidatePhasesService.getCandidatePhasesById(id);
+        return ResponseEntity.ok(candidateStateResponseDto);
     }
 
     @Operation(summary = "Get all the candidate process")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "All history process returned",
                     content = @Content(mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = CandidatePhasesResponseDto.class)))),
+                            array = @ArraySchema(schema = @Schema(implementation = CandidateStateResponseDto.class)))),
             @ApiResponse(responseCode = "404", description = "No data found", content = @Content)
     })
     @GetMapping("/")
-    public ResponseEntity<List<CandidatePhasesResponseDto>> getAllCandidatePhases(){
-        List<CandidatePhasesResponseDto> states = candidatePhasesService.getAllCandidatePhases();
+    public ResponseEntity<List<CandidateStateResponseDto>> getAllCandidatePhases(){
+        List<CandidateStateResponseDto> states = candidatePhasesService.getAllCandidatePhases();
         return states.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(states);
     }
 
@@ -73,8 +73,8 @@ public class CandidatePhasesController {
             @ApiResponse(responseCode = "404", description = "State not found", content = @Content)
     })
     @PutMapping("/{id}")
-    public ResponseEntity<CandidatePhasesResponseDto> updateCandidatePhases(@Valid @PathVariable Long id, @Valid @RequestBody CandidatePhasesRequestUpdateDto candidatePhasesRequestUpdateDto){
-        return candidatePhasesService.updateCandidatePhases(id, candidatePhasesRequestUpdateDto)
+    public ResponseEntity<CandidateStateResponseDto> updateCandidatePhases(@Valid @PathVariable Long id, @Valid @RequestBody CandidateStateRequestUpdateDto candidateStateRequestUpdateDto){
+        return candidatePhasesService.updateCandidatePhases(id, candidateStateRequestUpdateDto)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }

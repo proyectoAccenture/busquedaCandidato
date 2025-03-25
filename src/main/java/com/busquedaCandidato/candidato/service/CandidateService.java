@@ -13,7 +13,7 @@ import com.busquedaCandidato.candidato.exception.type.RoleIdNoExistException;
 import com.busquedaCandidato.candidato.exception.type.CandidateNoExistException;
 import com.busquedaCandidato.candidato.exception.type.IdCardAlreadyExistException;
 import com.busquedaCandidato.candidato.exception.type.EntityAlreadyHasRelationException;
-import com.busquedaCandidato.candidato.mapper.IMapperCandidatePhasesResponse;
+import com.busquedaCandidato.candidato.mapper.IMapperCandidateStateResponse;
 import com.busquedaCandidato.candidato.mapper.IMapperCandidateRequest;
 import com.busquedaCandidato.candidato.mapper.IMapperCandidateResponse;
 import com.busquedaCandidato.candidato.repository.ICandidateRepository;
@@ -39,7 +39,7 @@ public class CandidateService {
     private final IRoleIDRepository roleIDRepository;
     private final IMapperCandidateResponse mapperCandidateResponse;
     private final IMapperCandidateRequest mapperCandidateRequest;
-    private final IMapperCandidatePhasesResponse phasesMappers;
+    private final IMapperCandidateStateResponse phasesMappers;
 
     public List<CandidateResponseDto> getCandidateByRole(String roleName) {
 

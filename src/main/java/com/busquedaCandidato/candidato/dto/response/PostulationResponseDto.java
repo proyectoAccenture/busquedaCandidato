@@ -28,6 +28,9 @@ public class PostulationResponseDto {
     @Schema(name = "candidateName",description = "Name of candidate that appliqued", example = "1")
     private String candidateName;
 
+    @Schema(name = "candidateLastName",description = "Name of candidate that appliqued", example = "1")
+    private String candidateLastName;
+
     @Schema(name = "status", description = "Status of the postulation (true if active, false if closed)", example = "false")
     private Boolean status;
 }

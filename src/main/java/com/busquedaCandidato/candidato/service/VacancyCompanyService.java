@@ -60,6 +60,7 @@ public class VacancyCompanyService {
         vacancyCompanyEntityNew.setLevel(vacancyCompanyRequestDto.getLevel());
         vacancyCompanyEntityNew.setSeniority(vacancyCompanyRequestDto.getSeniority());
         vacancyCompanyEntityNew.setSkills(vacancyCompanyRequestDto.getSkills());
+        vacancyCompanyEntityNew.setExperience(vacancyCompanyRequestDto.getExperience());
         vacancyCompanyEntityNew.setAssignmentTime(vacancyCompanyRequestDto.getAssignmentTime());
         vacancyCompanyEntityNew.setRole(roleIDEntity);
         vacancyCompanyEntityNew.setJobProfile(jobProfileEntity);
@@ -88,6 +89,7 @@ public class VacancyCompanyService {
         existingEntity.setLevel(vacancyCompanyRequestDto.getLevel());
         existingEntity.setSeniority(vacancyCompanyRequestDto.getSeniority());
         existingEntity.setSkills(vacancyCompanyRequestDto.getSkills());
+        existingEntity.setExperience(vacancyCompanyRequestDto.getExperience());
         existingEntity.setAssignmentTime(vacancyCompanyRequestDto.getAssignmentTime());
         existingEntity.setRole(roleIDEntity);
         existingEntity.setJobProfile(jobProfileEntity);

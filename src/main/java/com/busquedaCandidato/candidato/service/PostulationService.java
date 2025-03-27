@@ -75,7 +75,6 @@ public class PostulationService {
 
         PostulationEntity postulationEntityNew = new PostulationEntity();
         postulationEntityNew.setDatePresentation(postulationRequestDto.getDatePresentation());
-        postulationEntityNew.setSalaryAspiration(postulationRequestDto.getSalaryAspiration());
         postulationEntityNew.setVacancyCompany(vacancyCompanyEntity);
         postulationEntityNew.setCandidate(candidateEntity);
         postulationEntityNew.setStatus(postulationRequestDto.getStatus());
@@ -95,7 +94,6 @@ public class PostulationService {
                 .orElseThrow(EntityNoExistException::new);
 
         existingEntity.setDatePresentation(postulationRequestDto.getDatePresentation());
-        existingEntity.setSalaryAspiration(postulationRequestDto.getSalaryAspiration());
         existingEntity.setVacancyCompany(vacancyCompanyEntity);
         existingEntity.setStatus(postulationRequestDto.getStatus());
         existingEntity.setCandidate(candidateEntity);

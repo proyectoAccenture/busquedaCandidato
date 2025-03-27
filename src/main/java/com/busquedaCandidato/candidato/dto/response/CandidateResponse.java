@@ -2,7 +2,6 @@ package com.busquedaCandidato.candidato.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-
 import java.util.List;
 
 @Data

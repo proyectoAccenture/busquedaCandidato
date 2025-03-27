@@ -1,7 +1,14 @@
 package com.busquedaCandidato.candidato.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,8 +18,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Table(name = "candidate_phases")
-public class CandidatePhasesEntity {
+@Table(name = "candidate_state")
+public class CandidateStateEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,10 +32,6 @@ public class CandidatePhasesEntity {
 
     @Column(nullable = false)
     private LocalDate assignedDate;
-
-    @ManyToOne
-    @JoinColumn(name = "phase_id", nullable = false)
-    private PhaseEntity phase;
 
     @ManyToOne
     @JoinColumn(name = "state_id", nullable = false)

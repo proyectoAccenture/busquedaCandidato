@@ -5,7 +5,6 @@ import com.busquedaCandidato.candidato.dto.response.JobProfileResponseDto;
 import com.busquedaCandidato.candidato.entity.JobProfileEntity;
 import com.busquedaCandidato.candidato.repository.IJobProfileRepository;
 import com.busquedaCandidato.candidato.service.JobProfileService;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -23,7 +22,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY) // Usa H2 para pruebas
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 public class JobProfileControllerTests {
 
     @Autowired
@@ -48,7 +47,6 @@ public class JobProfileControllerTests {
                 new ParameterizedTypeReference<>() {}
         );
 
-        // Verificar respuestas
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());

@@ -30,7 +30,7 @@ public class StateController {
 
     private final StateService stateService;
 
-    @Operation(summary = "Get a state by their Number")
+    @Operation(summary = "Get a state by its Number")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "State found",
                             content = @Content(mediaType = "application/json",
@@ -38,7 +38,7 @@ public class StateController {
             @ApiResponse(responseCode = "404", description = "State not found", content = @Content)
     })
     @GetMapping("/{id}")
-    public ResponseEntity<StateResponseDto> getState(@PathVariable Long id){
+    public ResponseEntity<StateResponseDto> getByIdState(@PathVariable Long id){
         StateResponseDto stateResponseDto  = stateService.getState(id);
         return ResponseEntity.ok(stateResponseDto);
     }
@@ -77,7 +77,7 @@ public class StateController {
         return ResponseEntity.ok(updatedState);
     }
 
-    @Operation(summary = "Delete a state by their Number")
+    @Operation(summary = "Delete a state by its Number")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "State deleted", content = @Content),
             @ApiResponse(responseCode = "404", description = "State not found", content = @Content)

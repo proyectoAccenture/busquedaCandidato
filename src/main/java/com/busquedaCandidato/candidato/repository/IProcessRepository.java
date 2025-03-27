@@ -1,17 +1,16 @@
 package com.busquedaCandidato.candidato.repository;
 
-import com.busquedaCandidato.candidato.entity.CandidateEntity;
-import com.busquedaCandidato.candidato.entity.PostulationEntity;
 import com.busquedaCandidato.candidato.entity.ProcessEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
 import java.util.List;
 import java.util.Optional;
 
 public interface IProcessRepository extends JpaRepository<ProcessEntity, Long> {
-    Boolean existsByPostulationId(Long phaseId);
-    Boolean existsByCandidatePhasesId(Long phaseId);
+    Boolean existsByPostulationId(Long postulationId);
+    Boolean existsByCandidateStateId(Long candidateStateId);
     Optional<ProcessEntity> findByPostulationId(Long id);
     List<ProcessEntity> findByIdIn(List<Long> processId);
 

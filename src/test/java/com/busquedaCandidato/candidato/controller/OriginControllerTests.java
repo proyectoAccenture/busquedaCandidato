@@ -23,7 +23,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY) // Usa H2
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 public class OriginControllerTests {
     @Autowired
     private TestRestTemplate restTemplate;

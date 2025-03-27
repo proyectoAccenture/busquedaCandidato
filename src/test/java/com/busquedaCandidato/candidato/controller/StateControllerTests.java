@@ -16,13 +16,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
-
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY) // Usa H2
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 public class StateControllerTests {
     @Autowired
     private TestRestTemplate restTemplate;
@@ -46,7 +44,6 @@ public class StateControllerTests {
                 new ParameterizedTypeReference<>() {}
         );
 
-        // Verificar respuestas
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
@@ -60,7 +57,6 @@ public class StateControllerTests {
         stateRepository.save(new StateEntity(null, "En prueba tecnica"));
         stateRepository.save(new StateEntity(null, "Pasó prueba tecnica"));
 
-        // Realizar la petición GET a /state
         ResponseEntity<List<StateResponseDto>> response = restTemplate.exchange(
                 "/api/state/",
                 HttpMethod.GET,
@@ -121,7 +117,6 @@ public class StateControllerTests {
     @Test
     @DirtiesContext
     void delete_state_should_return_204() {
-        // Guardar estado inicial
         StateEntity stateEntity = stateRepository.save(new StateEntity(null, "Asignacion salarial"));
 
         ResponseEntity<Void> response = restTemplate.exchange(

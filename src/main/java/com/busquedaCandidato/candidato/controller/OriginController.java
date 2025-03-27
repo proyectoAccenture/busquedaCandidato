@@ -30,7 +30,7 @@ public class OriginController {
 
      private final OriginService originService;
 
-    @Operation(summary = "Get a origin by their Number")
+    @Operation(summary = "Get a origin by its number")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Origin found",
                             content = @Content(mediaType = "application/json",
@@ -38,7 +38,7 @@ public class OriginController {
             @ApiResponse(responseCode = "404", description = "Origin not found", content = @Content)
     })
     @GetMapping("/{id}")
-    public ResponseEntity<OriginResponseDto> getOrigin(@PathVariable Long id) {
+    public ResponseEntity<OriginResponseDto> getByIdOrigin(@PathVariable Long id) {
         OriginResponseDto originResponseDto = originService.getOriginById(id);
         return ResponseEntity.ok(originResponseDto);
     }
@@ -77,7 +77,7 @@ public class OriginController {
          return ResponseEntity.ok(updatedOrigin);
     }
 
-    @Operation(summary = "Delete a origin by their Number")
+    @Operation(summary = "Delete a origin by its Number")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Origin deleted", content = @Content),
             @ApiResponse(responseCode = "404", description = "Origin not found", content = @Content)

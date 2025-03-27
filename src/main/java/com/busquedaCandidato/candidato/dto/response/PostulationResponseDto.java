@@ -3,6 +3,7 @@ package com.busquedaCandidato.candidato.dto.response;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+
 import java.time.LocalDate;
 
 @Schema(name = "PostulationResponse",description = "Model representing a postulation of the candidate on database")
@@ -14,9 +15,6 @@ public class PostulationResponseDto {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate datePresentation;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "#,###")
-    private Long salaryAspiration;
 
     @Schema(name = "vacancyCompanyId",description = "Id of tha vacancy",example = "1")
     private Long vacancyCompanyId;

@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
 import java.util.List;
 
 public interface ICandidateRepository extends JpaRepository<CandidateEntity, Long>{
@@ -22,7 +23,7 @@ public interface ICandidateRepository extends JpaRepository<CandidateEntity, Lon
             "OR LOWER(c.city) LIKE LOWER(CONCAT('%', :query, '%')) " +
             "OR LOWER(c.email) LIKE LOWER(CONCAT('%', :query, '%')) " +
             "OR CAST(c.birthdate AS string) LIKE CONCAT('%', :query, '%') " +
-            "OR CAST(c.registrationDate AS string) LIKE CONCAT('%', :query, '%')")
+            "OR CAST(c.datePresentation AS string) LIKE CONCAT('%', :query, '%')")
     Page<CandidateEntity> searchCandidates(@Param("query") String query, Pageable pageable);
 
     @Query("SELECT c FROM CandidateEntity c " +

@@ -8,7 +8,7 @@ import com.busquedaCandidato.candidato.exception.type.EntityAlreadyHasRelationEx
 import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
 import com.busquedaCandidato.candidato.mapper.IMapperStateRequest;
 import com.busquedaCandidato.candidato.mapper.IMapperStateResponse;
-import com.busquedaCandidato.candidato.repository.ICandidatePhasesRepository;
+import com.busquedaCandidato.candidato.repository.ICandidateStateRepository;
 import com.busquedaCandidato.candidato.repository.IStateRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class StateService {
 
     private final IStateRepository stateRepository;
-    private final ICandidatePhasesRepository candidatePhasesRepository;
+    private final ICandidateStateRepository candidateStateRepository;
     private final IMapperStateResponse mapperStateResponse;
     private final IMapperStateRequest mapperStateRequest;
 
@@ -61,7 +61,7 @@ public class StateService {
         StateEntity existingState = stateRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 
-        if (candidatePhasesRepository.existsByStateId(id)) {
+        if (candidateStateRepository.existsByStateId(id)) {
             throw new EntityAlreadyHasRelationException();
         }
 

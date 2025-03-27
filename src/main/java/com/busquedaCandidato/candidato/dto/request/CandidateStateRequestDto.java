@@ -3,29 +3,25 @@ package com.busquedaCandidato.candidato.dto.request;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
-@Schema(name = "CandidatePhasesRequest", description = "Model represent a candidate phases process on database")
-public class CandidatePhasesRequestDto {
+@Schema(name = "CandidateStateRequest", description = "Model represent a candidate state process on database")
+public class CandidateStateRequestDto {
 
     @Schema(name = "processId",description = "Id of process of candidate",example = "1")
     @NotNull(message = "processId cannot be null")
     @Min(value = 1, message = "processId must be greater than 0")
     private Long processId;
-
-    @Schema(name = "phaseId", description = "Id of phaseId", example = "1")
-    @NotNull(message = "PhaseId cannot be null")
-    @Min(value = 1, message = "phaseId must be greater than 0")
-    private Long phaseId;
 
     @Schema(name = "stateId", description = "Id of stateId", example = "1")
     @NotNull(message = "State cannot be null")

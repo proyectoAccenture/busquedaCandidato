@@ -45,7 +45,7 @@ public class ProcessController {
         return ResponseEntity.ok(processCandidateList);
     }
 
-    @Operation(summary = "Get a process by their Number of postulation")
+    @Operation(summary = "Get a process by its number of the candidate")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "ProcessEntity found",
                     content = @Content(mediaType = "application/json",
@@ -58,7 +58,7 @@ public class ProcessController {
         return ResponseEntity.ok(processResponseDto );
     }
 
-    @Operation(summary = "Get a process by their Number")
+    @Operation(summary = "Get a process by its number")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "ProcessEntity found",
                     content = @Content(mediaType = "application/json",
@@ -133,7 +133,7 @@ public class ProcessController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "Delete a process by their Number")
+    @Operation(summary = "Delete a process by its Number")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "process deleted", content = @Content),
             @ApiResponse(responseCode = "404", description = "process not found", content = @Content)

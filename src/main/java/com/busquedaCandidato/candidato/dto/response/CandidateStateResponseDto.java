@@ -5,24 +5,19 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(name = "CandidatePhasesResponse",description = "Model representing a candidate phases process in the database")
-public class CandidatePhasesResponseDto {
-    @Schema(name = "id",defaultValue = "1", description = "Unique Id of the candidate phases process in the database")
+@Schema(name = "CandidateStateResponse",description = "Model representing a candidate state process in the database")
+public class CandidateStateResponseDto {
+    @Schema(name = "id",defaultValue = "1", description = "Unique Id of the candidate state process in the database")
     private Long id;
 
     @Schema(name = "processId", description = "Id of process of the candidate")
     private Long processId;
-
-    @Schema(name = "phaseId", description = "Id of phase where is of the candidate")
-    private Long phaseId;
-
-    @Schema(name = "phaseName", description = "Name of phase where is of the candidate")
-    private String phaseName;
 
     @Schema(name = "stateId", description = "Id of state where is of the candidate")
     private Long stateId;

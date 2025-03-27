@@ -16,15 +16,15 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
@@ -33,7 +33,7 @@ import java.util.List;
 public class CandidateController {
     private final CandidateService candidateService;
 
-    @Operation(summary = "Get a candidate by their role id")
+    @Operation(summary = "Get a candidate by its role id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Candidate found",
                     content = @Content(mediaType = "application/json",
@@ -46,7 +46,7 @@ public class CandidateController {
         return ResponseEntity.ok(candidates);
     }
 
-    @Operation(summary = "Get a candidate by their number")
+    @Operation(summary = "Get a candidate by its number")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Candidate found",
                     content = @Content(mediaType = "application/json",
@@ -59,7 +59,7 @@ public class CandidateController {
         return ResponseEntity.ok(candidate);
     }
 
-    @Operation(summary = "Get a candidate by their name")
+    @Operation(summary = "Get a candidate by its name")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Candidate found",
                     content = @Content(mediaType = "application/json",
@@ -140,7 +140,7 @@ public class CandidateController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "Delete a candidate by their Number")
+    @Operation(summary = "Delete a candidate by its Number")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Candidate deleted", content = @Content),
             @ApiResponse(responseCode = "404", description = "Candidate not found", content = @Content)

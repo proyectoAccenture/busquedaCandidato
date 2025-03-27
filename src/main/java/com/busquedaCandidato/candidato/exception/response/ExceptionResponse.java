@@ -5,8 +5,6 @@ public enum ExceptionResponse {
     PROCESS_NO_EXIST("There is not process with this id"),
     PROCESS_CLOSED("This process is closed"),
     STATE_NO_FOUND("State has not been found"),
-    PHASE_NO_FOUND("Phase has not been found"),
-    NOT_PHASES_ASSIGNED("There are not phases assigned to this process"),
     ID_CARD_ALREADY_EXISTS("There is already a id card with that number"),
     CANNOT_BE_CREATED_CANDIDATE_PROCESS("the candidate process cannot be create because the post status is false"),
     ENTITY_DOES_NOT_EXIST("There is no entity with that identification"),
@@ -19,7 +17,8 @@ public enum ExceptionResponse {
     POSTULATION_IS_OFF("The postulation must be in true"),
     CANNOT_APPLY("You cannot apply, as the application is inactive"),
     IT_ALREADY_EXIST_POSTULATION("You have already submitted an active application"),
-    IT_ALREADY_PROCESS_POSTULATION("There is already a process with that id postulation");
+    IT_ALREADY_PROCESS_POSTULATION("There is already a process with that id postulation"),
+    ERROR_CLIENT("Error client");
 
     private final String message;
 

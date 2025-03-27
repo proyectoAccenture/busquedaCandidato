@@ -38,7 +38,7 @@ public class VacancyCompanyController {
             @ApiResponse(responseCode = "404", description = "Candidate not found", content = @Content)
     })
     @GetMapping("/{id}")
-    public ResponseEntity<VacancyCompanyResponseDto> getVacancy(@PathVariable Long id){
+    public ResponseEntity<VacancyCompanyResponseDto> getBtIdVacancy(@PathVariable Long id){
         VacancyCompanyResponseDto vacancyCompanyResponseDto  = vacancyCompanyService.getVacancyCompany(id);
         return ResponseEntity.ok(vacancyCompanyResponseDto);
     }
@@ -72,7 +72,7 @@ public class VacancyCompanyController {
             @ApiResponse(responseCode = "404", description = "Vacancy not found", content = @Content)
     })
     @PutMapping("/{id}")
-    public ResponseEntity<VacancyCompanyResponseDto> updateCandidate(@Valid @PathVariable Long id, @Valid @RequestBody VacancyCompanyRequestDto vacancyCompanyRequestDto){
+    public ResponseEntity<VacancyCompanyResponseDto> updateVacancy(@Valid @PathVariable Long id, @Valid @RequestBody VacancyCompanyRequestDto vacancyCompanyRequestDto){
         return vacancyCompanyService.updateVacancyCompany(id, vacancyCompanyRequestDto)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());

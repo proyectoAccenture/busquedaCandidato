@@ -32,7 +32,7 @@ public class PostulationController {
 
     private final PostulationService postulationService;
 
-    @Operation(summary = "Get a postulation by their Number")
+    @Operation(summary = "Get a postulation by its Number")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Postulation found",
                     content = @Content(mediaType = "application/json",
@@ -40,7 +40,7 @@ public class PostulationController {
             @ApiResponse(responseCode = "404", description = "Postulation not found", content = @Content)
     })
     @GetMapping("/{id}")
-    public ResponseEntity<PostulationResponseDto> getPostulation(@PathVariable Long id){
+    public ResponseEntity<PostulationResponseDto> getByIdPostulation(@PathVariable Long id){
         PostulationResponseDto getByIdPostulation = postulationService.getPostulation(id);
         return ResponseEntity.ok(getByIdPostulation);
     }
@@ -92,7 +92,7 @@ public class PostulationController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "Delete a postulation by their Number")
+    @Operation(summary = "Delete a postulation by its Number")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Postulation deleted", content = @Content),
             @ApiResponse(responseCode = "404", description = "Postulation not found", content = @Content)

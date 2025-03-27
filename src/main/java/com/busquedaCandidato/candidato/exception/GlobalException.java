@@ -141,13 +141,6 @@ public class GlobalException {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, String>> handleGeneralException(Exception ex) {
-        Map<String, String> response = new HashMap<>();
-        response.put("error", "Error interno del servidor: " + ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
     @ExceptionHandler(EntityAlreadyHasRelationException.class)
     public ResponseEntity<Map<String, String>> EntityAlreadyHasRelationException(EntityAlreadyHasRelationException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)

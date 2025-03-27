@@ -9,9 +9,14 @@ import com.busquedaCandidato.candidato.entity.RoleIDEntity;
 import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
 import com.busquedaCandidato.candidato.exception.type.EntityAlreadyHasRelationException;
 import com.busquedaCandidato.candidato.mapper.IMapperVacancyCompanyResponse;
-import com.busquedaCandidato.candidato.repository.*;
+import com.busquedaCandidato.candidato.repository.IVacancyCompanyRepository;
+import com.busquedaCandidato.candidato.repository.IRoleIDRepository;
+import com.busquedaCandidato.candidato.repository.IJobProfileRepository;
+import com.busquedaCandidato.candidato.repository.IOriginRepository;
+import com.busquedaCandidato.candidato.repository.IPostulationRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -49,15 +54,13 @@ public class VacancyCompanyService {
                 .orElseThrow(EntityNoExistException::new);
 
         VacancyCompanyEntity vacancyCompanyEntityNew = new VacancyCompanyEntity();
+        vacancyCompanyEntityNew.setDescription(vacancyCompanyRequestDto.getDescription());
         vacancyCompanyEntityNew.setContract(vacancyCompanyRequestDto.getContract());
         vacancyCompanyEntityNew.setSalary(vacancyCompanyRequestDto.getSalary());
-        vacancyCompanyEntityNew.setExperience(vacancyCompanyRequestDto.getExperience());
         vacancyCompanyEntityNew.setLevel(vacancyCompanyRequestDto.getLevel());
+        vacancyCompanyEntityNew.setSeniority(vacancyCompanyRequestDto.getSeniority());
         vacancyCompanyEntityNew.setSkills(vacancyCompanyRequestDto.getSkills());
-        vacancyCompanyEntityNew.setDescription(vacancyCompanyRequestDto.getDescription());
-        vacancyCompanyEntityNew.setDatePublication(vacancyCompanyRequestDto.getDatePublication());
-        vacancyCompanyEntityNew.setSource(vacancyCompanyRequestDto.getSource());
-        vacancyCompanyEntityNew.setSalaryScale(vacancyCompanyRequestDto.getSalaryScale());
+        vacancyCompanyEntityNew.setAssignmentTime(vacancyCompanyRequestDto.getAssignmentTime());
         vacancyCompanyEntityNew.setRole(roleIDEntity);
         vacancyCompanyEntityNew.setJobProfile(jobProfileEntity);
         vacancyCompanyEntityNew.setOrigin(originEntity);
@@ -79,15 +82,13 @@ public class VacancyCompanyService {
         OriginEntity originEntity = originRepository.findById(vacancyCompanyRequestDto.getOrigin())
                 .orElseThrow(EntityNoExistException::new);
 
+        existingEntity.setDescription(vacancyCompanyRequestDto.getDescription());
         existingEntity.setContract(vacancyCompanyRequestDto.getContract());
         existingEntity.setSalary(vacancyCompanyRequestDto.getSalary());
-        existingEntity.setExperience(vacancyCompanyRequestDto.getExperience());
         existingEntity.setLevel(vacancyCompanyRequestDto.getLevel());
+        existingEntity.setSeniority(vacancyCompanyRequestDto.getSeniority());
         existingEntity.setSkills(vacancyCompanyRequestDto.getSkills());
-        existingEntity.setDescription(vacancyCompanyRequestDto.getDescription());
-        existingEntity.setDatePublication(vacancyCompanyRequestDto.getDatePublication());
-        existingEntity.setSource(vacancyCompanyRequestDto.getSource());
-        existingEntity.setSalaryScale(vacancyCompanyRequestDto.getSalaryScale());
+        existingEntity.setAssignmentTime(vacancyCompanyRequestDto.getAssignmentTime());
         existingEntity.setRole(roleIDEntity);
         existingEntity.setJobProfile(jobProfileEntity);
         existingEntity.setOrigin(originEntity);

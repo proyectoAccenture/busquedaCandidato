@@ -4,19 +4,21 @@ import com.busquedaCandidato.candidato.dto.request.CandidateRequestDto;
 import com.busquedaCandidato.candidato.dto.response.CandidateResponse;
 import com.busquedaCandidato.candidato.dto.response.CandidateResponseDto;
 import com.busquedaCandidato.candidato.entity.CandidateEntity;
+import com.busquedaCandidato.candidato.entity.JobProfileEntity;
+import com.busquedaCandidato.candidato.entity.OriginEntity;
 import com.busquedaCandidato.candidato.entity.PostulationEntity;
 import com.busquedaCandidato.candidato.entity.RoleIDEntity;
 import com.busquedaCandidato.candidato.entity.VacancyCompanyEntity;
+import com.busquedaCandidato.candidato.exception.type.CandidateNoExistException;
+import com.busquedaCandidato.candidato.exception.type.EntityAlreadyHasRelationException;
 import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
+import com.busquedaCandidato.candidato.exception.type.IdCardAlreadyExistException;
 import com.busquedaCandidato.candidato.exception.type.PhoneAlreadyExistException;
 import com.busquedaCandidato.candidato.exception.type.RoleIdNoExistException;
-import com.busquedaCandidato.candidato.exception.type.CandidateNoExistException;
-import com.busquedaCandidato.candidato.exception.type.IdCardAlreadyExistException;
-import com.busquedaCandidato.candidato.exception.type.EntityAlreadyHasRelationException;
-import com.busquedaCandidato.candidato.mapper.IMapperCandidateStateResponse;
-import com.busquedaCandidato.candidato.mapper.IMapperCandidateRequest;
 import com.busquedaCandidato.candidato.mapper.IMapperCandidateResponse;
 import com.busquedaCandidato.candidato.repository.ICandidateRepository;
+import com.busquedaCandidato.candidato.repository.IJobProfileRepository;
+import com.busquedaCandidato.candidato.repository.IOriginRepository;
 import com.busquedaCandidato.candidato.repository.IPostulationRepository;
 import com.busquedaCandidato.candidato.repository.IRoleIDRepository;
 import com.busquedaCandidato.candidato.repository.IVacancyCompanyRepository;
@@ -37,9 +39,9 @@ public class CandidateService {
     private final IVacancyCompanyRepository vacancyCompanyRepository;
     private final IPostulationRepository postulationRepository;
     private final IRoleIDRepository roleIDRepository;
+    private final IJobProfileRepository jobProfileRepository;
+    private final IOriginRepository originRepository;
     private final IMapperCandidateResponse mapperCandidateResponse;
-    private final IMapperCandidateRequest mapperCandidateRequest;
-    private final IMapperCandidateStateResponse phasesMappers;
 
     public List<CandidateResponseDto> getCandidateByRole(String roleName) {
 
@@ -145,9 +147,32 @@ public class CandidateService {
             throw new PhoneAlreadyExistException();
         }
 
-        CandidateEntity candidateEntity = mapperCandidateRequest.toEntity(candidateRequestDto);
-        CandidateEntity candidateEntitySave = candidateRepository.save(candidateEntity);
+        JobProfileEntity jobProfileEntity = jobProfileRepository.findById(candidateRequestDto.getJobProfile())
+                .orElseThrow(EntityNoExistException::new);
 
+        OriginEntity originEntity = originRepository.findById(candidateRequestDto.getOrigin())
+                .orElseThrow(EntityNoExistException::new);
+
+        CandidateEntity candidateEntityNew = new CandidateEntity();
+        candidateEntityNew.setName(candidateRequestDto.getName());
+        candidateEntityNew.setLastName(candidateRequestDto.getLastName());
+        candidateEntityNew.setCard(candidateRequestDto.getCard());
+        candidateEntityNew.setPhone(candidateRequestDto.getPhone());
+        candidateEntityNew.setCity(candidateRequestDto.getCity());
+        candidateEntityNew.setEmail(candidateRequestDto.getEmail());
+        candidateEntityNew.setBirthdate(candidateRequestDto.getBirthdate());
+        candidateEntityNew.setSource(candidateRequestDto.getSource());
+        candidateEntityNew.setSkills(candidateRequestDto.getSkills());
+        candidateEntityNew.setYearsExperience(candidateRequestDto.getYearsExperience());
+        candidateEntityNew.setWorkExperience(candidateRequestDto.getWorkExperience());
+        candidateEntityNew.setSeniority(candidateRequestDto.getSeniority());
+        candidateEntityNew.setSalaryAspiration(candidateRequestDto.getSalaryAspiration());
+        candidateEntityNew.setLevel(candidateRequestDto.getLevel());
+        candidateEntityNew.setDatePresentation(candidateRequestDto.getDatePresentation());
+        candidateEntityNew.setOrigin(originEntity);
+        candidateEntityNew.setJobProfile(jobProfileEntity);
+
+        CandidateEntity candidateEntitySave = candidateRepository.save(candidateEntityNew);
         return mapperCandidateResponse.toDto(candidateEntitySave);
     }
 
@@ -155,13 +180,29 @@ public class CandidateService {
         CandidateEntity existingEntity  = candidateRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 
+        JobProfileEntity jobProfileEntity = jobProfileRepository.findById(candidateRequestDto.getJobProfile())
+                .orElseThrow(EntityNoExistException::new);
+
+        OriginEntity originEntity = originRepository.findById(candidateRequestDto.getOrigin())
+                .orElseThrow(EntityNoExistException::new);
+
         existingEntity.setName(candidateRequestDto.getName());
         existingEntity.setLastName(candidateRequestDto.getLastName());
         existingEntity.setCard(candidateRequestDto.getCard());
-        existingEntity.setBirthdate(candidateRequestDto.getBirthdate());
         existingEntity.setPhone(candidateRequestDto.getPhone());
         existingEntity.setCity(candidateRequestDto.getCity());
         existingEntity.setEmail(candidateRequestDto.getEmail());
+        existingEntity.setBirthdate(candidateRequestDto.getBirthdate());
+        existingEntity.setSource(candidateRequestDto.getSource());
+        existingEntity.setSkills(candidateRequestDto.getSkills());
+        existingEntity.setYearsExperience(candidateRequestDto.getYearsExperience());
+        existingEntity.setWorkExperience(candidateRequestDto.getWorkExperience());
+        existingEntity.setSeniority(candidateRequestDto.getSeniority());
+        existingEntity.setSalaryAspiration(candidateRequestDto.getSalaryAspiration());
+        existingEntity.setLevel(candidateRequestDto.getLevel());
+        existingEntity.setDatePresentation(candidateRequestDto.getDatePresentation());
+        existingEntity.setOrigin(originEntity);
+        existingEntity.setJobProfile(jobProfileEntity);
 
         return Optional.of(mapperCandidateResponse.toDto(candidateRepository.save(existingEntity)));
     }

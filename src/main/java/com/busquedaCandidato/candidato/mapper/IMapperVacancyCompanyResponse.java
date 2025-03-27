@@ -13,6 +13,5 @@ public interface IMapperVacancyCompanyResponse {
     @Mapping(source = "jobProfile.name", target = "jobProfileName")
     @Mapping(source = "origin.id", target = "originId")
     @Mapping(source = "origin.name", target = "originName")
-    @Mapping(source = "salaryScale", target = "salaryScale")
     VacancyCompanyResponseDto toDto(VacancyCompanyEntity vacancyCompanyEntity);
 }

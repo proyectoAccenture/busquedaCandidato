@@ -5,14 +5,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(name = "CandidatePhasesResponse",description = "Model representing a candidate phases process in the database")
+@Schema(name = "CandidateStateResponse",description = "Model representing a candidate state process in the database")
 public class CandidateStateResponseDto {
-    @Schema(name = "id",defaultValue = "1", description = "Unique Id of the candidate phases process in the database")
+    @Schema(name = "id",defaultValue = "1", description = "Unique Id of the candidate state process in the database")
     private Long id;
 
     @Schema(name = "processId", description = "Id of process of the candidate")

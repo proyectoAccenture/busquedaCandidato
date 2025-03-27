@@ -9,5 +9,6 @@ import org.mapstruct.Mapping;
 public interface IMapperProcessResponse {
     @Mapping(source = "postulation.id", target = "postulationId")
     @Mapping(source = "postulation.candidate.name", target = "postulationName")
+    @Mapping(source = "candidateState", target = "candidateState")
     ProcessResponseDto toDto(ProcessEntity processEntity);
 }

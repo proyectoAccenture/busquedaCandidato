@@ -4,6 +4,7 @@ import com.busquedaCandidato.candidato.entity.CandidateStateEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -26,6 +27,6 @@ public class ProcessResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate assignmentDate;
 
-    @Schema(name = "ListCandidateProcess",description = "List all phases that is the candidate")
-    private List<CandidateStateEntity> candidatePhases;
+    @Schema(name = "ListCandidateProcess",description = "List all state that is the candidate")
+    private List<CandidateStateEntity> candidateState;
 }

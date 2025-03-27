@@ -2,14 +2,15 @@ package com.busquedaCandidato.candidato.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDate;
 
 @Data
@@ -22,7 +23,7 @@ public class ProcessRequestDto {
     @Min(value = 1, message = "postulationId must be greater than 0")
     private Long postulationId;
 
-    @Schema(name = "description", description = "Description about candidate Phases", example = "This process is...")
+    @Schema(name = "description", description = "Description about candidate state", example = "This process is...")
     @NotBlank(message = "description cannot be blank")
     @Size(min = 10, max = 255, message = "Description must be between 10 and 255 characters")
     @Pattern(regexp = "^[a-zA-Z0-9 .,!?-]+$", message = "Description contains invalid characters")

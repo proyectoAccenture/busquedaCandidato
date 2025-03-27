@@ -1,6 +1,5 @@
 package com.busquedaCandidato.candidato.controller;
 
-
 import com.busquedaCandidato.candidato.dto.request.RoleIDRequestDto;
 import com.busquedaCandidato.candidato.dto.response.RoleIDResponseDto;
 import com.busquedaCandidato.candidato.entity.RoleIDEntity;
@@ -21,7 +20,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY) // Usa H2
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 public class RoleIdControllerTests {
 
     @Autowired
@@ -96,7 +95,6 @@ public class RoleIdControllerTests {
     @Test
     @DirtiesContext
     void update_role_should_return_200() {
-
         RoleIDEntity roleIDEntity = roleIDRepository.save(new RoleIDEntity(null, "En 2"));
 
         RoleIDRequestDto updateRequest = new RoleIDRequestDto();
@@ -117,8 +115,7 @@ public class RoleIdControllerTests {
 
     @Test
     @DirtiesContext
-    void delete_role_should_return_204() {        // Guardar estado inicial
-
+    void delete_role_should_return_204() {
         RoleIDEntity roleIDEntity = roleIDRepository.save(new RoleIDEntity(null, "No id"));
 
         ResponseEntity<Void> response = restTemplate.exchange(

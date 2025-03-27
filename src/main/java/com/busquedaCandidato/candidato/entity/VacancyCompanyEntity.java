@@ -1,11 +1,16 @@
 package com.busquedaCandidato.candidato.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.time.LocalDate;
-import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -18,31 +23,25 @@ public class VacancyCompanyEntity {
     private Long id;
 
     @Column(nullable = false)
+    private String description;
+
+    @Column(nullable = false)
     private String contract;
 
     @Column(nullable = false)
     private Long salary;
 
     @Column(nullable = false)
-    private String experience;
+    private Integer level;
 
     @Column(nullable = false)
-    private String level;
+    private String seniority;
 
     @Column(nullable = false)
     private String skills;
 
     @Column(nullable = false)
-    private String description;
-
-    @Column(nullable = false)
-    private LocalDate datePublication;
-
-    @Column(nullable = false)
-    private String source;
-
-    @Column(nullable = false, name = "salary_scale")
-    private Long salaryScale;
+    private String assignmentTime;
 
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
@@ -55,5 +54,4 @@ public class VacancyCompanyEntity {
     @ManyToOne
     @JoinColumn(name = "origin_id", nullable = false)
     private OriginEntity origin;
-
 }

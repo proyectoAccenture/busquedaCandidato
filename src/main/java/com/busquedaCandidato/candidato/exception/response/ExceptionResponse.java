@@ -17,7 +17,8 @@ public enum ExceptionResponse {
     POSTULATION_IS_OFF("The postulation must be in true"),
     CANNOT_APPLY("You cannot apply, as the application is inactive"),
     IT_ALREADY_EXIST_POSTULATION("You have already submitted an active application"),
-    IT_ALREADY_PROCESS_POSTULATION("There is already a process with that id postulation");
+    IT_ALREADY_PROCESS_POSTULATION("There is already a process with that id postulation"),
+    ERROR_CLIENT("Error client");
 
     private final String message;
 

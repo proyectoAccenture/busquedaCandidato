@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class StateService {
 
     private final IStateRepository stateRepository;
-    private final ICandidateStateRepository candidatePhasesRepository;
+    private final ICandidateStateRepository candidateStateRepository;
     private final IMapperStateResponse mapperStateResponse;
     private final IMapperStateRequest mapperStateRequest;
 
@@ -61,7 +61,7 @@ public class StateService {
         StateEntity existingState = stateRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 
-        if (candidatePhasesRepository.existsByStateId(id)) {
+        if (candidateStateRepository.existsByStateId(id)) {
             throw new EntityAlreadyHasRelationException();
         }
 

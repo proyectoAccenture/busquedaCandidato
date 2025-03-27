@@ -41,6 +41,9 @@ public class VacancyCompanyEntity {
     private String skills;
 
     @Column(nullable = false)
+    private String experience;
+
+    @Column(nullable = false)
     private String assignmentTime;
 
     @ManyToOne

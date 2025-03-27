@@ -50,6 +50,11 @@ public class VacancyCompanyRequestDto {
     @Size(min = 1, max = 100, message = "The skills must be between 1 and 100 characters")
     private String skills;
 
+    @Schema(name= "experience",description = "Experience candidate", example = "string")
+    @NotNull(message = "Years experience scale cannot be null")
+    @Size(min = 1, max = 100, message = "The experience must be between 1 and 100 characters")
+    private String experience;
+
     @Schema(name = "assignmentTime", description = "source where the vacancy was launched ", example = "string")
     @NotBlank(message = "Assignment time cannot be blank")
     @Size(min = 1, max = 100, message = "The source must be between 1 and 100 characters")

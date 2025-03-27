@@ -29,6 +29,9 @@ public class VacancyCompanyResponseDto {
     @Schema(name = "skills", description = "Skills should have of the candidate")
     private String skills;
 
+    @Schema(name = "experience", description = "Experience of the candidate")
+    private String experience;
+
     @Schema(name = "assignmentTime", description = "Assignment of the candidate")
     private String assignmentTime;
 

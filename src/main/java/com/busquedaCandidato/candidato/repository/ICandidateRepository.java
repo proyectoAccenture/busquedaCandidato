@@ -12,7 +12,6 @@ import java.util.List;
 public interface ICandidateRepository extends JpaRepository<CandidateEntity, Long>{
     boolean existsByCard(Long card);
     boolean existsByPhone(Long phone);
-    List<CandidateEntity> findByName(String name);
     List<CandidateEntity> findByIdIn(List<Long> candidateIds);
 
     @Query("SELECT c FROM CandidateEntity c " +
@@ -27,8 +26,16 @@ public interface ICandidateRepository extends JpaRepository<CandidateEntity, Lon
     Page<CandidateEntity> searchCandidates(@Param("query") String query, Pageable pageable);
 
     @Query("SELECT c FROM CandidateEntity c " +
-            "WHERE LOWER(CONCAT(c.name, ' ', c.lastName)) LIKE LOWER(CONCAT('%', :query, '%')) " +
-            "OR LOWER(c.name) LIKE LOWER(CONCAT('%', :query, '%')) " +
-            "OR LOWER(c.lastName) LIKE LOWER(CONCAT('%', :query, '%'))")
-    List<CandidateEntity> searchByNameOrLastName(@Param("query") String query, Pageable pageable);
+            "WHERE LOWER(CONCAT(c.name, ' ', c.lastName)) LIKE LOWER(CONCAT('%', :query1, '%')) " +
+            "AND LOWER(CONCAT(c.name, ' ', c.lastName)) LIKE LOWER(CONCAT('%', :query2, '%'))")
+    List<CandidateEntity> searchByPartialName(
+            @Param("query1") String query1,
+            @Param("query2") String query2,
+            Pageable pageable);
+
+    @Query("SELECT c FROM CandidateEntity c " +
+            "WHERE LOWER(CONCAT(c.name, ' ', c.lastName)) LIKE LOWER(CONCAT('%', :query, '%')) ")
+    List<CandidateEntity> searchByFullName(@Param("query") String query, Pageable pageable);
+
+
 }

@@ -96,7 +96,15 @@ public class CandidateService {
         validationQueryNumber(query);
         Pageable pageable = PageRequest.of(0, 10);
 
-        List<CandidateEntity> candidates = candidateRepository.searchByNameOrLastName(query, pageable);
+        String[] keywords = query.toLowerCase().split(" ");
+
+        List<CandidateEntity> candidates;
+        if (keywords.length > 1) {
+            candidates = candidateRepository.searchByPartialName(keywords[0], keywords[1], pageable);
+        } else {
+            candidates = candidateRepository.searchByFullName(query, pageable);
+        }
+
         validationListCandidate(candidates);
 
         List<CandidateResponseDto> candidateDTOs = candidates.stream()
@@ -110,18 +118,6 @@ public class CandidateService {
                 1,
                 candidateDTOs.size()
         );
-    }
-
-    public List<CandidateResponseDto> getByNameCandidate(String name){
-        List<CandidateEntity> candidateEntities = candidateRepository.findByName(name);
-
-        if(candidateEntities.isEmpty()){
-            throw new CandidateNoExistException();
-        }
-
-        return candidateEntities.stream()
-                .map(mapperCandidateResponse::toDto)
-                .collect(Collectors.toList());
     }
 
     public CandidateResponseDto getByIdCandidate(Long id){

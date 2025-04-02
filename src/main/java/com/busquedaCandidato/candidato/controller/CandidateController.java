@@ -59,19 +59,6 @@ public class CandidateController {
         return ResponseEntity.ok(candidate);
     }
 
-    @Operation(summary = "Get a candidate by its name")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Candidate found",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = CandidateResponseDto.class))),
-            @ApiResponse(responseCode = "404", description = "Candidate not found", content = @Content)
-    })
-    @GetMapping("/name/{name}")
-    public ResponseEntity<List<CandidateResponseDto>> getByNameCandidate(@PathVariable String name){
-        List<CandidateResponseDto> candidates = candidateService.getByNameCandidate(name);
-        return ResponseEntity.ok(candidates);
-    }
-
     @Operation(summary = "Get a candidate by any field")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Candidate found",

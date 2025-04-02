@@ -53,7 +53,18 @@ public class PostulationController {
     @ApiResponse(responseCode = "404", description = "No postulations found", content = @Content)
     @GetMapping("/search/fullName")
     public List<PostulationResponseDto> getSearchPostulationsByCandidate(@RequestParam @NotBlank String query) {
-        return postulationService.getSearchPostulationsByCandidate(query);
+        return postulationService.getSearchPostulationsByCandidateFullName(query);
+    }
+
+    @Operation(summary = "Search postulations by candidate name, last name or role ID")
+    @ApiResponse(responseCode = "200", description = "Postulations found",
+            content = @Content(mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = PostulationResponseDto.class))))
+    @ApiResponse(responseCode = "400", description = "Invalid query", content = @Content)
+    @ApiResponse(responseCode = "404", description = "No postulations found", content = @Content)
+    @GetMapping("/search/fullName-roleId")
+    public List<PostulationResponseDto> searchPostulationsByCandidateNameLastNameAndRole(@RequestParam @NotBlank String query) {
+        return postulationService.searchByCandidateNameLastNameAndRole(query);
     }
 
     @Operation(summary = "Get all the postulation")
@@ -102,4 +113,7 @@ public class PostulationController {
         postulationService.deletePostulation(id);
         return ResponseEntity.noContent().build();
     }
+
+
+
 }

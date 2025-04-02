@@ -1,12 +1,26 @@
 package com.busquedaCandidato.candidato.service;
 
 import com.busquedaCandidato.candidato.dto.request.ProcessRequestDto;
-import com.busquedaCandidato.candidato.dto.response.CandidateResponseDto;
 import com.busquedaCandidato.candidato.dto.response.ProcessResponseDto;
-import com.busquedaCandidato.candidato.entity.*;
-import com.busquedaCandidato.candidato.exception.type.*;
+import com.busquedaCandidato.candidato.entity.PostulationEntity;
+import com.busquedaCandidato.candidato.entity.ProcessEntity;
+import com.busquedaCandidato.candidato.entity.RoleIDEntity;
+import com.busquedaCandidato.candidato.entity.VacancyCompanyEntity;
+import com.busquedaCandidato.candidato.entity.CandidateEntity;
+import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
+import com.busquedaCandidato.candidato.exception.type.ItAlreadyProcessWithIdPostulation;
+import com.busquedaCandidato.candidato.exception.type.PostulationIsOffException;
+import com.busquedaCandidato.candidato.exception.type.ResourceNotFoundException;
+import com.busquedaCandidato.candidato.exception.type.BadRequestException;
+import com.busquedaCandidato.candidato.exception.type.RoleIdNoExistException;
+import com.busquedaCandidato.candidato.exception.type.CandidateNoExistException;
+import com.busquedaCandidato.candidato.exception.type.CandidateNoPostulationException;
 import com.busquedaCandidato.candidato.mapper.IMapperProcessResponse;
-import com.busquedaCandidato.candidato.repository.*;
+import com.busquedaCandidato.candidato.repository.IPostulationRepository;
+import com.busquedaCandidato.candidato.repository.IProcessRepository;
+import com.busquedaCandidato.candidato.repository.IRoleIDRepository;
+import com.busquedaCandidato.candidato.repository.IVacancyCompanyRepository;
+import com.busquedaCandidato.candidato.repository.ICandidateRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -17,7 +31,6 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class ProcessService {
-
     private final IProcessRepository processRepository;
     private final ICandidateRepository candidateRepository;
     private final IPostulationRepository postulationRepository;
@@ -93,8 +106,17 @@ public class ProcessService {
 
     public List<ProcessResponseDto> getSearchProcessesByCandidateFullName(String query) {
         validateStringQuery(query);
+        query = normalizeQuery(query);
 
-        List<ProcessEntity> processes = processRepository.searchByCandidateNameOrLastName(query);
+        String[] words = query.split(" ");
+
+        String word1 = words.length > 0 ? words[0] : null;
+        String word2 = words.length > 1 ? words[1] : null;
+        String word3 = words.length > 2 ? words[2] : null;
+        String word4 = words.length > 3 ? words[3] : null;
+
+        List<ProcessEntity> processes = processRepository.searchByCandidateNameOrLastName2(word1, word2, word3, word4);
+
         validateListProcess(processes);
 
         return processes.stream()
@@ -174,4 +196,17 @@ public class ProcessService {
             throw new BadRequestException("The search query cannot be empty.");
         }
     }
+
+    private String normalizeQuery(String query) {
+        if (query == null || query.isBlank()) {
+            return query;
+        }
+        query = query.trim();
+        return query.replaceAll("[áÁ]", "a")
+                .replaceAll("[éÉ]", "e")
+                .replaceAll("[íÍ]", "i")
+                .replaceAll("[óÓ]", "o")
+                .replaceAll("[úÚ]", "u");
+    }
 }
+

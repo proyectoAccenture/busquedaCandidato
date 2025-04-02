@@ -44,10 +44,35 @@ public class PostulationService {
                 .collect(Collectors.toList());
     }
 
-    public List<PostulationResponseDto> getSearchPostulationsByCandidate(String query) {
-        validationQuery(query);
+    public List<PostulationResponseDto> getSearchPostulationsByCandidateFullName(String query) {
+        validateStringQuery(query);
+        query = normalizeQuery(query);
 
-        List<PostulationEntity> postulations = postulationRepository.searchByCandidateNameOrLastName(query);
+        String[] words = query.split(" ");
+        String word1 = words.length > 0 ? words[0] : null;
+        String word2 = words.length > 1 ? words[1] : null;
+        String word3 = words.length > 2 ? words[2] : null;
+        String word4 = words.length > 3 ? words[3] : null;
+
+        List<PostulationEntity> postulations = postulationRepository.searchByCandidateNameOrLastName(word1, word2, word3, word4);
+        validationListPostulation(postulations);
+
+        return postulations.stream()
+                .map(mapperPostulationResponse::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<PostulationResponseDto> searchByCandidateNameLastNameAndRole(String query) {
+        validateStringQuery(query);
+        query = normalizeQuery(query);
+
+        String[] words = query.split(" ");
+        String word1 = words.length > 0 ? words[0] : null;
+        String word2 = words.length > 1 ? words[1] : null;
+        String word3 = words.length > 2 ? words[2] : null;
+        String word4 = words.length > 3 ? words[3] : null;
+
+        List<PostulationEntity> postulations = postulationRepository.searchByCandidateNameLastNameAndRole(word1, word2, word3, word4, query);
         validationListPostulation(postulations);
 
         return postulations.stream()
@@ -112,15 +137,26 @@ public class PostulationService {
         postulationRepository.delete(existingPostulation);
     }
 
-    private void validationQuery(String query){
+    private void validationListPostulation(List<PostulationEntity> postulations){
+        if (postulations.isEmpty()) {
+            throw new ResourceNotFoundException("No postulations found for the given search criteria.");
+        }
+    }
+    private void validateStringQuery(String query) {
         if (query == null || query.trim().isEmpty()) {
             throw new BadRequestException("The search query cannot be empty.");
         }
     }
 
-    private void validationListPostulation(List<PostulationEntity> postulations){
-        if (postulations.isEmpty()) {
-            throw new ResourceNotFoundException("No postulations found for the given search criteria.");
+    private String normalizeQuery(String query) {
+        if (query == null || query.isBlank()) {
+            return query;
         }
+        query = query.trim();
+        return query.replaceAll("[áÁ]", "a")
+                .replaceAll("[éÉ]", "e")
+                .replaceAll("[íÍ]", "i")
+                .replaceAll("[óÓ]", "o")
+                .replaceAll("[úÚ]", "u");
     }
 }

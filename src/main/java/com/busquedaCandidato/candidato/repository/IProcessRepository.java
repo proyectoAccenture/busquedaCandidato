@@ -17,8 +17,15 @@ public interface IProcessRepository extends JpaRepository<ProcessEntity, Long> {
     @Query("SELECT p FROM ProcessEntity p " +
             "JOIN p.postulation po " +
             "JOIN po.candidate c " +
-            "WHERE LOWER(CONCAT(c.name, ' ', c.lastName)) LIKE LOWER(CONCAT('%', :query, '%')) " +
-            "OR LOWER(c.name) LIKE LOWER(CONCAT('%', :query, '%')) " +
-            "OR LOWER(c.lastName) LIKE LOWER(CONCAT('%', :query, '%'))")
-    List<ProcessEntity> searchByCandidateNameOrLastName(@Param("query") String query);
+            "WHERE " +
+            "(:word1 IS NULL OR LOWER(CONCAT(c.name, ' ', c.lastName)) LIKE LOWER(CONCAT('%', :word1, '%'))) " +
+            "AND (:word2 IS NULL OR LOWER(CONCAT(c.name, ' ', c.lastName)) LIKE LOWER(CONCAT('%', :word2, '%'))) " +
+            "AND (:word3 IS NULL OR LOWER(CONCAT(c.name, ' ', c.lastName)) LIKE LOWER(CONCAT('%', :word3, '%'))) " +
+            "AND (:word4 IS NULL OR LOWER(CONCAT(c.name, ' ', c.lastName)) LIKE LOWER(CONCAT('%', :word4, '%')))")
+    List<ProcessEntity> searchByCandidateNameOrLastName2(
+            @Param("word1") String word1,
+            @Param("word2") String word2,
+            @Param("word3") String word3,
+            @Param("word4") String word4);
+
 }

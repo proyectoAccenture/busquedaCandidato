@@ -95,10 +95,6 @@ public class CandidateStateService {
         CandidateStateEntity existingCandidateState = candidateStateRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 
-        if (processRepository.existsByCandidateStateId(id)) {
-            throw new EntityAlreadyHasRelationException();
-        }
-
         candidateStateRepository.delete(existingCandidateState);
     }
 }

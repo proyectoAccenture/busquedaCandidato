@@ -21,7 +21,7 @@ public class CandidateStateRequestUpdateDto {
     private Long stateId;
 
     @Schema(name = "description", description = "Description about candidate state", example = "This process is...")
-    @Size(min = 10, max = 255, message = "Description must be between 10 and 255 characters")
+    @Size(min = 1, max = 255, message = "Description must be between 10 and 255 characters")
     @Pattern(regexp = "^[a-zA-Z0-9 .,!?-]+$", message = "Description contains invalid characters")
     private String description;
 

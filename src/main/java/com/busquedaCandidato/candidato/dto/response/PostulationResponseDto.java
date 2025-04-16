@@ -16,11 +16,11 @@ public class PostulationResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate datePresentation;
 
-    @Schema(name = "vacancyCompanyId",description = "Id of tha vacancy",example = "1")
-    private Long vacancyCompanyId;
+    @Schema(name = "roleId",description = "Id of role")
+    private Long roleId;
 
-    @Schema(name = "vacancyCompanyName",description = "Name of tha vacancy",example = "1")
-    private String vacancyCompanyName;
+    @Schema(name = "roleName",description = "Name of role")
+    private String roleName;
 
     @Schema(name = "candidateId",description = "Id of candidate that appliqued", example = "1")
     private Long candidateId;

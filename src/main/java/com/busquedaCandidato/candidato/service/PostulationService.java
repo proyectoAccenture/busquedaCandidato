@@ -60,23 +60,24 @@ public class PostulationService {
     }
 
     public List<PostulationResponseDto> searchByCandidateNameLastNameAndRole(String query) {
-//        validateStringQuery(query);
-//        query = normalizeQuery(query);
-//
-//        String[] words = query.split(" ");
-//        String word1 = words.length > 0 ? words[0] : null;
-//        String word2 = words.length > 1 ? words[1] : null;
-//        String word3 = words.length > 2 ? words[2] : null;
-//        String word4 = words.length > 3 ? words[3] : null;
-//
-//        List<PostulationEntity> postulations = postulationRepository.searchByCandidateNameLastNameAndRole(word1, word2, word3, word4, query);
-//        validationListPostulation(postulations);
-//
-//        return postulations.stream()
-//                .map(mapperPostulationResponse::toDto)
-//                .collect(Collectors.toList());
+        validateStringQuery(query);
+        query = normalizeQuery(query);
 
-        return null;
+        String[] words = query.split(" ");
+        String word1 = words.length > 0 ? words[0] : null;
+        String word2 = words.length > 1 ? words[1] : null;
+        String word3 = words.length > 2 ? words[2] : null;
+        String word4 = words.length > 3 ? words[3] : null;
+
+        String roleId = words.length > 0 ? words[words.length - 1] : null;
+
+        List<PostulationEntity> postulations = postulationRepository.searchByCandidateNameLastNameAndRole(word1, word2, word3, word4, roleId);
+        validationListPostulation(postulations);
+
+        return postulations.stream()
+                .map(mapperPostulationResponse::toDto)
+                .collect(Collectors.toList());
+
     }
 
     public PostulationResponseDto savePostulation(PostulationRequestDto postulationRequestDto) {
@@ -90,13 +91,12 @@ public class PostulationService {
             throw new CannotApplyException();
         }
 
-        /* boolean alreadyApplied = postulationRepository
-                .existsByCandidate_IdRoleId_IdAndStatus(candidateEntity.getId(), roleIDEntity.getId(), true);
+        boolean alreadyApplied = postulationRepository
+                .existsByCandidate_IdAndRole_IdAndStatus(candidateEntity.getId(), roleIDEntity.getId(), true);
 
         if (alreadyApplied) {
             throw new ItAlreadyExistPostulationException();
         }
-         */
 
         PostulationEntity postulationEntityNew = new PostulationEntity();
         postulationEntityNew.setRole(roleIDEntity);

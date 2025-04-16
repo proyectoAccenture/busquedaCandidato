@@ -21,9 +21,9 @@ public class PostulationRequestDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate datePresentation;
 
-    @Schema(name = "vacancyCompanyId",description = "Id of tha vacancy",example = "1")
-    @NotNull(message = "vacancyCompanyId cannot be null")
-    private Long vacancyCompanyId;
+    @Schema(name = "roleId",description = "Id of role",example = "1")
+    @NotNull(message = "roleId cannot be null")
+    private Long roleId;
 
     @Schema(name = "candidateId",description = "Id of candidate that appliqued", example = "1")
     @NotNull(message = "candidateId cannot be null")

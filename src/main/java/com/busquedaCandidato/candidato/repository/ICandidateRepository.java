@@ -36,6 +36,4 @@ public interface ICandidateRepository extends JpaRepository<CandidateEntity, Lon
     @Query("SELECT c FROM CandidateEntity c " +
             "WHERE LOWER(CONCAT(c.name, ' ', c.lastName)) LIKE LOWER(CONCAT('%', :query, '%')) ")
     List<CandidateEntity> searchByFullName(@Param("query") String query, Pageable pageable);
-
-
 }

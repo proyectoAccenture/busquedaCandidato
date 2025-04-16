@@ -45,7 +45,7 @@ public class CandidateService {
 
     public List<CandidateResponseDto> getCandidateByRole(String roleName) {
 
-        RoleIDEntity roleOptional = roleIDRepository.findByName(roleName)
+        /* RoleIDEntity roleOptional = roleIDRepository.findByName(roleName)
                 .orElseThrow(RoleIdNoExistException::new);
 
         Long roleId = roleOptional.getId();
@@ -69,6 +69,9 @@ public class CandidateService {
         return candidates.stream()
                 .map(mapperCandidateResponse::toDto)
                 .collect(Collectors.toList());
+
+         */
+        return null;
     }
 
     public CandidateResponse getSearchCandidates(String query, int page, int size) {

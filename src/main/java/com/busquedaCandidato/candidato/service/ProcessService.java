@@ -40,7 +40,7 @@ public class ProcessService {
 
     public List<ProcessResponseDto> getProcessOfCandidateByRole(String roleName) {
 
-        RoleIDEntity roleOptional = roleIDRepository.findByName(roleName)
+        /* RoleIDEntity roleOptional = roleIDRepository.findByName(roleName)
                 .orElseThrow(RoleIdNoExistException::new);
 
         Long roleId = roleOptional.getId();
@@ -64,6 +64,9 @@ public class ProcessService {
         return processes.stream()
                 .map(mapperProcessResponse::toDto)
                 .collect(Collectors.toList());
+
+         */
+        return null;
     }
 
     public ProcessResponseDto getProcessByIdCandidate(Long id){

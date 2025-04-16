@@ -35,12 +35,6 @@ public class VacancyCompanyResponseDto {
     @Schema(name = "assignmentTime", description = "Assignment of the candidate")
     private String assignmentTime;
 
-    @Schema(name = "roleId",description = "Id of role")
-    private Long roleId;
-
-    @Schema(name = "roleName",description = "Name of role")
-    private String roleName;
-
     @Schema(name = "jobProfileId",description = "Id of job profile")
     private Long jobProfileId;
 

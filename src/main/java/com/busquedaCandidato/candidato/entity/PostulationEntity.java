@@ -1,5 +1,6 @@
 package com.busquedaCandidato.candidato.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -34,9 +35,9 @@ public class PostulationEntity {
     @JoinColumn(name = "candidate_id", nullable = false)
     private CandidateEntity candidate;
 
-    @ManyToOne
-    @JoinColumn(name = "company_vacancy_id", nullable = false)
-    private VacancyCompanyEntity  vacancyCompany;
+    @OneToOne
+    @JoinColumn(name = "role_id", nullable = false)
+    private RoleIDEntity role;
 
     @OneToOne(mappedBy = "postulation")
     private ProcessEntity process;

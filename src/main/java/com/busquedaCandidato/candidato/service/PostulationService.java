@@ -4,7 +4,7 @@ import com.busquedaCandidato.candidato.dto.request.PostulationRequestDto;
 import com.busquedaCandidato.candidato.dto.response.PostulationResponseDto;
 import com.busquedaCandidato.candidato.entity.PostulationEntity;
 import com.busquedaCandidato.candidato.entity.CandidateEntity;
-import com.busquedaCandidato.candidato.entity.VacancyCompanyEntity;
+import com.busquedaCandidato.candidato.entity.RoleIDEntity;
 import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
 import com.busquedaCandidato.candidato.exception.type.CannotApplyException;
 import com.busquedaCandidato.candidato.exception.type.BadRequestException;
@@ -12,10 +12,7 @@ import com.busquedaCandidato.candidato.exception.type.EntityAlreadyHasRelationEx
 import com.busquedaCandidato.candidato.exception.type.ItAlreadyExistPostulationException;
 import com.busquedaCandidato.candidato.exception.type.ResourceNotFoundException;
 import com.busquedaCandidato.candidato.mapper.IMapperPostulationResponse;
-import com.busquedaCandidato.candidato.repository.ICandidateRepository;
-import com.busquedaCandidato.candidato.repository.IPostulationRepository;
-import com.busquedaCandidato.candidato.repository.IProcessRepository;
-import com.busquedaCandidato.candidato.repository.IVacancyCompanyRepository;
+import com.busquedaCandidato.candidato.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -26,10 +23,10 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class PostulationService {
     private final IPostulationRepository postulationRepository;
-    private final IVacancyCompanyRepository vacancyCompanyRepository;
     private final ICandidateRepository candidateRepository;
     private final IProcessRepository processRepository;
     private final IMapperPostulationResponse mapperPostulationResponse;
+    private final IRoleIDRepository roleIDRepository;
 
     public PostulationResponseDto getPostulation(Long id){
         PostulationEntity postulationEntity = postulationRepository.findById(id)
@@ -63,25 +60,27 @@ public class PostulationService {
     }
 
     public List<PostulationResponseDto> searchByCandidateNameLastNameAndRole(String query) {
-        validateStringQuery(query);
-        query = normalizeQuery(query);
+//        validateStringQuery(query);
+//        query = normalizeQuery(query);
+//
+//        String[] words = query.split(" ");
+//        String word1 = words.length > 0 ? words[0] : null;
+//        String word2 = words.length > 1 ? words[1] : null;
+//        String word3 = words.length > 2 ? words[2] : null;
+//        String word4 = words.length > 3 ? words[3] : null;
+//
+//        List<PostulationEntity> postulations = postulationRepository.searchByCandidateNameLastNameAndRole(word1, word2, word3, word4, query);
+//        validationListPostulation(postulations);
+//
+//        return postulations.stream()
+//                .map(mapperPostulationResponse::toDto)
+//                .collect(Collectors.toList());
 
-        String[] words = query.split(" ");
-        String word1 = words.length > 0 ? words[0] : null;
-        String word2 = words.length > 1 ? words[1] : null;
-        String word3 = words.length > 2 ? words[2] : null;
-        String word4 = words.length > 3 ? words[3] : null;
-
-        List<PostulationEntity> postulations = postulationRepository.searchByCandidateNameLastNameAndRole(word1, word2, word3, word4, query);
-        validationListPostulation(postulations);
-
-        return postulations.stream()
-                .map(mapperPostulationResponse::toDto)
-                .collect(Collectors.toList());
+        return null;
     }
 
     public PostulationResponseDto savePostulation(PostulationRequestDto postulationRequestDto) {
-        VacancyCompanyEntity vacancyCompanyEntity = vacancyCompanyRepository.findById(postulationRequestDto.getVacancyCompanyId())
+        RoleIDEntity roleIDEntity = roleIDRepository.findById(postulationRequestDto.getRoleId())
                 .orElseThrow(EntityNoExistException::new);
 
         CandidateEntity candidateEntity = candidateRepository.findById(postulationRequestDto.getCandidateId())
@@ -91,16 +90,17 @@ public class PostulationService {
             throw new CannotApplyException();
         }
 
-        boolean alreadyApplied = postulationRepository
-                .existsByCandidate_IdAndVacancyCompany_IdAndStatus(candidateEntity.getId(), vacancyCompanyEntity.getId(), true);
+        /* boolean alreadyApplied = postulationRepository
+                .existsByCandidate_IdRoleId_IdAndStatus(candidateEntity.getId(), roleIDEntity.getId(), true);
 
         if (alreadyApplied) {
             throw new ItAlreadyExistPostulationException();
         }
+         */
 
         PostulationEntity postulationEntityNew = new PostulationEntity();
+        postulationEntityNew.setRole(roleIDEntity);
         postulationEntityNew.setDatePresentation(postulationRequestDto.getDatePresentation());
-        postulationEntityNew.setVacancyCompany(vacancyCompanyEntity);
         postulationEntityNew.setCandidate(candidateEntity);
         postulationEntityNew.setStatus(postulationRequestDto.getStatus());
 
@@ -109,17 +109,17 @@ public class PostulationService {
     }
 
     public Optional<PostulationResponseDto> updatePostulation(Long id, PostulationRequestDto postulationRequestDto) {
-        PostulationEntity existingEntity  = postulationRepository.findById(id)
+        RoleIDEntity roleIDEntity = roleIDRepository.findById(postulationRequestDto.getRoleId())
                 .orElseThrow(EntityNoExistException::new);
 
-        VacancyCompanyEntity vacancyCompanyEntity = vacancyCompanyRepository.findById(postulationRequestDto.getVacancyCompanyId())
+        PostulationEntity existingEntity  = postulationRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 
         CandidateEntity candidateEntity = candidateRepository.findById(postulationRequestDto.getCandidateId())
                 .orElseThrow(EntityNoExistException::new);
 
         existingEntity.setDatePresentation(postulationRequestDto.getDatePresentation());
-        existingEntity.setVacancyCompany(vacancyCompanyEntity);
+        existingEntity.setRole(roleIDEntity);
         existingEntity.setStatus(postulationRequestDto.getStatus());
         existingEntity.setCandidate(candidateEntity);
 

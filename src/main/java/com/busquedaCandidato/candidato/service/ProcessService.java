@@ -40,33 +40,20 @@ public class ProcessService {
 
     public List<ProcessResponseDto> getProcessOfCandidateByRole(String roleName) {
 
-        /* RoleIDEntity roleOptional = roleIDRepository.findByName(roleName)
+        RoleIDEntity role = roleIDRepository.findByName(roleName)
                 .orElseThrow(RoleIdNoExistException::new);
 
-        Long roleId = roleOptional.getId();
+        List<PostulationEntity> postulations = postulationRepository.findByRole(role);
 
-        List<VacancyCompanyEntity> vacancies = vacancyCompanyRepository.findByRoleId(roleId);
-
-        List<Long> vacancyIds = vacancies.stream()
-                .map(VacancyCompanyEntity::getId)
-                .toList();
-
-        List<PostulationEntity> postulations = postulationRepository.findByVacancyCompanyIdIn(vacancyIds);
-
-        List<Long> processIds = postulations.stream()
+        List<ProcessEntity> processes = postulations.stream()
                 .map(PostulationEntity::getProcess)
                 .filter(Objects::nonNull)
-                .map(ProcessEntity::getId)
                 .toList();
-
-        List<ProcessEntity> processes = processRepository.findByIdIn(processIds);
 
         return processes.stream()
                 .map(mapperProcessResponse::toDto)
                 .collect(Collectors.toList());
 
-         */
-        return null;
     }
 
     public ProcessResponseDto getProcessByIdCandidate(Long id){

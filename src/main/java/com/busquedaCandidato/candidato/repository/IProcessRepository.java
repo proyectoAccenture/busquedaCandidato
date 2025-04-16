@@ -10,9 +10,7 @@ import java.util.Optional;
 
 public interface IProcessRepository extends JpaRepository<ProcessEntity, Long> {
     Boolean existsByPostulationId(Long postulationId);
-    Boolean existsByCandidateStateId(Long candidateStateId);
     Optional<ProcessEntity> findByPostulationId(Long id);
-    List<ProcessEntity> findByIdIn(List<Long> processId);
 
     @Query("SELECT p FROM ProcessEntity p " +
             "JOIN p.postulation po " +

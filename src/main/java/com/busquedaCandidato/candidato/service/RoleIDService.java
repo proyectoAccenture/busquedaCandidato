@@ -41,6 +41,7 @@ public class RoleIDService {
     }
 
     public RoleIDResponseDto saveRolID(RoleIDRequestDto rolIDRequestDto) {
+
         VacancyCompanyEntity vacancyCompanyEntity = null;
 
         if (rolIDRequestDto.getVacancyCompanyId() != null) {
@@ -55,13 +56,12 @@ public class RoleIDService {
             throw new EntityAlreadyExistsException();
         }
 
-        RoleIDEntity roleIDEntity = mapperRolIDRequest.toEntity(rolIDRequestDto);
         RoleIDEntity roleEntityNew = new RoleIDEntity();
-        roleEntityNew.setName(roleIDEntity.getName());
-        roleEntityNew.setDescription(roleIDEntity.getDescription());
+        roleEntityNew.setName(rolIDRequestDto.getName());
+        roleEntityNew.setDescription(rolIDRequestDto.getDescription());
         roleEntityNew.setVacancyCompanyEntity(vacancyCompanyEntity);
-        RoleIDEntity roleIDEntitySave = roleIDRepository.save(roleIDEntity);
 
+        RoleIDEntity roleIDEntitySave = roleIDRepository.save(roleEntityNew);
         return mapperRolIDResponse.toDto(roleIDEntitySave);
     }
 

@@ -73,4 +73,10 @@ public class CandidateResponseDto {
 
     @Schema(name = "jobProfileName",description = "Name of job profile")
     private String jobProfileName;
+
+    @Schema(name = "hasResume", description = "Indica si el candidato tiene hoja de vida cargada")
+    private Boolean hasResume;
+
+    @Schema(name = "resumeFileName", description = "Nombre del archivo de la hoja de vida")
+    private String resumeFileName;
 }

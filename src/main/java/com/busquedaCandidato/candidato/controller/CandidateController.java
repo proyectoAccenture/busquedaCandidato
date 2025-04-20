@@ -1,10 +1,14 @@
 package com.busquedaCandidato.candidato.controller;
 
 import com.busquedaCandidato.candidato.dto.request.CandidateRequestDto;
+import com.busquedaCandidato.candidato.dto.request.CandidateResumeRequestDto;
 import com.busquedaCandidato.candidato.dto.response.CandidateResponse;
 import com.busquedaCandidato.candidato.dto.response.CandidateResponseDto;
+import com.busquedaCandidato.candidato.dto.response.CandidateResumeResponseDto;
+import com.busquedaCandidato.candidato.service.CandidateResumeService;
 import com.busquedaCandidato.candidato.service.CandidateService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,17 +18,13 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 @RestController
@@ -32,6 +32,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CandidateController {
     private final CandidateService candidateService;
+    private final CandidateResumeService candidateResumeService;
 
     @Operation(summary = "Get a candidate by its role id")
     @ApiResponses(value = {
@@ -111,8 +112,72 @@ public class CandidateController {
             @ApiResponse(responseCode = "409", description = "Candidate already exists", content = @Content)
     })
     @PostMapping("/")
-    public ResponseEntity<CandidateResponseDto> saveCandidate(@Valid @RequestBody CandidateRequestDto candidateRequestDto){
-        return ResponseEntity.status(HttpStatus.CREATED).body(candidateService.saveCandidate(candidateRequestDto));
+    public ResponseEntity<CandidateResponseDto> saveCandidate(
+            @RequestBody @Valid CandidateRequestDto candidateRequestDto) {
+
+        CandidateResponseDto savedCandidate = candidateService.saveCandidate(candidateRequestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedCandidate);
+    }
+
+    @Operation(summary = "Upload a candidate's resume")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Hoja de vida cargada exitosamente"),
+            @ApiResponse(responseCode = "400", description = "Solicitud inválida", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Candidato no encontrado", content = @Content)
+    })
+    @PostMapping(value = "/{candidateId}/upload",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public ResponseEntity<String> uploadResume(
+            @Parameter(description = "candidate ID", required = true)
+            @PathVariable Long candidateId,
+            @Parameter(description = "PDF file of the resume",
+                    required = true,
+                    content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE)
+            )
+            @RequestParam("file") MultipartFile file) {
+        candidateResumeService.uploadResume(candidateId, file);
+
+        return ResponseEntity.ok("Resume uploaded successfully");
+    }
+
+    @Operation(summary = "Create a new candidate with a resume")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Candidato creado con hoja de vida",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CandidateResponseDto.class))),
+            @ApiResponse(responseCode = "400", description = "Solicitud inválida", content = @Content),
+            @ApiResponse(responseCode = "409", description = "Candidato ya existe", content = @Content)
+    })
+    @PostMapping(value = "/with-resume",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CandidateResponseDto> saveCandidateWithResume(
+            @Parameter(description = "Datos del candidato", required = true)
+            @RequestPart("candidate") @Valid CandidateResumeRequestDto candidateResumeRequestDto,
+            @Parameter(description = "PDF de la hoja de vida (opcional)",
+                    content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE))
+            @RequestPart(value = "file", required = false) MultipartFile file) {
+
+        CandidateResponseDto savedCandidate = candidateResumeService.saveCandidateWithResume(candidateResumeRequestDto, file);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedCandidate);
+    }
+
+    @Operation(summary = "Download a candidate's resume")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Found resume",
+                    content = @Content(mediaType = "application/pdf")),
+            @ApiResponse(responseCode = "404", description = "Resume not found", content = @Content)
+    })
+    @GetMapping("/{candidateId}/download")
+    public ResponseEntity<byte[]> downloadResume(@PathVariable Long candidateId) {
+        CandidateResumeResponseDto resume = candidateResumeService.getResume(candidateId);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType(resume.getResumeContentType()));
+        headers.setContentDispositionFormData("attachment", resume.getResumeFileName());
+
+        return new ResponseEntity<>(resume.getResumePdf(), headers, HttpStatus.OK);
     }
 
     @Operation(summary = "Update an existing candidate")

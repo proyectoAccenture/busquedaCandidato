@@ -11,5 +11,7 @@ public interface IMapperCandidateResponse {
     @Mapping(source = "jobProfile.name", target = "jobProfileName")
     @Mapping(source = "origin.id", target = "originId")
     @Mapping(source = "origin.name", target = "originName")
+    @Mapping(target = "hasResume", expression = "java(candidateEntity.getResumePdf() != null)")
+    @Mapping(source = "resumeFileName", target = "resumeFileName")
     CandidateResponseDto toDto(CandidateEntity candidateEntity);
 }

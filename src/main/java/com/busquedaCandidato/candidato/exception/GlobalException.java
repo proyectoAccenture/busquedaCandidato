@@ -1,25 +1,7 @@
 package com.busquedaCandidato.candidato.exception;
 
 import com.busquedaCandidato.candidato.exception.response.ExceptionResponse;
-import com.busquedaCandidato.candidato.exception.type.EntityAlreadyExistsException;
-import com.busquedaCandidato.candidato.exception.type.ProcessClosedException;
-import com.busquedaCandidato.candidato.exception.type.ProcessNoExistException;
-import com.busquedaCandidato.candidato.exception.type.StateNoFoundException;
-import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
-import com.busquedaCandidato.candidato.exception.type.ItAlreadyProcessWithIdPostulation;
-import com.busquedaCandidato.candidato.exception.type.CannotApplyException;
-import com.busquedaCandidato.candidato.exception.type.PostulationIsOffException;
-import com.busquedaCandidato.candidato.exception.type.PhoneAlreadyExistException;
-import com.busquedaCandidato.candidato.exception.type.RoleIdNoExistException;
-import com.busquedaCandidato.candidato.exception.type.CandidateNoExistException;
-import com.busquedaCandidato.candidato.exception.type.ProcessAlreadyExistException;
-import com.busquedaCandidato.candidato.exception.type.CannotBeCreateCandidateProcessException;
-import com.busquedaCandidato.candidato.exception.type.IdCardAlreadyExistException;
-import com.busquedaCandidato.candidato.exception.type.BadRequestException;
-import com.busquedaCandidato.candidato.exception.type.CandidateNoPostulationException;
-import com.busquedaCandidato.candidato.exception.type.EntityAlreadyHasRelationException;
-import com.busquedaCandidato.candidato.exception.type.ItAlreadyExistPostulationException;
-import com.busquedaCandidato.candidato.exception.type.ResourceNotFoundException;
+import com.busquedaCandidato.candidato.exception.type.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -163,6 +145,13 @@ public class GlobalException {
     public ResponseEntity<Map<String, String>> ItAlreadyProcessWithIdPostulation(ItAlreadyProcessWithIdPostulation ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.IT_ALREADY_PROCESS_POSTULATION.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidFileTypeException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidFileType(InvalidFileTypeException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }
 

@@ -1,13 +1,6 @@
 package com.busquedaCandidato.candidato.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -68,6 +61,16 @@ public class CandidateEntity {
 
     @Column(nullable = false)
     private LocalDate datePresentation;
+
+    @Lob
+    @Column(name = "resume_pdf", columnDefinition = "LONGBLOB")
+    private byte[] resumePdf;
+
+    @Column(name = "resume_file_name")
+    private String resumeFileName;
+
+    @Column(name = "resume_content_type")
+    private String resumeContentType;
 
     @ManyToOne
     @JoinColumn(name = "origin_id", nullable = false)

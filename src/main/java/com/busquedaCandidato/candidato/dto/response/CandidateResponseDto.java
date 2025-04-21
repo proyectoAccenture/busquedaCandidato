@@ -5,9 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -61,6 +59,12 @@ public class CandidateResponseDto {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate datePresentation;
+
+    @Schema(name = "hasResume", description = "Indica si el candidato tiene hoja de vida cargada")
+    private Boolean hasResume;
+
+    @Schema(name = "resumeFileName", description = "Nombre del archivo de la hoja de vida")
+    private String resumeFileName;
 
     @Schema(name = "originId",description = "Id of origin")
     private Long originId;

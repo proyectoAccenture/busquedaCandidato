@@ -60,10 +60,6 @@ public class VacancyCompanyRequestDto {
     @Size(min = 1, max = 100, message = "The source must be between 1 and 100 characters")
     private String assignmentTime;
 
-    @Schema(name = "role",description = "Id of role",example = "1")
-    @NotNull(message = "roleId cannot be null")
-    private Long role;
-
     @Schema(name = "jobProfile",description = "Id of jobProfile", example = "1")
     @NotNull(message = "jobProfile cannot be null")
     private Long jobProfile;

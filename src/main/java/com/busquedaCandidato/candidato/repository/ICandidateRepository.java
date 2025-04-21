@@ -10,9 +10,9 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface ICandidateRepository extends JpaRepository<CandidateEntity, Long>{
+    List<CandidateEntity> findByIdIn(List<Long> candidateIds);
     boolean existsByCard(Long card);
     boolean existsByPhone(Long phone);
-    List<CandidateEntity> findByIdIn(List<Long> candidateIds);
 
     @Query("SELECT c FROM CandidateEntity c " +
             "WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :query, '%')) " +
@@ -36,6 +36,4 @@ public interface ICandidateRepository extends JpaRepository<CandidateEntity, Lon
     @Query("SELECT c FROM CandidateEntity c " +
             "WHERE LOWER(CONCAT(c.name, ' ', c.lastName)) LIKE LOWER(CONCAT('%', :query, '%')) ")
     List<CandidateEntity> searchByFullName(@Param("query") String query, Pageable pageable);
-
-
 }

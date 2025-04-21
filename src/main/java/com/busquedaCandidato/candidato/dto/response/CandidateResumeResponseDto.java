@@ -8,17 +8,17 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(name = "CandidateResumeResponse", description = "Información de la hoja de vida de un candidato")
+@Schema(name = "CandidateResumeResponse", description = "Information from a candidate's resume")
 public class CandidateResumeResponseDto {
-    @Schema(name = "candidateId", description = "ID del candidato")
+    @Schema(name = "candidateId", description = "candidate ID")
     private Long candidateId;
 
-    @Schema(name = "resumeFileName", description = "Nombre del archivo de la hoja de vida")
+    @Schema(name = "resumeFileName", description = "Resume file name")
     private String resumeFileName;
 
-    @Schema(name = "resumeContentType", description = "Tipo de contenido del archivo")
+    @Schema(name = "resumeContentType", description = "File content type")
     private String resumeContentType;
 
-    @Schema(name = "resumePdf", description = "Contenido del archivo PDF")
+    @Schema(name = "resumePdf", description = "PDF file content")
     private byte[] resumePdf;
 }

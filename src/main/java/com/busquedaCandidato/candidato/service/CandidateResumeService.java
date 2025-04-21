@@ -1,6 +1,6 @@
 package com.busquedaCandidato.candidato.service;
 
-import com.busquedaCandidato.candidato.dto.request.CandidateResumeRequestDto;
+import com.busquedaCandidato.candidato.dto.request.CandidateRequestDto;
 import com.busquedaCandidato.candidato.dto.response.CandidateResponseDto;
 import com.busquedaCandidato.candidato.dto.response.CandidateResumeResponseDto;
 import com.busquedaCandidato.candidato.entity.CandidateEntity;
@@ -36,15 +36,15 @@ public class CandidateResumeService {
         try {
 
             if (file.isEmpty()) {
-                throw new BadRequestException("El archivo está vacío");
+                throw new BadRequestException("The file is empty");
             }
 
             if (!Objects.equals(file.getContentType(), "application/pdf")) {
-                throw new InvalidFileTypeException("El archivo debe ser un PDF");
+                throw new InvalidFileTypeException("The file must be a PDF");
             }
 
             CandidateEntity candidate = candidateRepository.findById(candidateId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Candidato no encontrado con ID: " + candidateId));
+                    .orElseThrow(() -> new ResourceNotFoundException("Candidate not found with ID: " + candidateId));
 
             candidate.setResumePdf(file.getBytes());
             candidate.setResumeFileName(file.getOriginalFilename());
@@ -52,17 +52,17 @@ public class CandidateResumeService {
             candidateRepository.save(candidate);
 
         } catch (IOException e) {
-            throw new RuntimeException("Error al procesar el archivo: " + e.getMessage());
+            throw new RuntimeException("Error processing file: " + e.getMessage());
         }
     }
 
     @Transactional(readOnly = true)
     public CandidateResumeResponseDto getResume(Long candidateId) {
         CandidateEntity candidate = candidateRepository.findById(candidateId)
-                .orElseThrow(() -> new ResourceNotFoundException("Candidato no encontrado con ID: " + candidateId));
+                .orElseThrow(() -> new ResourceNotFoundException("Candidate not found with ID: " + candidateId));
 
         if (candidate.getResumePdf() == null) {
-            throw new ResourceNotFoundException("El candidato no tiene hoja de vida cargada");
+            throw new ResourceNotFoundException("The candidate does not have a resume uploaded");
         }
 
         return new CandidateResumeResponseDto(
@@ -74,44 +74,44 @@ public class CandidateResumeService {
     }
 
     @Transactional
-    public CandidateResponseDto saveCandidateWithResume(CandidateResumeRequestDto candidateResumeRequestDto, MultipartFile file) {
+    public CandidateResponseDto saveCandidateWithResume(CandidateRequestDto candidateRequestDto, MultipartFile file) {
         try {
-            if(candidateRepository.existsByCard(candidateResumeRequestDto.getCard())){
+            if(candidateRepository.existsByCard(candidateRequestDto.getCard())){
                 throw new IdCardAlreadyExistException();
             }
 
-            if(candidateRepository.existsByPhone(candidateResumeRequestDto.getPhone())){
+            if(candidateRepository.existsByPhone(candidateRequestDto.getPhone())){
                 throw new PhoneAlreadyExistException();
             }
 
-            JobProfileEntity jobProfileEntity = jobProfileRepository.findById(candidateResumeRequestDto.getJobProfile())
+            JobProfileEntity jobProfileEntity = jobProfileRepository.findById(candidateRequestDto.getJobProfile())
                     .orElseThrow(EntityNoExistException::new);
 
-            OriginEntity originEntity = originRepository.findById(candidateResumeRequestDto.getOrigin())
+            OriginEntity originEntity = originRepository.findById(candidateRequestDto.getOrigin())
                     .orElseThrow(EntityNoExistException::new);
 
             CandidateEntity candidateEntityNew = new CandidateEntity();
-            candidateEntityNew.setName(candidateResumeRequestDto.getName());
-            candidateEntityNew.setLastName(candidateResumeRequestDto.getLastName());
-            candidateEntityNew.setCard(candidateResumeRequestDto.getCard());
-            candidateEntityNew.setPhone(candidateResumeRequestDto.getPhone());
-            candidateEntityNew.setCity(candidateResumeRequestDto.getCity());
-            candidateEntityNew.setEmail(candidateResumeRequestDto.getEmail());
-            candidateEntityNew.setBirthdate(candidateResumeRequestDto.getBirthdate());
-            candidateEntityNew.setSource(candidateResumeRequestDto.getSource());
-            candidateEntityNew.setSkills(candidateResumeRequestDto.getSkills());
-            candidateEntityNew.setYearsExperience(candidateResumeRequestDto.getYearsExperience());
-            candidateEntityNew.setWorkExperience(candidateResumeRequestDto.getWorkExperience());
-            candidateEntityNew.setSeniority(candidateResumeRequestDto.getSeniority());
-            candidateEntityNew.setSalaryAspiration(candidateResumeRequestDto.getSalaryAspiration());
-            candidateEntityNew.setLevel(candidateResumeRequestDto.getLevel());
-            candidateEntityNew.setDatePresentation(candidateResumeRequestDto.getDatePresentation());
+            candidateEntityNew.setName(candidateRequestDto.getName());
+            candidateEntityNew.setLastName(candidateRequestDto.getLastName());
+            candidateEntityNew.setCard(candidateRequestDto.getCard());
+            candidateEntityNew.setPhone(candidateRequestDto.getPhone());
+            candidateEntityNew.setCity(candidateRequestDto.getCity());
+            candidateEntityNew.setEmail(candidateRequestDto.getEmail());
+            candidateEntityNew.setBirthdate(candidateRequestDto.getBirthdate());
+            candidateEntityNew.setSource(candidateRequestDto.getSource());
+            candidateEntityNew.setSkills(candidateRequestDto.getSkills());
+            candidateEntityNew.setYearsExperience(candidateRequestDto.getYearsExperience());
+            candidateEntityNew.setWorkExperience(candidateRequestDto.getWorkExperience());
+            candidateEntityNew.setSeniority(candidateRequestDto.getSeniority());
+            candidateEntityNew.setSalaryAspiration(candidateRequestDto.getSalaryAspiration());
+            candidateEntityNew.setLevel(candidateRequestDto.getLevel());
+            candidateEntityNew.setDatePresentation(candidateRequestDto.getDatePresentation());
             candidateEntityNew.setOrigin(originEntity);
             candidateEntityNew.setJobProfile(jobProfileEntity);
 
             if (file != null && !file.isEmpty()) {
                 if (!Objects.equals(file.getContentType(), "application/pdf")) {
-                    throw new InvalidFileTypeException("El archivo debe ser un PDF");
+                    throw new InvalidFileTypeException("The file must be a PDF");
                 }
 
                 candidateEntityNew.setResumePdf(file.getBytes());
@@ -130,7 +130,7 @@ public class CandidateResumeService {
             return responseDto;
 
         } catch (IOException e) {
-            throw new RuntimeException("Error al procesar el archivo: " + e.getMessage());
+            throw new RuntimeException("Error processing file: " + e.getMessage());
         }
     }
 }

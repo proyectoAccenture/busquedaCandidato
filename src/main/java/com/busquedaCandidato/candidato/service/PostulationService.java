@@ -13,7 +13,10 @@ import com.busquedaCandidato.candidato.exception.type.ItAlreadyExistPostulationE
 import com.busquedaCandidato.candidato.exception.type.ResourceNotFoundException;
 import com.busquedaCandidato.candidato.mapper.IMapperPostulationResponse;
 import com.busquedaCandidato.candidato.repository.*;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +40,7 @@ public class PostulationService {
 
     public List<PostulationResponseDto> getAllPostulation(){
         return postulationRepository.findAll().stream()
+                .filter(PostulationEntity::getStatus)
                 .map(mapperPostulationResponse::toDto)
                 .collect(Collectors.toList());
     }
@@ -118,6 +122,17 @@ public class PostulationService {
         CandidateEntity candidateEntity = candidateRepository.findById(postulationRequestDto.getCandidateId())
                 .orElseThrow(EntityNoExistException::new);
 
+        if (!postulationRequestDto.getStatus()) {
+            throw new CannotApplyException();
+        }
+
+        boolean alreadyApplied = postulationRepository
+                .existsByCandidate_IdAndRole_IdAndStatus(candidateEntity.getId(), roleIDEntity.getId(), true);
+
+        if (alreadyApplied) {
+            throw new ItAlreadyExistPostulationException();
+        }
+
         existingEntity.setDatePresentation(postulationRequestDto.getDatePresentation());
         existingEntity.setRole(roleIDEntity);
         existingEntity.setStatus(postulationRequestDto.getStatus());
@@ -126,15 +141,19 @@ public class PostulationService {
         return Optional.of(mapperPostulationResponse.toDto(postulationRepository.save(existingEntity)));
     }
 
-    public void deletePostulation(Long id){
-        PostulationEntity existingPostulation = postulationRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
+    @Transactional
+    public void deletePostulation(long id) {
+        try {
+            PostulationEntity postulation = postulationRepository.findById(id)
+                    .orElseThrow(EntityNoExistException::new);
 
-        if (processRepository.existsByPostulationId(id)) {
-            throw new EntityAlreadyHasRelationException();
+            postulation.setStatus(false);
+            ResponseEntity.ok("Postulation deactivated successfully");
+
+        } catch (EntityNoExistException e) {
+            ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Postulation not found with id: " + id);
         }
-
-        postulationRepository.delete(existingPostulation);
     }
 
     private void validationListPostulation(List<PostulationEntity> postulations){

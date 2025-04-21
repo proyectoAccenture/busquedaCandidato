@@ -73,9 +73,7 @@ public class PostulationService {
         String word3 = words.length > 2 ? words[2] : null;
         String word4 = words.length > 3 ? words[3] : null;
 
-        String roleId = words.length > 0 ? words[words.length - 1] : null;
-
-        List<PostulationEntity> postulations = postulationRepository.searchByCandidateNameLastNameAndRole(word1, word2, word3, word4, roleId);
+        List<PostulationEntity> postulations = postulationRepository.searchByCandidateNameLastNameAndRole(word1, word2, word3, word4, query);
         validationListPostulation(postulations);
 
         return postulations.stream()

@@ -63,7 +63,7 @@ public class CandidateStateService {
     }
 
     public CandidateStateResponseDto getCandidateStateById(Long processId){
-         CandidateStateEntity candidateState = candidateStateRepository.findById(processId)
+        CandidateStateEntity candidateState = candidateStateRepository.findById(processId)
                 .orElseThrow(ProcessNoExistException::new);
 
         return mapperCandidateStateResponse.toDto(candidateState);

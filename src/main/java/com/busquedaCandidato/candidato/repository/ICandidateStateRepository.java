@@ -17,4 +17,5 @@ public interface ICandidateStateRepository extends JpaRepository<CandidateStateE
             "WHERE c.process = :process " +
             "AND c.process.postulation = :postulation")
     boolean existsByCandidateAndPostulationAndProcess(CandidateEntity candidate, PostulationEntity postulation, ProcessEntity process);
+
 }

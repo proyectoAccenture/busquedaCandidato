@@ -2,21 +2,22 @@ package com.busquedaCandidato.candidato.service;
 
 import com.busquedaCandidato.candidato.dto.request.PostulationRequestDto;
 import com.busquedaCandidato.candidato.dto.response.PostulationResponseDto;
-import com.busquedaCandidato.candidato.entity.PostulationEntity;
 import com.busquedaCandidato.candidato.entity.CandidateEntity;
-import com.busquedaCandidato.candidato.entity.VacancyCompanyEntity;
-import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
-import com.busquedaCandidato.candidato.exception.type.CannotApplyException;
+import com.busquedaCandidato.candidato.entity.PostulationEntity;
+import com.busquedaCandidato.candidato.entity.RoleIDEntity;
 import com.busquedaCandidato.candidato.exception.type.BadRequestException;
-import com.busquedaCandidato.candidato.exception.type.EntityAlreadyHasRelationException;
+import com.busquedaCandidato.candidato.exception.type.CannotApplyException;
+import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
 import com.busquedaCandidato.candidato.exception.type.ItAlreadyExistPostulationException;
 import com.busquedaCandidato.candidato.exception.type.ResourceNotFoundException;
 import com.busquedaCandidato.candidato.mapper.IMapperPostulationResponse;
 import com.busquedaCandidato.candidato.repository.ICandidateRepository;
 import com.busquedaCandidato.candidato.repository.IPostulationRepository;
-import com.busquedaCandidato.candidato.repository.IProcessRepository;
-import com.busquedaCandidato.candidato.repository.IVacancyCompanyRepository;
+import com.busquedaCandidato.candidato.repository.IRoleIDRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -26,10 +27,9 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class PostulationService {
     private final IPostulationRepository postulationRepository;
-    private final IVacancyCompanyRepository vacancyCompanyRepository;
     private final ICandidateRepository candidateRepository;
-    private final IProcessRepository processRepository;
     private final IMapperPostulationResponse mapperPostulationResponse;
+    private final IRoleIDRepository roleIDRepository;
 
     public PostulationResponseDto getPostulation(Long id){
         PostulationEntity postulationEntity = postulationRepository.findById(id)
@@ -40,6 +40,7 @@ public class PostulationService {
 
     public List<PostulationResponseDto> getAllPostulation(){
         return postulationRepository.findAll().stream()
+                .filter(PostulationEntity::getStatus)
                 .map(mapperPostulationResponse::toDto)
                 .collect(Collectors.toList());
     }
@@ -78,10 +79,11 @@ public class PostulationService {
         return postulations.stream()
                 .map(mapperPostulationResponse::toDto)
                 .collect(Collectors.toList());
+
     }
 
     public PostulationResponseDto savePostulation(PostulationRequestDto postulationRequestDto) {
-        VacancyCompanyEntity vacancyCompanyEntity = vacancyCompanyRepository.findById(postulationRequestDto.getVacancyCompanyId())
+        RoleIDEntity roleIDEntity = roleIDRepository.findById(postulationRequestDto.getRoleId())
                 .orElseThrow(EntityNoExistException::new);
 
         CandidateEntity candidateEntity = candidateRepository.findById(postulationRequestDto.getCandidateId())
@@ -92,15 +94,15 @@ public class PostulationService {
         }
 
         boolean alreadyApplied = postulationRepository
-                .existsByCandidate_IdAndVacancyCompany_IdAndStatus(candidateEntity.getId(), vacancyCompanyEntity.getId(), true);
+                .existsByCandidate_IdAndRole_IdAndStatus(candidateEntity.getId(), roleIDEntity.getId(), true);
 
         if (alreadyApplied) {
             throw new ItAlreadyExistPostulationException();
         }
 
         PostulationEntity postulationEntityNew = new PostulationEntity();
+        postulationEntityNew.setRole(roleIDEntity);
         postulationEntityNew.setDatePresentation(postulationRequestDto.getDatePresentation());
-        postulationEntityNew.setVacancyCompany(vacancyCompanyEntity);
         postulationEntityNew.setCandidate(candidateEntity);
         postulationEntityNew.setStatus(postulationRequestDto.getStatus());
 
@@ -109,32 +111,47 @@ public class PostulationService {
     }
 
     public Optional<PostulationResponseDto> updatePostulation(Long id, PostulationRequestDto postulationRequestDto) {
-        PostulationEntity existingEntity  = postulationRepository.findById(id)
+        RoleIDEntity roleIDEntity = roleIDRepository.findById(postulationRequestDto.getRoleId())
                 .orElseThrow(EntityNoExistException::new);
 
-        VacancyCompanyEntity vacancyCompanyEntity = vacancyCompanyRepository.findById(postulationRequestDto.getVacancyCompanyId())
+        PostulationEntity existingEntity  = postulationRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 
         CandidateEntity candidateEntity = candidateRepository.findById(postulationRequestDto.getCandidateId())
                 .orElseThrow(EntityNoExistException::new);
 
+        if (!postulationRequestDto.getStatus()) {
+            throw new CannotApplyException();
+        }
+
+        boolean alreadyApplied = postulationRepository
+                .existsByCandidate_IdAndRole_IdAndStatus(candidateEntity.getId(), roleIDEntity.getId(), true);
+
+        if (alreadyApplied) {
+            throw new ItAlreadyExistPostulationException();
+        }
+
         existingEntity.setDatePresentation(postulationRequestDto.getDatePresentation());
-        existingEntity.setVacancyCompany(vacancyCompanyEntity);
+        existingEntity.setRole(roleIDEntity);
         existingEntity.setStatus(postulationRequestDto.getStatus());
         existingEntity.setCandidate(candidateEntity);
 
         return Optional.of(mapperPostulationResponse.toDto(postulationRepository.save(existingEntity)));
     }
 
-    public void deletePostulation(Long id){
-        PostulationEntity existingPostulation = postulationRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
+    @Transactional
+    public void deletePostulation(long id) {
+        try {
+            PostulationEntity postulation = postulationRepository.findById(id)
+                    .orElseThrow(EntityNoExistException::new);
 
-        if (processRepository.existsByPostulationId(id)) {
-            throw new EntityAlreadyHasRelationException();
+            postulation.setStatus(false);
+            ResponseEntity.ok("Postulation deactivated successfully");
+
+        } catch (EntityNoExistException e) {
+            ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Postulation not found with id: " + id);
         }
-
-        postulationRepository.delete(existingPostulation);
     }
 
     private void validationListPostulation(List<PostulationEntity> postulations){

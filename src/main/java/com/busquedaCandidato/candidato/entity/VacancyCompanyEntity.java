@@ -47,10 +47,6 @@ public class VacancyCompanyEntity {
     private String assignmentTime;
 
     @ManyToOne
-    @JoinColumn(name = "role_id", nullable = false)
-    private RoleIDEntity role;
-
-    @ManyToOne
     @JoinColumn(name = "job_profile_id", nullable = false)
     private JobProfileEntity jobProfile;
 

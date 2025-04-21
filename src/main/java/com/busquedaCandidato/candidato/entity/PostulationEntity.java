@@ -1,18 +1,14 @@
 package com.busquedaCandidato.candidato.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.w3c.dom.stylesheets.LinkStyle;
+
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 @Entity
 @AllArgsConstructor
@@ -34,10 +30,11 @@ public class PostulationEntity {
     @JoinColumn(name = "candidate_id", nullable = false)
     private CandidateEntity candidate;
 
-    @ManyToOne
-    @JoinColumn(name = "company_vacancy_id", nullable = false)
-    private VacancyCompanyEntity  vacancyCompany;
+    @OneToOne
+    @JoinColumn(name = "role_id", nullable = false)
+    private RoleIDEntity role;
 
     @OneToOne(mappedBy = "postulation")
     private ProcessEntity process;
+    
 }

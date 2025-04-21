@@ -36,7 +36,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CandidateService {
     private final ICandidateRepository candidateRepository;
-    private final IVacancyCompanyRepository vacancyCompanyRepository;
     private final IPostulationRepository postulationRepository;
     private final IRoleIDRepository roleIDRepository;
     private final IJobProfileRepository jobProfileRepository;
@@ -45,23 +44,16 @@ public class CandidateService {
 
     public List<CandidateResponseDto> getCandidateByRole(String roleName) {
 
-        RoleIDEntity roleOptional = roleIDRepository.findByName(roleName)
+        RoleIDEntity role = roleIDRepository.findByName(roleName)
                 .orElseThrow(RoleIdNoExistException::new);
 
-        Long roleId = roleOptional.getId();
-
-        List<VacancyCompanyEntity> vacancies = vacancyCompanyRepository.findByRoleId(roleId);
-
-        List<Long> vacancyIds = vacancies.stream()
-                .map(VacancyCompanyEntity::getId)
-                .toList();
-
-        List<PostulationEntity> postulations = postulationRepository.findByVacancyCompanyIdIn(vacancyIds);
+        List<PostulationEntity> postulations = postulationRepository.findByRole(role);
 
         List<Long> candidateIds = postulations.stream()
                 .map(PostulationEntity::getCandidate)
                 .filter(Objects::nonNull)
                 .map(CandidateEntity::getId)
+                .distinct()
                 .toList();
 
         List<CandidateEntity> candidates = candidateRepository.findByIdIn(candidateIds);
@@ -69,6 +61,7 @@ public class CandidateService {
         return candidates.stream()
                 .map(mapperCandidateResponse::toDto)
                 .collect(Collectors.toList());
+
     }
 
     public CandidateResponse getSearchCandidates(String query, int page, int size) {

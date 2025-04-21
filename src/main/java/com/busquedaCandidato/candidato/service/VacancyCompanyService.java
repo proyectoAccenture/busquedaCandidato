@@ -5,7 +5,6 @@ import com.busquedaCandidato.candidato.dto.response.VacancyCompanyResponseDto;
 import com.busquedaCandidato.candidato.entity.OriginEntity;
 import com.busquedaCandidato.candidato.entity.VacancyCompanyEntity;
 import com.busquedaCandidato.candidato.entity.JobProfileEntity;
-import com.busquedaCandidato.candidato.entity.RoleIDEntity;
 import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
 import com.busquedaCandidato.candidato.exception.type.EntityAlreadyHasRelationException;
 import com.busquedaCandidato.candidato.mapper.IMapperVacancyCompanyResponse;
@@ -16,7 +15,7 @@ import com.busquedaCandidato.candidato.repository.IOriginRepository;
 import com.busquedaCandidato.candidato.repository.IPostulationRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import java.time.LocalDate;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,7 +24,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class VacancyCompanyService {
     private final IVacancyCompanyRepository vacancyCompanyRepository;
-    private final IRoleIDRepository roleIDRepository;
     private final IJobProfileRepository jobProfileRepository;
     private final IOriginRepository originRepository;
     private final IPostulationRepository postulationRepository;
@@ -44,9 +42,6 @@ public class VacancyCompanyService {
     }
 
     public VacancyCompanyResponseDto saveVacancyCompany(VacancyCompanyRequestDto vacancyCompanyRequestDto) {
-        RoleIDEntity roleIDEntity = roleIDRepository.findById(vacancyCompanyRequestDto.getRole())
-                .orElseThrow(EntityNoExistException::new);
-
         JobProfileEntity jobProfileEntity = jobProfileRepository.findById(vacancyCompanyRequestDto.getJobProfile())
                 .orElseThrow(EntityNoExistException::new);
 
@@ -62,7 +57,6 @@ public class VacancyCompanyService {
         vacancyCompanyEntityNew.setSkills(vacancyCompanyRequestDto.getSkills());
         vacancyCompanyEntityNew.setExperience(vacancyCompanyRequestDto.getExperience());
         vacancyCompanyEntityNew.setAssignmentTime(vacancyCompanyRequestDto.getAssignmentTime());
-        vacancyCompanyEntityNew.setRole(roleIDEntity);
         vacancyCompanyEntityNew.setJobProfile(jobProfileEntity);
         vacancyCompanyEntityNew.setOrigin(originEntity);
 
@@ -72,9 +66,6 @@ public class VacancyCompanyService {
 
     public Optional<VacancyCompanyResponseDto> updateVacancyCompany(Long id, VacancyCompanyRequestDto vacancyCompanyRequestDto) {
         VacancyCompanyEntity existingEntity  = vacancyCompanyRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
-
-        RoleIDEntity roleIDEntity = roleIDRepository.findById(vacancyCompanyRequestDto.getRole())
                 .orElseThrow(EntityNoExistException::new);
 
         JobProfileEntity jobProfileEntity = jobProfileRepository.findById(vacancyCompanyRequestDto.getJobProfile())
@@ -91,7 +82,6 @@ public class VacancyCompanyService {
         existingEntity.setSkills(vacancyCompanyRequestDto.getSkills());
         existingEntity.setExperience(vacancyCompanyRequestDto.getExperience());
         existingEntity.setAssignmentTime(vacancyCompanyRequestDto.getAssignmentTime());
-        existingEntity.setRole(roleIDEntity);
         existingEntity.setJobProfile(jobProfileEntity);
         existingEntity.setOrigin(originEntity);
 
@@ -102,7 +92,7 @@ public class VacancyCompanyService {
         VacancyCompanyEntity existingVacancyCompany = vacancyCompanyRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 
-        if (postulationRepository.existsByVacancyCompanyId(id)) {
+        if (postulationRepository.existsByRoleId(id)) {
             throw new EntityAlreadyHasRelationException();
         }
 

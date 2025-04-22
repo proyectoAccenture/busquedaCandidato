@@ -16,13 +16,17 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
+@ActiveProfiles("test")
 public class JobProfileControllerTests {
 
     @Autowired
@@ -37,11 +41,11 @@ public class JobProfileControllerTests {
     @Test
     @DirtiesContext
     void get_job_profile_by_id_should_return_200() {
-        JobProfileEntity jobProfileEntity = new JobProfileEntity(null, "Perfil 1");
+        JobProfileEntity jobProfileEntity = new JobProfileEntity(null, "Profile 1");
         JobProfileEntity savedEntity = jobProfileRepository.save(jobProfileEntity);
 
         ResponseEntity<JobProfileResponseDto> response = restTemplate.exchange(
-                "/api/jobprofile/" + savedEntity.getId(),
+                "/api/job_profile/" + savedEntity.getId(),
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<>() {}
@@ -50,17 +54,17 @@ public class JobProfileControllerTests {
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals("Perfil 1", response.getBody().getName());
+        assertEquals("Profile 1", response.getBody().getName());
     }
 
     @Test
     @DirtiesContext
     void get_all_job_profiles_should_return_200() {
-        jobProfileRepository.save(new JobProfileEntity(null, "Perfil 2"));
-        jobProfileRepository.save(new JobProfileEntity(null, "Perfil 3"));
+        jobProfileRepository.save(new JobProfileEntity(null, "Profile 2"));
+        jobProfileRepository.save(new JobProfileEntity(null, "Profile 3"));
 
         ResponseEntity<List<JobProfileResponseDto>> response = restTemplate.exchange(
-                "/api/jobprofile/",
+                "/api/job_profile/",
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<>() {}
@@ -72,8 +76,8 @@ public class JobProfileControllerTests {
         assertEquals(2, response.getBody().size());
 
         List<String> jobProfileNames = response.getBody().stream().map(JobProfileResponseDto::getName).toList();
-        assertTrue(jobProfileNames.contains("Perfil 2"));
-        assertTrue(jobProfileNames.contains("Perfil 3"));
+        assertTrue(jobProfileNames.contains("Profile 2"));
+        assertTrue(jobProfileNames.contains("Profile 3"));
     }
 
     @Test
@@ -83,7 +87,7 @@ public class JobProfileControllerTests {
         requestDto.setName("Nuevo");
 
         ResponseEntity<JobProfileResponseDto> response = restTemplate.exchange(
-                "/api/jobprofile/",
+                "/api/job_profile/",
                 HttpMethod.POST,
                 new HttpEntity<>(requestDto),
                 new ParameterizedTypeReference<>() {}
@@ -98,12 +102,13 @@ public class JobProfileControllerTests {
     @Test
     @DirtiesContext
     void update_job_profile_should_return_200() {
-        JobProfileEntity jobProfileEntity = jobProfileRepository.save(new JobProfileEntity(null, "Perfil 3"));
+        JobProfileEntity jobProfileEntity = jobProfileRepository.save(new JobProfileEntity(null, "Profile three"));
+
         JobProfileRequestDto updateRequest = new JobProfileRequestDto();
-        updateRequest.setName("Perfil 4");
+        updateRequest.setName("Profile four");
 
         ResponseEntity<JobProfileResponseDto> response = restTemplate.exchange(
-                "/api/jobprofile/" + jobProfileEntity.getId(),
+                "/api/job_profile/" + jobProfileEntity.getId(),
                 HttpMethod.PUT,
                 new HttpEntity<>(updateRequest),
                 new ParameterizedTypeReference<>() {}
@@ -112,16 +117,16 @@ public class JobProfileControllerTests {
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals("Perfil 4", response.getBody().getName());
+        assertEquals("Profile four", response.getBody().getName());
     }
 
     @Test
     @DirtiesContext
     void delete_job_profile_should_return_204() {
-        JobProfileEntity jobProfileEntity = jobProfileRepository.save(new JobProfileEntity(null, "Perfil 1"));
+        JobProfileEntity jobProfileEntity = jobProfileRepository.save(new JobProfileEntity(null, "Profile 1"));
 
         ResponseEntity<Void> response = restTemplate.exchange(
-                "/api/jobprofile/" + jobProfileEntity.getId(),
+                "/api/job_profile/" + jobProfileEntity.getId(),
                 HttpMethod.DELETE,
                 null,
                 Void.class

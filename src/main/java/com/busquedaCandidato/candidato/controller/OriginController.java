@@ -28,7 +28,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OriginController {
 
-     private final OriginService originService;
+    private final OriginService originService;
 
     @Operation(summary = "Get a origin by its number")
     @ApiResponses(value = {

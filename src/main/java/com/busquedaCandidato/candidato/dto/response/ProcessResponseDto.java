@@ -4,7 +4,6 @@ import com.busquedaCandidato.candidato.entity.CandidateStateEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-
 import java.time.LocalDate;
 import java.util.List;
 

@@ -7,8 +7,8 @@ import com.busquedaCandidato.candidato.entity.JobProfileEntity;
 import com.busquedaCandidato.candidato.entity.OriginEntity;
 import com.busquedaCandidato.candidato.entity.PostulationEntity;
 import com.busquedaCandidato.candidato.entity.ProcessEntity;
-import com.busquedaCandidato.candidato.entity.RoleIDEntity;
-import com.busquedaCandidato.candidato.entity.VacancyCompanyEntity;
+import com.busquedaCandidato.candidato.entity.RoleEntity;
+import com.busquedaCandidato.candidato.entity.CompanyVacancyEntity;
 import com.busquedaCandidato.candidato.repository.IProcessRepository;
 import com.busquedaCandidato.candidato.utility.TestEntityFactory;
 import org.junit.jupiter.api.Test;
@@ -22,14 +22,17 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
+@ActiveProfiles("test")
 public class ProcessControllerTests {
     @Autowired
     private TestRestTemplate restTemplate;
@@ -47,9 +50,9 @@ public class ProcessControllerTests {
         OriginEntity origin = entityFactory.originMethod();
         JobProfileEntity jobProfile = entityFactory.jobProfileMethod();
         CandidateEntity candidate = entityFactory.candidateMethod(jobProfile, origin);
-        RoleIDEntity role = entityFactory.roleMethod();
-        VacancyCompanyEntity vacancy = entityFactory.vacancyMethod(role, jobProfile, origin);
-        PostulationEntity postulation = entityFactory.postulationMethod(candidate, vacancy);
+        CompanyVacancyEntity vacancy = entityFactory.vacancyMethod(jobProfile, origin);
+        RoleEntity role = entityFactory.roleMethod(vacancy);
+        PostulationEntity postulation = entityFactory.postulationMethod(candidate, role);
         ProcessEntity process = entityFactory.processMethod(postulation);
 
         ResponseEntity<ProcessEntity> response = restTemplate.exchange(
@@ -72,10 +75,10 @@ public class ProcessControllerTests {
         JobProfileEntity jobProfile = entityFactory.jobProfileMethod();
         CandidateEntity candidate1 = entityFactory.candidateMethod(jobProfile, origin);
         CandidateEntity candidate2 = entityFactory.candidateMethod(jobProfile, origin);
-        RoleIDEntity role = entityFactory.roleMethod();
-        VacancyCompanyEntity vacancy = entityFactory.vacancyMethod(role, jobProfile, origin);
-        PostulationEntity postulation1 = entityFactory.postulationMethod(candidate1, vacancy);
-        PostulationEntity postulation2 = entityFactory.postulationMethod(candidate2, vacancy);
+        CompanyVacancyEntity vacancy = entityFactory.vacancyMethod(jobProfile, origin);
+        RoleEntity role = entityFactory.roleMethod(vacancy);
+        PostulationEntity postulation1 = entityFactory.postulationMethod(candidate1, role);
+        PostulationEntity postulation2 = entityFactory.postulationMethod(candidate2, role);
         ProcessEntity process1 = entityFactory.processMethod(postulation1);
         ProcessEntity process2 = entityFactory.processMethod(postulation2);
 
@@ -100,14 +103,14 @@ public class ProcessControllerTests {
         OriginEntity origin = entityFactory.originMethod();
         JobProfileEntity jobProfile = entityFactory.jobProfileMethod();
         CandidateEntity candidate1 = entityFactory.candidateMethod(jobProfile, origin);
-        RoleIDEntity role = entityFactory.roleMethod();
-        VacancyCompanyEntity vacancy = entityFactory.vacancyMethod(role, jobProfile, origin);
-        PostulationEntity postulation1 = entityFactory.postulationMethod(candidate1, vacancy);
+        CompanyVacancyEntity vacancy = entityFactory.vacancyMethod(jobProfile, origin);
+        RoleEntity role = entityFactory.roleMethod(vacancy);
+        PostulationEntity postulation = entityFactory.postulationMethod(candidate1, role);
 
         ProcessRequestDto requestDto = new ProcessRequestDto();
         requestDto.setDescription("description");
         requestDto.setAssignedDate(LocalDate.now());
-        requestDto.setPostulationId(postulation1.getId());
+        requestDto.setPostulationId(postulation.getId());
 
         ResponseEntity<ProcessResponseDto> response = restTemplate.exchange(
                 "/api/process/",
@@ -129,9 +132,9 @@ public class ProcessControllerTests {
         OriginEntity origin = entityFactory.originMethod();
         JobProfileEntity jobProfile = entityFactory.jobProfileMethod();
         CandidateEntity candidate1 = entityFactory.candidateMethod(jobProfile, origin);
-        RoleIDEntity role = entityFactory.roleMethod();
-        VacancyCompanyEntity vacancy = entityFactory.vacancyMethod(role, jobProfile, origin);
-        PostulationEntity postulation1 = entityFactory.postulationMethod(candidate1, vacancy);
+        CompanyVacancyEntity vacancy = entityFactory.vacancyMethod(jobProfile, origin);
+        RoleEntity role = entityFactory.roleMethod(vacancy);
+        PostulationEntity postulation1 = entityFactory.postulationMethod(candidate1, role);
         ProcessEntity process1 = entityFactory.processMethod(postulation1);
 
         ProcessRequestDto requestDto = new ProcessRequestDto();
@@ -160,9 +163,9 @@ public class ProcessControllerTests {
         OriginEntity origin = entityFactory.originMethod();
         JobProfileEntity jobProfile = entityFactory.jobProfileMethod();
         CandidateEntity candidate1 = entityFactory.candidateMethod(jobProfile, origin);
-        RoleIDEntity role = entityFactory.roleMethod();
-        VacancyCompanyEntity vacancy = entityFactory.vacancyMethod(role, jobProfile, origin);
-        PostulationEntity postulation1 = entityFactory.postulationMethod(candidate1, vacancy);
+        CompanyVacancyEntity vacancy = entityFactory.vacancyMethod(jobProfile, origin);
+        RoleEntity role = entityFactory.roleMethod(vacancy);
+        PostulationEntity postulation1 = entityFactory.postulationMethod(candidate1, role);
         ProcessEntity process1 = entityFactory.processMethod(postulation1);
 
         ResponseEntity<Void> response = restTemplate.exchange(

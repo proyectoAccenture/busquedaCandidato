@@ -1,7 +1,7 @@
 package com.busquedaCandidato.candidato.controller;
 
 import com.busquedaCandidato.candidato.dto.request.CandidateRequestDto;
-import com.busquedaCandidato.candidato.dto.response.CandidateResponse;
+import com.busquedaCandidato.candidato.dto.response.CandidateWithPaginationResponseDto;
 import com.busquedaCandidato.candidato.dto.response.CandidateResponseDto;
 import com.busquedaCandidato.candidato.dto.response.CandidateResumeResponseDto;
 import com.busquedaCandidato.candidato.service.CandidateResumeService;
@@ -38,6 +38,7 @@ import java.util.List;
 @RequestMapping("/api/candidate")
 @RequiredArgsConstructor
 public class CandidateController {
+
     private final CandidateService candidateService;
     private final CandidateResumeService candidateResumeService;
 
@@ -76,7 +77,7 @@ public class CandidateController {
             @ApiResponse(responseCode = "404", description = "Candidate not found", content = @Content)
     })
     @GetMapping("/search")
-    public ResponseEntity<CandidateResponse> getSearchCandidates(
+    public ResponseEntity<CandidateWithPaginationResponseDto> getSearchCandidates(
             @RequestParam @NotBlank String query,
             @RequestParam(defaultValue = "0") @Min(0)int page,
             @RequestParam(defaultValue = "10")@Min(1)  int size) {
@@ -92,12 +93,12 @@ public class CandidateController {
             @ApiResponse(responseCode = "404", description = "No candidates found", content = @Content)
     })
     @GetMapping("/search-fullName/{fullName}")
-    public ResponseEntity<CandidateResponse> getSearchCandidatesFullName(@PathVariable @NotBlank String fullName) {
-        CandidateResponse candidateResponse = candidateService.getSearchCandidatesFullName(fullName);
-        if (candidateResponse.toString().isEmpty()){
+    public ResponseEntity<CandidateWithPaginationResponseDto> getSearchCandidatesFullName(@PathVariable @NotBlank String fullName) {
+        CandidateWithPaginationResponseDto candidateWithPaginationResponseDto = candidateService.getSearchCandidatesFullName(fullName);
+        if (candidateWithPaginationResponseDto.toString().isEmpty()){
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(candidateResponse);
+        return ResponseEntity.ok(candidateWithPaginationResponseDto);
     }
 
     @Operation(summary = "Get all the candidate")

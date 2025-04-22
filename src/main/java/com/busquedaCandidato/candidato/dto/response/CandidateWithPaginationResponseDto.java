@@ -6,7 +6,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class CandidateResponse {
+public class CandidateWithPaginationResponseDto {
     private List<CandidateResponseDto> candidates;
     private int currentPage;
     private int pageSize;

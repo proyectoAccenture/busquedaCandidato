@@ -11,8 +11,8 @@ public class OpenAPIConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("API de Busqueda de Candidatos")
+                        .title("Candidate Search API")
                         .version("1.0")
-                        .description("Documentación de la API de usuarios usando OpenAPI y Swagger"));
+                        .description("Candidate Search API Documentation Using OpenAPI and Swagger"));
     }
 }

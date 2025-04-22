@@ -1,14 +1,12 @@
 package com.busquedaCandidato.candidato.dto.response;
 
-import com.busquedaCandidato.candidato.entity.VacancyCompanyEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-import java.util.List;
-
 @Schema(name = "RoleIDResponse", description = "Model representing a Role ID in the database")
 @Data
-public class RoleIDResponseDto {
+public class RoleResponseDto {
+
     @Schema(name = "id",defaultValue = "1", description = "Unique Id of the Role ID in the database")
     private Long id;
 
@@ -18,11 +16,9 @@ public class RoleIDResponseDto {
     @Schema(name = "description", description = "Role description")
     private String description;
 
-    @Schema(name = "vacancyCompanyId",description = "Vacancy id")
-    private Long vacancyCompanyId;
+    @Schema(name = "companyVacancyId",description = "Vacancy id")
+    private Long companyVacancyId;
 
-    @Schema(name = "vacancyCompanyName", description = "Vacancy name")
-    private String vacancyCompanyName;
-
-
+    @Schema(name = "companyVacancyName", description = "Vacancy name")
+    private String companyVacancyName;
 }

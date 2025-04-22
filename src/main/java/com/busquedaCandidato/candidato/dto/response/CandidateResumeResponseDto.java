@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Schema(name = "CandidateResumeResponse", description = "Information from a candidate's resume")
 public class CandidateResumeResponseDto {
+
     @Schema(name = "candidateId", description = "candidate ID")
     private Long candidateId;
 

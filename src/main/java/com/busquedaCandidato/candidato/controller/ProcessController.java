@@ -30,6 +30,7 @@ import java.util.List;
 @RequestMapping("api/process")
 @RequiredArgsConstructor
 public class ProcessController {
+
     private final ProcessService processService;
 
     @Operation(summary = "Get a process by their role id")

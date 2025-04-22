@@ -1,11 +1,9 @@
 package com.busquedaCandidato.candidato.repository;
 
-import com.busquedaCandidato.candidato.entity.VacancyCompanyEntity;
+import com.busquedaCandidato.candidato.entity.CompanyVacancyEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-
-public interface IVacancyCompanyRepository extends JpaRepository<VacancyCompanyEntity, Long> {
+public interface ICompanyVacancyRepository extends JpaRepository<CompanyVacancyEntity, Long> {
     Boolean existsByJobProfileId(Long jobProfileId);
     Boolean existsByOriginId(Long originId);
 }

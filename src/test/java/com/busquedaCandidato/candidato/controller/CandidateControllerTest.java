@@ -1,18 +1,11 @@
 package com.busquedaCandidato.candidato.controller;
 
 import com.busquedaCandidato.candidato.dto.request.CandidateRequestDto;
-import com.busquedaCandidato.candidato.dto.request.ProcessRequestDto;
 import com.busquedaCandidato.candidato.dto.response.CandidateResponseDto;
-import com.busquedaCandidato.candidato.dto.response.ProcessResponseDto;
 import com.busquedaCandidato.candidato.entity.CandidateEntity;
 import com.busquedaCandidato.candidato.entity.JobProfileEntity;
 import com.busquedaCandidato.candidato.entity.OriginEntity;
-import com.busquedaCandidato.candidato.entity.PostulationEntity;
-import com.busquedaCandidato.candidato.entity.ProcessEntity;
-import com.busquedaCandidato.candidato.entity.RoleIDEntity;
-import com.busquedaCandidato.candidato.entity.VacancyCompanyEntity;
 import com.busquedaCandidato.candidato.repository.ICandidateRepository;
-import com.busquedaCandidato.candidato.repository.IProcessRepository;
 import com.busquedaCandidato.candidato.utility.TestEntityFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,16 +18,19 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
+
 import java.time.LocalDate;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
+@ActiveProfiles("test")
 public class CandidateControllerTest {
+
     @Autowired
     private TestRestTemplate restTemplate;
 

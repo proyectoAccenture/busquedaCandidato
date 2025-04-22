@@ -1,8 +1,8 @@
 package com.busquedaCandidato.candidato.controller;
 
-import com.busquedaCandidato.candidato.dto.request.RoleIDRequestDto;
-import com.busquedaCandidato.candidato.dto.response.RoleIDResponseDto;
-import com.busquedaCandidato.candidato.service.RoleIDService;
+import com.busquedaCandidato.candidato.dto.request.RoleRequestDto;
+import com.busquedaCandidato.candidato.dto.response.RoleResponseDto;
+import com.busquedaCandidato.candidato.service.RoleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -26,33 +26,33 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/role_id")
 @RequiredArgsConstructor
-public class RoleIDController {
+public class RoleController {
 
-    private final RoleIDService roleIDService;
+    private final RoleService roleService;
 
     @Operation(summary = "Get a Role ID by ist ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Role ID found",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = RoleIDResponseDto.class))),
+                            schema = @Schema(implementation = RoleResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "Role ID not found", content = @Content)
     })
     @GetMapping("/{id}")
-    public ResponseEntity<RoleIDResponseDto> getByIdRoleID(@PathVariable Long id){
-        RoleIDResponseDto roleIDResponseDto  = roleIDService.getRolID(id);
-        return ResponseEntity.ok(roleIDResponseDto);
+    public ResponseEntity<RoleResponseDto> getByIdRoleID(@PathVariable Long id){
+        RoleResponseDto roleResponseDto = roleService.getRolID(id);
+        return ResponseEntity.ok(roleResponseDto);
     }
 
     @Operation(summary = "Get all the rolID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "All Role ID returned",
                     content = @Content(mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = RoleIDResponseDto.class)))),
+                            array = @ArraySchema(schema = @Schema(implementation = RoleResponseDto.class)))),
             @ApiResponse(responseCode = "404", description = "No data found", content = @Content)
     })
     @GetMapping("/")
-    public ResponseEntity<List<RoleIDResponseDto>> getAllRoleID(){
-        List<RoleIDResponseDto> role_id = roleIDService.getAllRolID();
+    public ResponseEntity<List<RoleResponseDto>> getAllRoleID(){
+        List<RoleResponseDto> role_id = roleService.getAllRolID();
         return role_id.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(role_id);
     }
 
@@ -62,8 +62,8 @@ public class RoleIDController {
             @ApiResponse(responseCode = "409", description = "Rol id already exists", content = @Content)
     })
     @PostMapping("/")
-    public ResponseEntity<RoleIDResponseDto> saveRoleID(@Valid @RequestBody RoleIDRequestDto rolIDRequestDto){
-        return ResponseEntity.status(HttpStatus.CREATED).body(roleIDService.saveRolID(rolIDRequestDto));
+    public ResponseEntity<RoleResponseDto> saveRoleID(@Valid @RequestBody RoleRequestDto rolIDRequestDto){
+        return ResponseEntity.status(HttpStatus.CREATED).body(roleService.saveRolID(rolIDRequestDto));
     }
 
     @Operation(summary = "Update an existing rol id")
@@ -72,8 +72,8 @@ public class RoleIDController {
             @ApiResponse(responseCode = "404", description = "Role ID not found", content = @Content)
     })
     @PutMapping("/{id}")
-    public ResponseEntity<RoleIDResponseDto> updateRoleID(@Valid @PathVariable Long id, @Valid @RequestBody RoleIDRequestDto rolIDRequestDto){
-        RoleIDResponseDto updatedRolId = roleIDService.updateRolID(id, rolIDRequestDto);
+    public ResponseEntity<RoleResponseDto> updateRoleID(@Valid @PathVariable Long id, @Valid @RequestBody RoleRequestDto rolIDRequestDto){
+        RoleResponseDto updatedRolId = roleService.updateRolID(id, rolIDRequestDto);
         return ResponseEntity.ok(updatedRolId);
     }
 
@@ -84,7 +84,7 @@ public class RoleIDController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRoleID(@PathVariable Long id){
-        roleIDService.deleteRolID(id);
+        roleService.deleteRolID(id);
         return ResponseEntity.noContent().build();
     }
 }

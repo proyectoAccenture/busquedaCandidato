@@ -1,8 +1,8 @@
 package com.busquedaCandidato.candidato.controller;
 
-import com.busquedaCandidato.candidato.dto.request.VacancyCompanyRequestDto;
-import com.busquedaCandidato.candidato.dto.response.VacancyCompanyResponseDto;
-import com.busquedaCandidato.candidato.service.VacancyCompanyService;
+import com.busquedaCandidato.candidato.dto.request.CompanyVacancyRequestDto;
+import com.busquedaCandidato.candidato.dto.response.CompanyVacancyResponseDto;
+import com.busquedaCandidato.candidato.service.CompanyVacancyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -24,35 +24,35 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/vacancy_company")
+@RequestMapping("/api/company_vacancy")
 @RequiredArgsConstructor
-public class VacancyCompanyController {
+public class CompanyVacancyController {
 
-    private final VacancyCompanyService vacancyCompanyService;
+    private final CompanyVacancyService companyVacancyService;
 
     @Operation(summary = "Get a vacancy by their Number")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Vacancy found",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = VacancyCompanyResponseDto.class))),
+                            schema = @Schema(implementation = CompanyVacancyResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "Candidate not found", content = @Content)
     })
     @GetMapping("/{id}")
-    public ResponseEntity<VacancyCompanyResponseDto> getBtIdVacancy(@PathVariable Long id){
-        VacancyCompanyResponseDto vacancyCompanyResponseDto  = vacancyCompanyService.getVacancyCompany(id);
-        return ResponseEntity.ok(vacancyCompanyResponseDto);
+    public ResponseEntity<CompanyVacancyResponseDto> getBtIdVacancy(@PathVariable Long id){
+        CompanyVacancyResponseDto companyVacancyResponseDto = companyVacancyService.getVacancyCompany(id);
+        return ResponseEntity.ok(companyVacancyResponseDto);
     }
 
     @Operation(summary = "Get all the vacancy")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "All vacancy returned",
                     content = @Content(mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = VacancyCompanyResponseDto.class)))),
+                            array = @ArraySchema(schema = @Schema(implementation = CompanyVacancyResponseDto.class)))),
             @ApiResponse(responseCode = "404", description = "No data found", content = @Content)
     })
     @GetMapping("/")
-    public ResponseEntity<List<VacancyCompanyResponseDto>> getAllVacancy(){
-        List<VacancyCompanyResponseDto> states = vacancyCompanyService.getAllVacancyCompany();
+    public ResponseEntity<List<CompanyVacancyResponseDto>> getAllVacancy(){
+        List<CompanyVacancyResponseDto> states = companyVacancyService.getAllVacancyCompany();
         return states.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(states);
     }
 
@@ -62,8 +62,8 @@ public class VacancyCompanyController {
             @ApiResponse(responseCode = "409", description = "Vacancy already exists", content = @Content)
     })
     @PostMapping("/")
-    public ResponseEntity<VacancyCompanyResponseDto> saveVacancy(@Valid @RequestBody VacancyCompanyRequestDto vacancyCompanyRequestDto){
-        return ResponseEntity.status(HttpStatus.CREATED).body(vacancyCompanyService.saveVacancyCompany(vacancyCompanyRequestDto));
+    public ResponseEntity<CompanyVacancyResponseDto> saveVacancy(@Valid @RequestBody CompanyVacancyRequestDto companyVacancyRequestDto){
+        return ResponseEntity.status(HttpStatus.CREATED).body(companyVacancyService.saveVacancyCompany(companyVacancyRequestDto));
     }
 
     @Operation(summary = "Update an existing vacancy")
@@ -72,8 +72,8 @@ public class VacancyCompanyController {
             @ApiResponse(responseCode = "404", description = "Vacancy not found", content = @Content)
     })
     @PutMapping("/{id}")
-    public ResponseEntity<VacancyCompanyResponseDto> updateVacancy(@Valid @PathVariable Long id, @Valid @RequestBody VacancyCompanyRequestDto vacancyCompanyRequestDto){
-        return vacancyCompanyService.updateVacancyCompany(id, vacancyCompanyRequestDto)
+    public ResponseEntity<CompanyVacancyResponseDto> updateVacancy(@Valid @PathVariable Long id, @Valid @RequestBody CompanyVacancyRequestDto companyVacancyRequestDto){
+        return companyVacancyService.updateVacancyCompany(id, companyVacancyRequestDto)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -85,7 +85,7 @@ public class VacancyCompanyController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteVacancy(@PathVariable Long id){
-        vacancyCompanyService.deleteVacancyCompany(id);
+        companyVacancyService.deleteVacancyCompany(id);
         return ResponseEntity.noContent().build();
     }
 }

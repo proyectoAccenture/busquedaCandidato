@@ -1,14 +1,13 @@
 package com.busquedaCandidato.candidato.service;
 
 import com.busquedaCandidato.candidato.dto.request.CandidateRequestDto;
-import com.busquedaCandidato.candidato.dto.response.CandidateResponse;
+import com.busquedaCandidato.candidato.dto.response.CandidateWithPaginationResponseDto;
 import com.busquedaCandidato.candidato.dto.response.CandidateResponseDto;
 import com.busquedaCandidato.candidato.entity.CandidateEntity;
 import com.busquedaCandidato.candidato.entity.JobProfileEntity;
 import com.busquedaCandidato.candidato.entity.OriginEntity;
 import com.busquedaCandidato.candidato.entity.PostulationEntity;
-import com.busquedaCandidato.candidato.entity.RoleIDEntity;
-import com.busquedaCandidato.candidato.entity.VacancyCompanyEntity;
+import com.busquedaCandidato.candidato.entity.RoleEntity;
 import com.busquedaCandidato.candidato.exception.type.CandidateNoExistException;
 import com.busquedaCandidato.candidato.exception.type.EntityAlreadyHasRelationException;
 import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
@@ -20,8 +19,7 @@ import com.busquedaCandidato.candidato.repository.ICandidateRepository;
 import com.busquedaCandidato.candidato.repository.IJobProfileRepository;
 import com.busquedaCandidato.candidato.repository.IOriginRepository;
 import com.busquedaCandidato.candidato.repository.IPostulationRepository;
-import com.busquedaCandidato.candidato.repository.IRoleIDRepository;
-import com.busquedaCandidato.candidato.repository.IVacancyCompanyRepository;
+import com.busquedaCandidato.candidato.repository.IRoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -37,14 +35,14 @@ import java.util.stream.Collectors;
 public class CandidateService {
     private final ICandidateRepository candidateRepository;
     private final IPostulationRepository postulationRepository;
-    private final IRoleIDRepository roleIDRepository;
+    private final IRoleRepository roleIDRepository;
     private final IJobProfileRepository jobProfileRepository;
     private final IOriginRepository originRepository;
     private final IMapperCandidateResponse mapperCandidateResponse;
 
     public List<CandidateResponseDto> getCandidateByRole(String roleName) {
 
-        RoleIDEntity role = roleIDRepository.findByName(roleName)
+        RoleEntity role = roleIDRepository.findByName(roleName)
                 .orElseThrow(RoleIdNoExistException::new);
 
         List<PostulationEntity> postulations = postulationRepository.findByRole(role);
@@ -64,7 +62,7 @@ public class CandidateService {
 
     }
 
-    public CandidateResponse getSearchCandidates(String query, int page, int size) {
+    public CandidateWithPaginationResponseDto getSearchCandidates(String query, int page, int size) {
         validationQuery(query);
         Pageable pageable = PageRequest.of(page, size);
 
@@ -75,7 +73,7 @@ public class CandidateService {
                 .map(mapperCandidateResponse::toDto)
                 .toList();
 
-        return new CandidateResponse(
+        return new CandidateWithPaginationResponseDto(
                 candidateDTOs,
                 candidates.getNumber(),
                 candidates.getSize(),
@@ -84,7 +82,7 @@ public class CandidateService {
         );
     }
 
-    public CandidateResponse getSearchCandidatesFullName(String query) {
+    public CandidateWithPaginationResponseDto getSearchCandidatesFullName(String query) {
         validationQuery(query);
         validationQueryNumber(query);
         Pageable pageable = PageRequest.of(0, 10);
@@ -104,7 +102,7 @@ public class CandidateService {
                 .map(mapperCandidateResponse::toDto)
                 .toList();
 
-        return new CandidateResponse(
+        return new CandidateWithPaginationResponseDto(
                 candidateDTOs,
                 0,
                 candidateDTOs.size(),

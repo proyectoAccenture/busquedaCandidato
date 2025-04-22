@@ -1,13 +1,12 @@
 package com.busquedaCandidato.candidato.controller;
 
-import com.busquedaCandidato.candidato.dto.request.VacancyCompanyRequestDto;
+import com.busquedaCandidato.candidato.dto.request.CompanyVacancyRequestDto;
 import com.busquedaCandidato.candidato.dto.response.StateResponseDto;
-import com.busquedaCandidato.candidato.dto.response.VacancyCompanyResponseDto;
+import com.busquedaCandidato.candidato.dto.response.CompanyVacancyResponseDto;
 import com.busquedaCandidato.candidato.entity.JobProfileEntity;
 import com.busquedaCandidato.candidato.entity.OriginEntity;
-import com.busquedaCandidato.candidato.entity.RoleIDEntity;
-import com.busquedaCandidato.candidato.entity.VacancyCompanyEntity;
-import com.busquedaCandidato.candidato.repository.IVacancyCompanyRepository;
+import com.busquedaCandidato.candidato.entity.CompanyVacancyEntity;
+import com.busquedaCandidato.candidato.repository.ICompanyVacancyRepository;
 import com.busquedaCandidato.candidato.utility.TestEntityFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +19,18 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
-import java.time.LocalDate;
+import org.springframework.test.context.ActiveProfiles;
+
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
-public class VacancyCompanyControllerTests {
+@ActiveProfiles("test")
+public class CompanyVacancyControllerTests {
+
     @Autowired
     private TestRestTemplate restTemplate;
 
@@ -36,7 +38,7 @@ public class VacancyCompanyControllerTests {
     TestEntityFactory entityFactory;
 
     @Autowired
-    private IVacancyCompanyRepository vacancyCompanyRepository;
+    private ICompanyVacancyRepository vacancyCompanyRepository;
 
 
     @Test
@@ -45,8 +47,7 @@ public class VacancyCompanyControllerTests {
 
         OriginEntity origin = entityFactory.originMethod();
         JobProfileEntity jobProfile = entityFactory.jobProfileMethod();
-        RoleIDEntity role = entityFactory.roleMethod();
-        VacancyCompanyEntity vacancy = entityFactory.vacancyMethod(role, jobProfile, origin);
+        CompanyVacancyEntity vacancy = entityFactory.vacancyMethod(jobProfile, origin);
 
         ResponseEntity<StateResponseDto> response = restTemplate.exchange(
                 "/api/vacancy_company/" + vacancy.getId(),
@@ -67,11 +68,10 @@ public class VacancyCompanyControllerTests {
 
         OriginEntity origin = entityFactory.originMethod();
         JobProfileEntity jobProfile = entityFactory.jobProfileMethod();
-        RoleIDEntity role = entityFactory.roleMethod();
-        VacancyCompanyEntity vacancy1 = entityFactory.vacancyMethod(role, jobProfile, origin);
-        VacancyCompanyEntity vacancy2 = entityFactory.vacancyMethod(role, jobProfile, origin);
+        CompanyVacancyEntity vacancy1 = entityFactory.vacancyMethod(jobProfile, origin);
+        CompanyVacancyEntity vacancy2 = entityFactory.vacancyMethod(jobProfile, origin);
 
-        ResponseEntity<List<VacancyCompanyResponseDto>> response = restTemplate.exchange(
+        ResponseEntity<List<CompanyVacancyResponseDto>> response = restTemplate.exchange(
                 "/api/vacancy_company/",
                 HttpMethod.GET,
                 null,
@@ -90,9 +90,8 @@ public class VacancyCompanyControllerTests {
 
         OriginEntity origin = entityFactory.originMethod();
         JobProfileEntity jobProfile = entityFactory.jobProfileMethod();
-        RoleIDEntity role = entityFactory.roleMethod();
 
-        VacancyCompanyRequestDto vacancyRequestDto = new VacancyCompanyRequestDto();
+        CompanyVacancyRequestDto vacancyRequestDto = new CompanyVacancyRequestDto();
         vacancyRequestDto.setDescription("description");
         vacancyRequestDto.setContract("contract");
         vacancyRequestDto.setSalary(1000000L);
@@ -100,11 +99,10 @@ public class VacancyCompanyControllerTests {
         vacancyRequestDto.setSeniority("seniority");
         vacancyRequestDto.setSkills("skills");
         vacancyRequestDto.setAssignmentTime("assignment time");
-        vacancyRequestDto.setRole(role.getId());
         vacancyRequestDto.setJobProfile(jobProfile.getId());
         vacancyRequestDto.setOrigin(origin.getId());
 
-        ResponseEntity<VacancyCompanyResponseDto> response = restTemplate.exchange(
+        ResponseEntity<CompanyVacancyResponseDto> response = restTemplate.exchange(
                 "/api/vacancy_company/",
                 HttpMethod.POST,
                 new HttpEntity<>(vacancyRequestDto),
@@ -122,10 +120,9 @@ public class VacancyCompanyControllerTests {
 
         OriginEntity origin = entityFactory.originMethod();
         JobProfileEntity jobProfile = entityFactory.jobProfileMethod();
-        RoleIDEntity role = entityFactory.roleMethod();
-        VacancyCompanyEntity vacancy = entityFactory.vacancyMethod(role, jobProfile, origin);
+        CompanyVacancyEntity vacancy = entityFactory.vacancyMethod(jobProfile, origin);
 
-        VacancyCompanyRequestDto updateRequest = new VacancyCompanyRequestDto();
+        CompanyVacancyRequestDto updateRequest = new CompanyVacancyRequestDto();
         updateRequest.setDescription("Description");
         updateRequest.setContract("contract");
         updateRequest.setSalary(2500000L);
@@ -133,11 +130,10 @@ public class VacancyCompanyControllerTests {
         updateRequest.setSeniority("seniority");
         updateRequest.setSkills("Skills more");
         updateRequest.setAssignmentTime("Assignment day");
-        updateRequest.setRole(1L);
         updateRequest.setJobProfile(1L);
         updateRequest.setOrigin(1L);
 
-        ResponseEntity<VacancyCompanyResponseDto> response = restTemplate.exchange(
+        ResponseEntity<CompanyVacancyResponseDto> response = restTemplate.exchange(
                 "/api/vacancy_company/" + vacancy.getId(),
                 HttpMethod.PUT,
                 new HttpEntity<>(updateRequest),
@@ -154,8 +150,7 @@ public class VacancyCompanyControllerTests {
     void delete_vacancy_should_return_204() {
         OriginEntity origin = entityFactory.originMethod();
         JobProfileEntity jobProfile = entityFactory.jobProfileMethod();
-        RoleIDEntity role = entityFactory.roleMethod();
-        VacancyCompanyEntity vacancy = entityFactory.vacancyMethod(role, jobProfile, origin);
+        CompanyVacancyEntity vacancy = entityFactory.vacancyMethod(jobProfile, origin);
 
         ResponseEntity<Void> response = restTemplate.exchange(
                 "/api/vacancy_company/" + vacancy.getId(),

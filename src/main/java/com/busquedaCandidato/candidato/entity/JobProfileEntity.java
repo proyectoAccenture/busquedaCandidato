@@ -16,7 +16,6 @@ import lombok.NoArgsConstructor;
 @Data
 @Table(name = "job_profile")
 public class JobProfileEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

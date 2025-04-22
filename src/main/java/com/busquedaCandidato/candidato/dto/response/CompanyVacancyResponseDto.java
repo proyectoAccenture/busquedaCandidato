@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Schema(name = "VacancyCompanyResponse", description = "Model represent a vacancy on database")
-public class VacancyCompanyResponseDto {
+public class CompanyVacancyResponseDto {
 
     @Schema(name = "id", defaultValue = "1", description = "Unique Id of origin on database")
     private final Long id;

@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @Schema(name = "VacancyCompanyRequest", description = "Model represent a vacancy of the candidate on database")
-public class VacancyCompanyRequestDto {
+public class CompanyVacancyRequestDto {
 
     @Schema(name = "description", description = "experience should have of the candidate", example = "string")
     @NotBlank(message = "Description cannot be blank")

@@ -1,16 +1,14 @@
 package com.busquedaCandidato.candidato.repository;
 
-
 import com.busquedaCandidato.candidato.entity.PostulationEntity;
-import com.busquedaCandidato.candidato.entity.RoleIDEntity;
+import com.busquedaCandidato.candidato.entity.RoleEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
 import java.util.List;
 
 public interface IPostulationRepository extends JpaRepository<PostulationEntity, Long> {
-    List<PostulationEntity> findByRole(RoleIDEntity role);
+    List<PostulationEntity> findByRole(RoleEntity role);
     Boolean existsByCandidateId(Long candidateId);
     Boolean existsByRoleId(Long roleId);
     boolean existsByCandidate_IdAndRole_IdAndStatus(Long candidateId, Long roleId, Boolean status);

@@ -4,12 +4,10 @@ import com.busquedaCandidato.candidato.entity.ProcessEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
 import java.util.List;
 import java.util.Optional;
 
 public interface IProcessRepository extends JpaRepository<ProcessEntity, Long> {
-    Boolean existsByPostulationId(Long postulationId);
     Optional<ProcessEntity> findByPostulationId(Long id);
 
     @Query("SELECT p FROM ProcessEntity p " +
@@ -25,5 +23,4 @@ public interface IProcessRepository extends JpaRepository<ProcessEntity, Long> {
             @Param("word2") String word2,
             @Param("word3") String word3,
             @Param("word4") String word4);
-
 }

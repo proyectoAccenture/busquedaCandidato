@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.UUID;
 
 @Component
 public class TestEntityFactory {
@@ -19,13 +18,13 @@ public class TestEntityFactory {
     private IOriginRepository originRepository;
 
     @Autowired
-    private IRoleIDRepository roleIDRepository;
+    private IRoleRepository roleIDRepository;
 
     @Autowired
     private IJobProfileRepository jobProfileRepository;
 
     @Autowired
-    private IVacancyCompanyRepository vacancyCompanyRepository;
+    private ICompanyVacancyRepository vacancyCompanyRepository;
 
     @Autowired
     private IPostulationRepository postulationRepository;
@@ -55,12 +54,17 @@ public class TestEntityFactory {
         long card = 1000000000L + random.nextInt(1000000000);
         long phone = 3000000000L + random.nextInt(1000000000);
 
-        CandidateEntity candidate = new CandidateEntity(null, "name", "lastname", card, phone, "city", "email" + random.nextInt(1000) + "@gmail.com", LocalDate.of(1990, 5, 20), "source", "skills", "5 years", "work experience", "seniority", 1000000L, 1, LocalDate.of(2025, 1, 20), origin, jobProfile);
+        CandidateEntity candidate = new CandidateEntity(null, "name", "lastname", card, phone, "city", "email" + random.nextInt(1000) + "@gmail.com", LocalDate.of(1990, 5, 20), "source", "skills", "5 years", "work experience", "seniority", 1000000L, 1, LocalDate.of(2025, 1, 20), null, null, null, origin, jobProfile);
         return candidateRepository.save(candidate);
     }
 
-    public RoleIDEntity roleMethod() {
-        RoleIDEntity role = new RoleIDEntity(null, "12345A");
+    public CompanyVacancyEntity vacancyMethod(JobProfileEntity jobProfile, OriginEntity origin) {
+        CompanyVacancyEntity vacancy = new CompanyVacancyEntity(null, "description", "contract", 1000000L, 1, "seniority", "skills", "experience", "assignment time", jobProfile, origin);
+        return vacancyCompanyRepository.save(vacancy);
+    }
+
+    public RoleEntity roleMethod(CompanyVacancyEntity vacancy) {
+        RoleEntity role = new RoleEntity(null, "12345A", "description", vacancy);
         return roleIDRepository.save(role);
     }
 
@@ -69,13 +73,8 @@ public class TestEntityFactory {
         return stateRepository.save(state);
     }
 
-    public VacancyCompanyEntity vacancyMethod(RoleIDEntity role, JobProfileEntity jobProfile, OriginEntity origin) {
-        VacancyCompanyEntity vacancy = new VacancyCompanyEntity(null, "description", "contract", 1000000L, 1, "seniority", "skills", "assignment time", role, jobProfile, origin);
-        return vacancyCompanyRepository.save(vacancy);
-    }
-
-    public PostulationEntity postulationMethod(CandidateEntity candidate, VacancyCompanyEntity vacancy) {
-        PostulationEntity postulation = new PostulationEntity(null, LocalDate.of(2025, 1, 20), true, candidate, vacancy, null);
+    public PostulationEntity postulationMethod(CandidateEntity candidate, RoleEntity role) {
+        PostulationEntity postulation = new PostulationEntity(null, LocalDate.of(2025, 1, 20), true, candidate, role, null);
         return postulationRepository.save(postulation);
     }
 

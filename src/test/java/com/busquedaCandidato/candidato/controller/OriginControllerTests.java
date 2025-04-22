@@ -17,13 +17,18 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
+@ActiveProfiles("test")
 public class OriginControllerTests {
     @Autowired
     private TestRestTemplate restTemplate;
@@ -57,8 +62,8 @@ public class OriginControllerTests {
     @Test
     @DirtiesContext
     void get_all_origin_should_return_200() {
-        originRepository.save(new OriginEntity(null, "origen 1"));
-        originRepository.save(new OriginEntity(null, "origen 2"));
+        originRepository.save(new OriginEntity(null, "origen one"));
+        originRepository.save(new OriginEntity(null, "origen two"));
 
 
         ResponseEntity<List<OriginResponseDto>> response = restTemplate.exchange(
@@ -74,8 +79,8 @@ public class OriginControllerTests {
         assertEquals(2, response.getBody().size());
 
         List<String> stateNames = response.getBody().stream().map(OriginResponseDto::getName).toList();
-        assertTrue(stateNames.contains("origen 1"));
-        assertTrue(stateNames.contains("origen 2"));
+        assertTrue(stateNames.contains("origen one"));
+        assertTrue(stateNames.contains("origen two"));
     }
 
     @Test
@@ -100,13 +105,13 @@ public class OriginControllerTests {
     @Test
     @DirtiesContext
     void update_origin_should_return_200() {
-        OriginEntity stateEntity = originRepository.save(new OriginEntity(null, "Origin"));
+        OriginEntity originEntity = originRepository.save(new OriginEntity(null, "Origin"));
 
-        StateRequestDto updateRequest = new StateRequestDto();
+        OriginRequestDto updateRequest = new OriginRequestDto();
         updateRequest.setName("Origin new");
 
         ResponseEntity<OriginResponseDto> response = restTemplate.exchange(
-                "/api/origin/" + stateEntity.getId(),
+                "/api/origin/" + originEntity.getId(),
                 HttpMethod.PUT,
                 new HttpEntity<>(updateRequest),
                 new ParameterizedTypeReference<>() {}
@@ -121,7 +126,7 @@ public class OriginControllerTests {
     @Test
     @DirtiesContext
     void delete_origin_should_return_204() {
-        OriginEntity originEntity = originRepository.save(new OriginEntity(null, "Asignacion salarial"));
+        OriginEntity originEntity = originRepository.save(new OriginEntity(null, "Origin"));
 
         ResponseEntity<Void> response = restTemplate.exchange(
                 "/api/origin/" + originEntity.getId(),

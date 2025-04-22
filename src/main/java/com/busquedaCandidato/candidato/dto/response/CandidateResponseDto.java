@@ -9,9 +9,10 @@ import java.time.LocalDate;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(name = "CandidateResponse",description = "Model representing a candidate on the database")
+@Schema(name = "CandidateWithPaginationResponseDto",description = "Model representing a candidate on the database")
 @Data
 public class CandidateResponseDto {
+
     @Schema(name = "id",description = "id of the candidate")
     private Long id;
 
@@ -60,10 +61,10 @@ public class CandidateResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate datePresentation;
 
-    @Schema(name = "hasResume", description = "Indica si el candidato tiene hoja de vida cargada")
+    @Schema(name = "hasResume", description = "Indicates whether the candidate has a resume uploaded")
     private Boolean hasResume;
 
-    @Schema(name = "resumeFileName", description = "Nombre del archivo de la hoja de vida")
+    @Schema(name = "resumeFileName", description = "Resume file name")
     private String resumeFileName;
 
     @Schema(name = "originId",description = "Id of origin")

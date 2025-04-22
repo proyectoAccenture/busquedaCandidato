@@ -1,9 +1,13 @@
 package com.busquedaCandidato.candidato.controller;
 
-import com.busquedaCandidato.candidato.dto.request.PostulationRequestDto;
-import com.busquedaCandidato.candidato.dto.response.PostulationResponseDto;
-import com.busquedaCandidato.candidato.entity.*;
-import com.busquedaCandidato.candidato.repository.*;
+import com.busquedaCandidato.candidato.dto.request.RoleRequestDto;
+import com.busquedaCandidato.candidato.dto.response.RoleResponseDto;
+import com.busquedaCandidato.candidato.entity.CompanyVacancyEntity;
+import com.busquedaCandidato.candidato.entity.JobProfileEntity;
+import com.busquedaCandidato.candidato.entity.OriginEntity;
+import com.busquedaCandidato.candidato.entity.RoleEntity;
+import com.busquedaCandidato.candidato.repository.IRoleRepository;
+import com.busquedaCandidato.candidato.service.RoleService;
 import com.busquedaCandidato.candidato.utility.TestEntityFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,66 +22,67 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.time.LocalDate;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 @ActiveProfiles("test")
-public class PostulationControllerTests {
+public class RoleControllerTests {
+
     @Autowired
     private TestRestTemplate restTemplate;
 
     @Autowired
-    TestEntityFactory entityFactory;
+    private IRoleRepository roleIDRepository;
 
     @Autowired
-    private IPostulationRepository postulationRepository;
+    private RoleService roleService;
+
+    @Autowired
+    TestEntityFactory entityFactory;
+
 
     @Test
     @DirtiesContext
-    void get_postulation_by_id_should_return_200() {
-
+    void get_role_by_id_should_return_200(){
         OriginEntity origin = entityFactory.originMethod();
         JobProfileEntity jobProfile = entityFactory.jobProfileMethod();
-        CandidateEntity candidate = entityFactory.candidateMethod(jobProfile, origin);
         CompanyVacancyEntity vacancy = entityFactory.vacancyMethod(jobProfile, origin);
-        RoleEntity role = entityFactory.roleMethod(vacancy);
-        PostulationEntity postulation = entityFactory.postulationMethod(candidate, role);
 
-        ResponseEntity<PostulationEntity> response = restTemplate.exchange(
-                "/api/postulation/" + postulation.getId(),
+        RoleEntity roleEntity = new RoleEntity(null, "12345A", "Description", vacancy);
+        RoleEntity saveEntity = roleIDRepository.save(roleEntity);
+
+        ResponseEntity<RoleResponseDto> response = restTemplate.exchange(
+                "/api/role_id/" + saveEntity.getId(),
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<>() {}
-        );
+                new ParameterizedTypeReference<>() {});
+
 
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
+        assertEquals("12345A", response.getBody().getName());
     }
 
     @Test
     @DirtiesContext
-    void get_all_postulations_should_return_200() {
-
+    void get_all_role_should_return_200() {
         OriginEntity origin = entityFactory.originMethod();
         JobProfileEntity jobProfile = entityFactory.jobProfileMethod();
-        CandidateEntity candidate1 = entityFactory.candidateMethod(jobProfile, origin);
-        CandidateEntity candidate2 = entityFactory.candidateMethod(jobProfile, origin);
         CompanyVacancyEntity vacancy1 = entityFactory.vacancyMethod(jobProfile, origin);
         CompanyVacancyEntity vacancy2 = entityFactory.vacancyMethod(jobProfile, origin);
-        RoleEntity role1 = entityFactory.roleMethod(vacancy1);
-        RoleEntity role2 = entityFactory.roleMethod(vacancy2);
-        PostulationEntity postulation1 = entityFactory.postulationMethod(candidate1, role1);
-        PostulationEntity postulation2 = entityFactory.postulationMethod(candidate2, role2);
 
 
-        ResponseEntity<List<PostulationEntity>> response = restTemplate.exchange(
-                "/api/postulation/",
+        roleIDRepository.save(new RoleEntity(null, "12345A", "Description", vacancy1));
+        roleIDRepository.save(new RoleEntity(null, "12345E", "Description", vacancy2));
+
+        ResponseEntity<List<RoleResponseDto>> response = restTemplate.exchange(
+                "/api/role_id/",
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<>() {}
@@ -87,26 +92,26 @@ public class PostulationControllerTests {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals(2, response.getBody().size());
+
+        List<String> roleNames = response.getBody().stream().map(RoleResponseDto::getName).toList();
+        assertTrue(roleNames.contains("12345A"));
+        assertTrue(roleNames.contains("12345E"));
     }
 
     @Test
     @DirtiesContext
-    void create_postulation_should_return_201() {
-
+    void create_role_should_return_201() {
         OriginEntity origin = entityFactory.originMethod();
         JobProfileEntity jobProfile = entityFactory.jobProfileMethod();
-        CandidateEntity candidate = entityFactory.candidateMethod(jobProfile, origin);
         CompanyVacancyEntity vacancy = entityFactory.vacancyMethod(jobProfile, origin);
-        RoleEntity role = entityFactory.roleMethod(vacancy);
 
-        PostulationRequestDto requestDto = new PostulationRequestDto();
-        requestDto.setDatePresentation(LocalDate.now());
-        requestDto.setRoleId(role.getId());
-        requestDto.setCandidateId(candidate.getId());
-        requestDto.setStatus(true);
+        RoleRequestDto requestDto = new RoleRequestDto();
+        requestDto.setName("12345A");
+        requestDto.setDescription("Description");
+        requestDto.setVacancyCompanyId(vacancy.getId());
 
-        ResponseEntity<PostulationResponseDto> response = restTemplate.exchange(
-                "/api/postulation/",
+        ResponseEntity<RoleResponseDto> response = restTemplate.exchange(
+                "/api/role_id/",
                 HttpMethod.POST,
                 new HttpEntity<>(requestDto),
                 new ParameterizedTypeReference<>() {}
@@ -115,63 +120,54 @@ public class PostulationControllerTests {
         assertNotNull(response);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
-
+        assertEquals("12345A", response.getBody().getName());
     }
 
     @Test
     @DirtiesContext
-    void update_postulation_should_return_200() {
-
+    void update_role_should_return_200() {
         OriginEntity origin = entityFactory.originMethod();
         JobProfileEntity jobProfile = entityFactory.jobProfileMethod();
-        CandidateEntity candidate = entityFactory.candidateMethod(jobProfile, origin);
         CompanyVacancyEntity vacancy = entityFactory.vacancyMethod(jobProfile, origin);
-        RoleEntity role = entityFactory.roleMethod(vacancy);
-        PostulationEntity postulation = entityFactory.postulationMethod(candidate, role);
-        postulation.setStatus(false);
-        postulationRepository.save(postulation);
 
-        PostulationRequestDto updateDto = new PostulationRequestDto();
-        updateDto.setDatePresentation(LocalDate.now().plusDays(1));
-        updateDto.setRoleId(role.getId());
-        updateDto.setCandidateId(candidate.getId());
-        updateDto.setStatus(true);
+        RoleEntity role = roleIDRepository.save(new RoleEntity(null, "12345A", "Description", vacancy));
 
-        ResponseEntity<PostulationResponseDto> response = restTemplate.exchange(
-                "/api/postulation/" + postulation.getId(),
+        RoleRequestDto updateRequest = new RoleRequestDto();
+        updateRequest.setName("123456A");
+        updateRequest.setDescription("Description new");
+        updateRequest.setVacancyCompanyId(vacancy.getId());
+
+        ResponseEntity<RoleResponseDto> response = restTemplate.exchange(
+                "/api/role_id/" + role.getId(),
                 HttpMethod.PUT,
-                new HttpEntity<>(updateDto),
+                new HttpEntity<>(updateRequest),
                 new ParameterizedTypeReference<>() {}
         );
 
+        assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals(updateDto.getDatePresentation(), response.getBody().getDatePresentation());
+        assertEquals("123456A", response.getBody().getName());
     }
 
     @Test
     @DirtiesContext
-    void delete_postulation_should_return_204() {
-
+    void delete_role_should_return_204() {
         OriginEntity origin = entityFactory.originMethod();
         JobProfileEntity jobProfile = entityFactory.jobProfileMethod();
-        CandidateEntity candidate = entityFactory.candidateMethod(jobProfile, origin);
         CompanyVacancyEntity vacancy = entityFactory.vacancyMethod(jobProfile, origin);
-        RoleEntity role = entityFactory.roleMethod(vacancy);
-        PostulationEntity postulation = entityFactory.postulationMethod(candidate, role);
+
+        RoleEntity role = roleIDRepository.save(new RoleEntity(null, "12345A", "Description", vacancy));
 
         ResponseEntity<Void> response = restTemplate.exchange(
-                "/api/postulation/" + postulation.getId(),
+                "/api/role_id/" + role.getId(),
                 HttpMethod.DELETE,
                 null,
                 Void.class
         );
 
-        PostulationEntity updated = postulationRepository.findById(postulation.getId()).orElseThrow();
-
         assertNotNull(response);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        assertFalse(updated.getStatus());
+        assertFalse(roleIDRepository.existsById(role.getId()));
     }
 }
-

@@ -4,8 +4,7 @@ import com.busquedaCandidato.candidato.dto.request.ProcessRequestDto;
 import com.busquedaCandidato.candidato.dto.response.ProcessResponseDto;
 import com.busquedaCandidato.candidato.entity.PostulationEntity;
 import com.busquedaCandidato.candidato.entity.ProcessEntity;
-import com.busquedaCandidato.candidato.entity.RoleIDEntity;
-import com.busquedaCandidato.candidato.entity.VacancyCompanyEntity;
+import com.busquedaCandidato.candidato.entity.RoleEntity;
 import com.busquedaCandidato.candidato.entity.CandidateEntity;
 import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
 import com.busquedaCandidato.candidato.exception.type.ItAlreadyProcessWithIdPostulation;
@@ -18,8 +17,7 @@ import com.busquedaCandidato.candidato.exception.type.CandidateNoPostulationExce
 import com.busquedaCandidato.candidato.mapper.IMapperProcessResponse;
 import com.busquedaCandidato.candidato.repository.IPostulationRepository;
 import com.busquedaCandidato.candidato.repository.IProcessRepository;
-import com.busquedaCandidato.candidato.repository.IRoleIDRepository;
-import com.busquedaCandidato.candidato.repository.IVacancyCompanyRepository;
+import com.busquedaCandidato.candidato.repository.IRoleRepository;
 import com.busquedaCandidato.candidato.repository.ICandidateRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,13 +32,12 @@ public class ProcessService {
     private final IProcessRepository processRepository;
     private final ICandidateRepository candidateRepository;
     private final IPostulationRepository postulationRepository;
-    private final IRoleIDRepository roleIDRepository;
-    private final IVacancyCompanyRepository vacancyCompanyRepository;
+    private final IRoleRepository roleIDRepository;
     private final IMapperProcessResponse mapperProcessResponse;
 
     public List<ProcessResponseDto> getProcessOfCandidateByRole(String roleName) {
 
-        RoleIDEntity role = roleIDRepository.findByName(roleName)
+        RoleEntity role = roleIDRepository.findByName(roleName)
                 .orElseThrow(RoleIdNoExistException::new);
 
         List<PostulationEntity> postulations = postulationRepository.findByRole(role);

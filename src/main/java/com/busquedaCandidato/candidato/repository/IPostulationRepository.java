@@ -31,9 +31,9 @@ public interface IPostulationRepository extends JpaRepository<PostulationEntity,
             "JOIN c.origin o " +
             "JOIN c.jobProfile jp " +
             "JOIN p.role r " +
-            "JOIN p.process pr " +
-            "JOIN pr.candidateState cs " +
-            "JOIN cs.state s " +
+            "LEFT JOIN p.process pr " +
+            "LEFT JOIN pr.candidateState cs " +
+            "LEFT JOIN cs.state s " +
             "WHERE (" +
             "(:word1 IS NULL OR LOWER(COALESCE(c.name, '')) LIKE LOWER(CONCAT('%', :word1, '%')) OR LOWER(COALESCE(c.lastName, '')) LIKE LOWER(CONCAT('%', :word1, '%'))) AND " +
             "(:word2 IS NULL OR LOWER(COALESCE(c.name, '')) LIKE LOWER(CONCAT('%', :word2, '%')) OR LOWER(COALESCE(c.lastName, '')) LIKE LOWER(CONCAT('%', :word2, '%'))) AND " +

@@ -41,7 +41,7 @@ public class JobProfileControllerTests {
     @Test
     @DirtiesContext
     void get_job_profile_by_id_should_return_200() {
-        JobProfileEntity jobProfileEntity = new JobProfileEntity(null, "Profile 1");
+        JobProfileEntity jobProfileEntity = new JobProfileEntity(null, "Profile 1", null, null);
         JobProfileEntity savedEntity = jobProfileRepository.save(jobProfileEntity);
 
         ResponseEntity<JobProfileResponseDto> response = restTemplate.exchange(
@@ -60,8 +60,8 @@ public class JobProfileControllerTests {
     @Test
     @DirtiesContext
     void get_all_job_profiles_should_return_200() {
-        jobProfileRepository.save(new JobProfileEntity(null, "Profile 2"));
-        jobProfileRepository.save(new JobProfileEntity(null, "Profile 3"));
+        jobProfileRepository.save(new JobProfileEntity(null, "Profile 2", null, null));
+        jobProfileRepository.save(new JobProfileEntity(null, "Profile 3", null, null));
 
         ResponseEntity<List<JobProfileResponseDto>> response = restTemplate.exchange(
                 "/api/job_profile/",
@@ -102,7 +102,7 @@ public class JobProfileControllerTests {
     @Test
     @DirtiesContext
     void update_job_profile_should_return_200() {
-        JobProfileEntity jobProfileEntity = jobProfileRepository.save(new JobProfileEntity(null, "Profile three"));
+        JobProfileEntity jobProfileEntity = jobProfileRepository.save(new JobProfileEntity(null, "Profile three", null, null));
 
         JobProfileRequestDto updateRequest = new JobProfileRequestDto();
         updateRequest.setName("Profile four");
@@ -123,7 +123,7 @@ public class JobProfileControllerTests {
     @Test
     @DirtiesContext
     void delete_job_profile_should_return_204() {
-        JobProfileEntity jobProfileEntity = jobProfileRepository.save(new JobProfileEntity(null, "Profile 1"));
+        JobProfileEntity jobProfileEntity = jobProfileRepository.save(new JobProfileEntity(null, "Profile 1", null, null));
 
         ResponseEntity<Void> response = restTemplate.exchange(
                 "/api/job_profile/" + jobProfileEntity.getId(),

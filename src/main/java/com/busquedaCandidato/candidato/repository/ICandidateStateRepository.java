@@ -8,5 +8,4 @@ import java.util.Optional;
 
 public interface ICandidateStateRepository extends JpaRepository<CandidateStateEntity, Long> {
     Optional<CandidateStateEntity> findTopByProcessOrderByIdDesc(ProcessEntity process);
-    Boolean existsByStateId(Long stateId);
 }

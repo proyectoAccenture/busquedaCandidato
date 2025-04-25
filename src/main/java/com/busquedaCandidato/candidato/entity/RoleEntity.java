@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,10 +21,12 @@ public class RoleEntity {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
     private String description;
 
     @OneToOne
-    @JoinColumn(name="company_vacancy_id", nullable = true)
-    private CompanyVacancyEntity companyVacancyEntity;
+    @JoinColumn(name="company_vacancy_id")
+    private CompanyVacancyEntity companyVacancy;
+
+    @OneToMany(mappedBy = "role", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<PostulationEntity> postulations = new ArrayList<>();
 }

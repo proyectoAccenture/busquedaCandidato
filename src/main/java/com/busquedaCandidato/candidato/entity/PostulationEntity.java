@@ -1,5 +1,6 @@
 package com.busquedaCandidato.candidato.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -34,10 +35,10 @@ public class PostulationEntity {
     @JoinColumn(name = "candidate_id", nullable = false)
     private CandidateEntity candidate;
 
-    @OneToOne
-    @JoinColumn(name = "role_id", nullable = false)
+    @ManyToOne
+    @JoinColumn( name = "role_id", nullable = false)
     private RoleEntity role;
 
-    @OneToOne(mappedBy = "postulation")
+    @OneToOne(mappedBy = "postulation", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private ProcessEntity process;
 }

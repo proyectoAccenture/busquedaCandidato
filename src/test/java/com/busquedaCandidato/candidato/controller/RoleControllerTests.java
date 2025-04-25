@@ -53,7 +53,7 @@ public class RoleControllerTests {
         JobProfileEntity jobProfile = entityFactory.jobProfileMethod();
         CompanyVacancyEntity vacancy = entityFactory.vacancyMethod(jobProfile, origin);
 
-        RoleEntity roleEntity = new RoleEntity(null, "12345A", "Description", vacancy);
+        RoleEntity roleEntity = new RoleEntity(null, "12345A", "Description", vacancy, null);
         RoleEntity saveEntity = roleIDRepository.save(roleEntity);
 
         ResponseEntity<RoleResponseDto> response = restTemplate.exchange(
@@ -78,8 +78,8 @@ public class RoleControllerTests {
         CompanyVacancyEntity vacancy2 = entityFactory.vacancyMethod(jobProfile, origin);
 
 
-        roleIDRepository.save(new RoleEntity(null, "12345A", "Description", vacancy1));
-        roleIDRepository.save(new RoleEntity(null, "12345E", "Description", vacancy2));
+        roleIDRepository.save(new RoleEntity(null, "12345A", "Description", vacancy1, null));
+        roleIDRepository.save(new RoleEntity(null, "12345E", "Description", vacancy2, null));
 
         ResponseEntity<List<RoleResponseDto>> response = restTemplate.exchange(
                 "/api/role_id/",
@@ -130,7 +130,7 @@ public class RoleControllerTests {
         JobProfileEntity jobProfile = entityFactory.jobProfileMethod();
         CompanyVacancyEntity vacancy = entityFactory.vacancyMethod(jobProfile, origin);
 
-        RoleEntity role = roleIDRepository.save(new RoleEntity(null, "12345A", "Description", vacancy));
+        RoleEntity role = roleIDRepository.save(new RoleEntity(null, "12345A", "Description", vacancy, null));
 
         RoleRequestDto updateRequest = new RoleRequestDto();
         updateRequest.setName("123456A");
@@ -157,7 +157,7 @@ public class RoleControllerTests {
         JobProfileEntity jobProfile = entityFactory.jobProfileMethod();
         CompanyVacancyEntity vacancy = entityFactory.vacancyMethod(jobProfile, origin);
 
-        RoleEntity role = roleIDRepository.save(new RoleEntity(null, "12345A", "Description", vacancy));
+        RoleEntity role = roleIDRepository.save(new RoleEntity(null, "12345A", "Description", vacancy, null));
 
         ResponseEntity<Void> response = restTemplate.exchange(
                 "/api/role_id/" + role.getId(),

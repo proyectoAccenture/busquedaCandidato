@@ -126,12 +126,11 @@ public class ProcessService {
             throw new PostulationIsOffException();
         }
 
-        ProcessEntity newCandidateStatusHistory = new ProcessEntity();
-        newCandidateStatusHistory.setDescription(processRequestDto.getDescription());
-        newCandidateStatusHistory.setAssignmentDate(processRequestDto.getAssignedDate());
-        newCandidateStatusHistory.setPostulation(postulationEntity);
-
-        ProcessEntity processEntitySave = processRepository.save(newCandidateStatusHistory);
+        ProcessEntity process = new ProcessEntity();
+        process.setDescription(processRequestDto.getDescription());
+        process.setAssignmentDate(processRequestDto.getAssignedDate());
+        process.setPostulation(postulationEntity);
+        ProcessEntity processEntitySave = processRepository.save(process);
         return mapperProcessResponse.toDto(processEntitySave);
     }
 
@@ -145,15 +144,14 @@ public class ProcessService {
         existingEntity.setPostulation(postulation);
         existingEntity.setDescription(processRequestDto.getDescription());
         existingEntity.setAssignmentDate(processRequestDto.getAssignedDate());
-
         return Optional.of(mapperProcessResponse.toDto(processRepository.save(existingEntity)));
     }
 
     public void deleteProcess(Long id){
-        PostulationEntity existingPostulation = postulationRepository.findById(id)
+        PostulationEntity existingProcess = postulationRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 
-        postulationRepository.delete(existingPostulation);
+        postulationRepository.delete(existingProcess);
     }
 
     private void validateLongId(Long id){

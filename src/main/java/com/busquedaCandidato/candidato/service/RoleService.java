@@ -5,10 +5,8 @@ import com.busquedaCandidato.candidato.dto.response.RoleResponseDto;
 import com.busquedaCandidato.candidato.entity.RoleEntity;
 import com.busquedaCandidato.candidato.entity.CompanyVacancyEntity;
 import com.busquedaCandidato.candidato.exception.type.EntityAlreadyExistsException;
-import com.busquedaCandidato.candidato.exception.type.EntityAlreadyHasRelationException;
 import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
 import com.busquedaCandidato.candidato.mapper.IMapperRoleResponse;
-import com.busquedaCandidato.candidato.repository.IPostulationRepository;
 import com.busquedaCandidato.candidato.repository.IRoleRepository;
 import com.busquedaCandidato.candidato.repository.ICompanyVacancyRepository;
 import lombok.AllArgsConstructor;
@@ -24,7 +22,6 @@ public class RoleService {
     private final IRoleRepository roleIDRepository;
     private final ICompanyVacancyRepository vacancyCompanyRepository;
     private final IMapperRoleResponse mapperRolIDResponse;
-    private final IPostulationRepository postulationRepository;
 
     public RoleResponseDto getRolID(Long id) {
         return roleIDRepository.findById(id)
@@ -57,9 +54,11 @@ public class RoleService {
         RoleEntity roleEntityNew = new RoleEntity();
         roleEntityNew.setName(rolIDRequestDto.getName());
         roleEntityNew.setDescription(rolIDRequestDto.getDescription());
-        roleEntityNew.setCompanyVacancyEntity(companyVacancyEntity);
+        roleEntityNew.setCompanyVacancy(companyVacancyEntity);
 
         RoleEntity roleEntitySave = roleIDRepository.save(roleEntityNew);
+
+
         return mapperRolIDResponse.toDto(roleEntitySave);
     }
 
@@ -79,7 +78,7 @@ public class RoleService {
 
         existingRolId.setName(rolIDRequestDto.getName());
         existingRolId.setDescription(rolIDRequestDto.getDescription());
-        existingRolId.setCompanyVacancyEntity(companyVacancyEntity);
+        existingRolId.setCompanyVacancy(companyVacancyEntity);
         RoleEntity updatedRolId = roleIDRepository.save(existingRolId);
 
         return mapperRolIDResponse.toDto(updatedRolId);
@@ -88,10 +87,6 @@ public class RoleService {
     public void deleteRolID(Long id) {
         RoleEntity existingRolId = roleIDRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
-
-        if (postulationRepository.existsByRoleId(id)) {
-            throw new EntityAlreadyHasRelationException();
-        }
 
         roleIDRepository.delete(existingRolId);
     }

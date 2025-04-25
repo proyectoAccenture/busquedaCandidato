@@ -1,5 +1,6 @@
 package com.busquedaCandidato.candidato.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -37,6 +38,7 @@ public class ProcessEntity {
 
     @OneToOne
     @JoinColumn(name = "postulation_id", nullable = false)
+    @JsonBackReference
     private PostulationEntity postulation;
 
     @JsonManagedReference

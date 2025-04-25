@@ -4,11 +4,9 @@ import com.busquedaCandidato.candidato.dto.request.StateRequestDto;
 import com.busquedaCandidato.candidato.dto.response.StateResponseDto;
 import com.busquedaCandidato.candidato.entity.StateEntity;
 import com.busquedaCandidato.candidato.exception.type.EntityAlreadyExistsException;
-import com.busquedaCandidato.candidato.exception.type.EntityAlreadyHasRelationException;
 import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
 import com.busquedaCandidato.candidato.mapper.IMapperStateRequest;
 import com.busquedaCandidato.candidato.mapper.IMapperStateResponse;
-import com.busquedaCandidato.candidato.repository.ICandidateStateRepository;
 import com.busquedaCandidato.candidato.repository.IStateRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +18,6 @@ import java.util.stream.Collectors;
 public class StateService {
 
     private final IStateRepository stateRepository;
-    private final ICandidateStateRepository candidateStateRepository;
     private final IMapperStateResponse mapperStateResponse;
     private final IMapperStateRequest mapperStateRequest;
 
@@ -60,10 +57,6 @@ public class StateService {
     public void deleteState(Long id){
         StateEntity existingState = stateRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
-
-        if (candidateStateRepository.existsByStateId(id)) {
-            throw new EntityAlreadyHasRelationException();
-        }
 
         stateRepository.delete(existingState);
     }

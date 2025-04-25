@@ -7,7 +7,7 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface IMapperRoleResponse {
-    @Mapping(source = "companyVacancyEntity.id", target = "companyVacancyId")
-    @Mapping(source = "companyVacancyEntity.jobProfile.name", target = "companyVacancyName")
+    @Mapping(source = "companyVacancy.id", target = "companyVacancyId")
+    @Mapping(source = "companyVacancy.jobProfile.name", target = "companyVacancyName")
     RoleResponseDto toDto(RoleEntity roleEntity);
 }

@@ -7,6 +7,7 @@ import com.busquedaCandidato.candidato.entity.CandidateEntity;
 import com.busquedaCandidato.candidato.entity.JobProfileEntity;
 import com.busquedaCandidato.candidato.entity.OriginEntity;
 import com.busquedaCandidato.candidato.entity.PostulationEntity;
+import com.busquedaCandidato.candidato.entity.ProcessEntity;
 import com.busquedaCandidato.candidato.entity.RoleEntity;
 import com.busquedaCandidato.candidato.exception.type.CandidateNoExistException;
 import com.busquedaCandidato.candidato.exception.type.EntityAlreadyHasRelationException;
@@ -16,9 +17,11 @@ import com.busquedaCandidato.candidato.exception.type.PhoneAlreadyExistException
 import com.busquedaCandidato.candidato.exception.type.RoleIdNoExistException;
 import com.busquedaCandidato.candidato.mapper.IMapperCandidateResponse;
 import com.busquedaCandidato.candidato.repository.ICandidateRepository;
+import com.busquedaCandidato.candidato.repository.ICandidateStateRepository;
 import com.busquedaCandidato.candidato.repository.IJobProfileRepository;
 import com.busquedaCandidato.candidato.repository.IOriginRepository;
 import com.busquedaCandidato.candidato.repository.IPostulationRepository;
+import com.busquedaCandidato.candidato.repository.IProcessRepository;
 import com.busquedaCandidato.candidato.repository.IRoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -160,6 +163,13 @@ public class CandidateService {
         candidateEntityNew.setJobProfile(jobProfileEntity);
 
         CandidateEntity candidateEntitySave = candidateRepository.save(candidateEntityNew);
+
+        JobProfileEntity jobProfile = new JobProfileEntity();
+        jobProfile.getCandidates().add(candidateEntitySave);
+
+        OriginEntity origin = new OriginEntity();
+        origin.getCandidates().add(candidateEntitySave);
+
         return mapperCandidateResponse.toDto(candidateEntitySave);
     }
 
@@ -197,10 +207,6 @@ public class CandidateService {
     public void deleteCandidate(Long id){
         CandidateEntity existingCandidate = candidateRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
-
-        if (postulationRepository.existsByCandidateId(id)) {
-            throw new EntityAlreadyHasRelationException();
-        }
 
         candidateRepository.delete(existingCandidate);
     }

@@ -39,12 +39,12 @@ public class TestEntityFactory {
     private ICandidateStateRepository candidateStateRepository;
 
     public JobProfileEntity jobProfileMethod() {
-        JobProfileEntity jobProfile = new JobProfileEntity(null, "Dev Backend");
+        JobProfileEntity jobProfile = new JobProfileEntity(null, "Dev Backend", null, null);
         return jobProfileRepository.save(jobProfile);
     }
 
     public OriginEntity originMethod() {
-        OriginEntity origin = new OriginEntity(null, "origin");
+        OriginEntity origin = new OriginEntity(null, "origin", null, null);
         return originRepository.save(origin);
     }
 
@@ -54,17 +54,17 @@ public class TestEntityFactory {
         long card = 1000000000L + random.nextInt(1000000000);
         long phone = 3000000000L + random.nextInt(1000000000);
 
-        CandidateEntity candidate = new CandidateEntity(null, "name", "lastname", card, phone, "city", "email" + random.nextInt(1000) + "@gmail.com", LocalDate.of(1990, 5, 20), "source", "skills", "5 years", "work experience", "seniority", 1000000L, 1, LocalDate.of(2025, 1, 20), null, null, null, origin, jobProfile);
+        CandidateEntity candidate = new CandidateEntity(null, "name", "lastname", card, phone, "city", "email" + random.nextInt(1000) + "@gmail.com", LocalDate.of(1990, 5, 20), "source", "skills", "5 years", "work experience", "seniority", 1000000L, 1, LocalDate.of(2025, 1, 20), null, null, null, origin, jobProfile, new ArrayList<>());
         return candidateRepository.save(candidate);
     }
 
     public CompanyVacancyEntity vacancyMethod(JobProfileEntity jobProfile, OriginEntity origin) {
-        CompanyVacancyEntity vacancy = new CompanyVacancyEntity(null, "description", "contract", 1000000L, 1, "seniority", "skills", "experience", "assignment time", jobProfile, origin);
+        CompanyVacancyEntity vacancy = new CompanyVacancyEntity(null, "description", "contract", 1000000L, 1, "seniority", "skills", "experience", "assignment time", jobProfile, origin, null);
         return vacancyCompanyRepository.save(vacancy);
     }
 
     public RoleEntity roleMethod(CompanyVacancyEntity vacancy) {
-        RoleEntity role = new RoleEntity(null, "12345A", "description", vacancy);
+        RoleEntity role = new RoleEntity(null, "12345A", "description", vacancy,  new ArrayList<>());
         return roleIDRepository.save(role);
     }
 

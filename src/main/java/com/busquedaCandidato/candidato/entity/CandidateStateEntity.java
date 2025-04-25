@@ -37,8 +37,8 @@ public class CandidateStateEntity {
     @JoinColumn(name = "state_id", nullable = false)
     private StateEntity state;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "process_id", nullable = false)
-    @JsonBackReference
     private ProcessEntity process;
 }

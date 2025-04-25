@@ -3,6 +3,7 @@ package com.busquedaCandidato.candidato.service;
 import com.busquedaCandidato.candidato.dto.request.CandidateStateRequestDto;
 import com.busquedaCandidato.candidato.dto.request.CandidateStateRequestUpdateDto;
 import com.busquedaCandidato.candidato.dto.response.CandidateStateResponseDto;
+import com.busquedaCandidato.candidato.entity.JobProfileEntity;
 import com.busquedaCandidato.candidato.entity.ProcessEntity;
 import com.busquedaCandidato.candidato.entity.CandidateStateEntity;
 import com.busquedaCandidato.candidato.entity.StateEntity;

@@ -113,7 +113,4 @@ public class PostulationController {
         postulationService.deletePostulation(id);
         return ResponseEntity.noContent().build();
     }
-
-
-
 }

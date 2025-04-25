@@ -42,7 +42,7 @@ public class OriginControllerTests {
     @Test
     @DirtiesContext
     void get_origin_by_id_should_return_200(){
-        OriginEntity originEntity = new OriginEntity(null, "origin");
+        OriginEntity originEntity = new OriginEntity(null, "origin", null, null);
         OriginEntity originSave = originRepository.save(originEntity);
 
         ResponseEntity<OriginResponseDto> response = restTemplate.exchange(
@@ -62,8 +62,8 @@ public class OriginControllerTests {
     @Test
     @DirtiesContext
     void get_all_origin_should_return_200() {
-        originRepository.save(new OriginEntity(null, "origen one"));
-        originRepository.save(new OriginEntity(null, "origen two"));
+        originRepository.save(new OriginEntity(null, "origen one", null, null));
+        originRepository.save(new OriginEntity(null, "origen two", null, null));
 
 
         ResponseEntity<List<OriginResponseDto>> response = restTemplate.exchange(
@@ -105,7 +105,7 @@ public class OriginControllerTests {
     @Test
     @DirtiesContext
     void update_origin_should_return_200() {
-        OriginEntity originEntity = originRepository.save(new OriginEntity(null, "Origin"));
+        OriginEntity originEntity = originRepository.save(new OriginEntity(null, "Origin", null, null));
 
         OriginRequestDto updateRequest = new OriginRequestDto();
         updateRequest.setName("Origin new");
@@ -126,7 +126,7 @@ public class OriginControllerTests {
     @Test
     @DirtiesContext
     void delete_origin_should_return_204() {
-        OriginEntity originEntity = originRepository.save(new OriginEntity(null, "Origin"));
+        OriginEntity originEntity = originRepository.save(new OriginEntity(null, "Origin", null, null));
 
         ResponseEntity<Void> response = restTemplate.exchange(
                 "/api/origin/" + originEntity.getId(),

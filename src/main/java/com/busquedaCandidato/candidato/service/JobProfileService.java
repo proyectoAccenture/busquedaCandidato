@@ -4,7 +4,6 @@ import com.busquedaCandidato.candidato.dto.request.JobProfileRequestDto;
 import com.busquedaCandidato.candidato.dto.response.JobProfileResponseDto;
 import com.busquedaCandidato.candidato.entity.JobProfileEntity;
 import com.busquedaCandidato.candidato.exception.type.EntityAlreadyExistsException;
-import com.busquedaCandidato.candidato.exception.type.EntityAlreadyHasRelationException;
 import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
 import com.busquedaCandidato.candidato.mapper.IMapperJobProfileRequest;
 import com.busquedaCandidato.candidato.mapper.IMapperJobProfileResponse;
@@ -59,10 +58,6 @@ public class JobProfileService {
     public void deleteJobProfile(Long id){
         JobProfileEntity existingJob = jobProfileRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
-
-        if (vacancyCompanyRepository.existsByJobProfileId(id)) {
-            throw new EntityAlreadyHasRelationException();
-        }
 
         jobProfileRepository.delete(existingJob);
     }

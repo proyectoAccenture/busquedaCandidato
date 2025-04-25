@@ -39,7 +39,7 @@ public class ProcessEntity {
     @JoinColumn(name = "postulation_id", nullable = false)
     private PostulationEntity postulation;
 
-    @OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
+    @OneToMany(mappedBy = "process", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<CandidateStateEntity> candidateState = new ArrayList<>();
 }

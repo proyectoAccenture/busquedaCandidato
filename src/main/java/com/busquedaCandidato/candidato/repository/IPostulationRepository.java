@@ -8,6 +8,8 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface IPostulationRepository extends JpaRepository<PostulationEntity, Long> {
+    void deleteByCandidateId (Long idCandidate);
+    PostulationEntity findByCandidateId (Long idCandidate);
     List<PostulationEntity> findByRole(RoleEntity role);
     Boolean existsByCandidateId(Long candidateId);
     Boolean existsByRoleId(Long roleId);

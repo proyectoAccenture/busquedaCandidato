@@ -7,14 +7,14 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.4.2</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath/>
 	</parent>
 
-	<groupId>com.busquedaCandidato</groupId>
-	<artifactId>candidato</artifactId>
+	<groupId>com.candidateSearch</groupId>
+	<artifactId>search</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>candidato</name>
-	<description>Busqueda de candidatos</description>
+	<name>Searching</name>
+	<description>Candidate Search</description>
 
 	<properties>
 		<java.version>17</java.version>
@@ -114,5 +114,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>

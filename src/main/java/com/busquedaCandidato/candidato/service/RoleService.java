@@ -9,6 +9,7 @@ import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
 import com.busquedaCandidato.candidato.mapper.IMapperRole;
 import com.busquedaCandidato.candidato.repository.IRoleRepository;
 import com.busquedaCandidato.candidato.repository.ICompanyVacancyRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -87,10 +88,16 @@ public class RoleService {
         return mapperRolID.toDto(updatedRolId);
     }
 
+    @Transactional
     public void deleteRolID(Long id) {
         RoleEntity existingRolId = roleIDRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 
+        CompanyVacancyEntity vacancy = existingRolId.getCompanyVacancy();
+        if(vacancy != null){
+            vacancy.setRole(null);
+            vacancyCompanyRepository.save(vacancy);
+        }
         roleIDRepository.delete(existingRolId);
     }
 }

@@ -67,7 +67,7 @@ public class ProcessService {
         return processRepository.findById(candidateEntity.getId())
                 .map(mapperProcess::toDto)
                 .orElseThrow(EntityNoExistException::new);
-     }
+    }
 
     public ProcessResponseDto getByIdProcess(Long id){
         return processRepository.findById(id)
@@ -159,10 +159,15 @@ public class ProcessService {
     }
 
     public void deleteProcess(Long id){
-        PostulationEntity existingProcess = postulationRepository.findByProcessId(id)
+        ProcessEntity existingProcess = processRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 
-        postulationRepository.delete(existingProcess);
+        PostulationEntity postulation = existingProcess.getPostulation();
+        if(postulation != null){
+            postulation.setProcess(null);
+            postulationRepository.save(postulation);
+        }
+        processRepository.delete(existingProcess);
     }
 
     private void validateLongId(Long id){

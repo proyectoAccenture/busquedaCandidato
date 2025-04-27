@@ -27,6 +27,8 @@ public class RoleEntity {
     @JoinColumn(name="company_vacancy_id")
     private CompanyVacancyEntity companyVacancy;
 
-    @OneToMany(mappedBy = "role", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<PostulationEntity> postulations = new ArrayList<>();
+    @OneToMany(mappedBy = "role",
+            cascade = CascadeType.REMOVE,
+            orphanRemoval = true)
+    private List<PostulationEntity> postulations;
 }

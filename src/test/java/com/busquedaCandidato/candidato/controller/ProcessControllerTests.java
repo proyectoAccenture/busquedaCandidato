@@ -181,6 +181,6 @@ public class ProcessControllerTests {
 
         assertNotNull(response);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        assertFalse(postulationRepository.existsById(process1.getId()));
+        assertFalse(processRepository.existsById(process1.getId()));
     }
 }

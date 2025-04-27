@@ -36,7 +36,6 @@ public class CompanyVacancyRequestDto {
     @Schema(name= "level",description = "level", example = "13")
     @NotNull(message = "Level scale cannot be null")
     @Min(value = 1, message = "The level must be greater 1")
-    @Max(value = 13, message = "The level must be least 1")
     private Integer level;
 
     @Schema(name = "seniority", description = "seniority should have of the candidate", example = "string")

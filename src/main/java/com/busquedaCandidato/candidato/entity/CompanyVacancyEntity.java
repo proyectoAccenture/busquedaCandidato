@@ -56,6 +56,8 @@ public class CompanyVacancyEntity {
     @JoinColumn(name = "origin_id", nullable = false)
     private OriginEntity origin;
 
-    @OneToOne(mappedBy = "companyVacancy", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToOne(mappedBy = "companyVacancy",
+            cascade = CascadeType.REMOVE,
+            orphanRemoval = true)
     private RoleEntity role;
 }

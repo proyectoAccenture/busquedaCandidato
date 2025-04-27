@@ -42,6 +42,8 @@ public class ProcessEntity {
     private PostulationEntity postulation;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "process", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "process",
+            cascade = CascadeType.REMOVE,
+            orphanRemoval = true)
     private List<CandidateStateEntity> candidateState = new ArrayList<>();
 }

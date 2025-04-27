@@ -39,6 +39,8 @@ public class PostulationEntity {
     @JoinColumn( name = "role_id", nullable = false)
     private RoleEntity role;
 
-    @OneToOne(mappedBy = "postulation", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToOne(mappedBy = "postulation",
+            cascade = CascadeType.REMOVE,
+            orphanRemoval = true)
     private ProcessEntity process;
 }

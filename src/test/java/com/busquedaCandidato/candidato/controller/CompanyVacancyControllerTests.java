@@ -6,6 +6,7 @@ import com.busquedaCandidato.candidato.dto.response.CompanyVacancyResponseDto;
 import com.busquedaCandidato.candidato.entity.JobProfileEntity;
 import com.busquedaCandidato.candidato.entity.OriginEntity;
 import com.busquedaCandidato.candidato.entity.CompanyVacancyEntity;
+import com.busquedaCandidato.candidato.entity.RoleEntity;
 import com.busquedaCandidato.candidato.repository.ICompanyVacancyRepository;
 import com.busquedaCandidato.candidato.utility.TestEntityFactory;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -50,7 +50,7 @@ public class CompanyVacancyControllerTests {
         CompanyVacancyEntity vacancy = entityFactory.vacancyMethod(jobProfile, origin);
 
         ResponseEntity<StateResponseDto> response = restTemplate.exchange(
-                "/api/vacancy_company/" + vacancy.getId(),
+                "/api/company_vacancy/" + vacancy.getId(),
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<>() {}
@@ -72,7 +72,7 @@ public class CompanyVacancyControllerTests {
         CompanyVacancyEntity vacancy2 = entityFactory.vacancyMethod(jobProfile, origin);
 
         ResponseEntity<List<CompanyVacancyResponseDto>> response = restTemplate.exchange(
-                "/api/vacancy_company/",
+                "/api/company_vacancy/",
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<>() {}
@@ -98,12 +98,13 @@ public class CompanyVacancyControllerTests {
         vacancyRequestDto.setLevel(1);
         vacancyRequestDto.setSeniority("seniority");
         vacancyRequestDto.setSkills("skills");
+        vacancyRequestDto.setExperience("experience");
         vacancyRequestDto.setAssignmentTime("assignment time");
         vacancyRequestDto.setJobProfile(jobProfile.getId());
         vacancyRequestDto.setOrigin(origin.getId());
 
         ResponseEntity<CompanyVacancyResponseDto> response = restTemplate.exchange(
-                "/api/vacancy_company/",
+                "/api/company_vacancy/",
                 HttpMethod.POST,
                 new HttpEntity<>(vacancyRequestDto),
                 new ParameterizedTypeReference<>() {}
@@ -129,12 +130,13 @@ public class CompanyVacancyControllerTests {
         updateRequest.setLevel(2);
         updateRequest.setSeniority("seniority");
         updateRequest.setSkills("Skills more");
+        updateRequest.setExperience("experience");
         updateRequest.setAssignmentTime("Assignment day");
         updateRequest.setJobProfile(1L);
         updateRequest.setOrigin(1L);
 
         ResponseEntity<CompanyVacancyResponseDto> response = restTemplate.exchange(
-                "/api/vacancy_company/" + vacancy.getId(),
+                "/api/company_vacancy/" + vacancy.getId(),
                 HttpMethod.PUT,
                 new HttpEntity<>(updateRequest),
                 new ParameterizedTypeReference<>() {}
@@ -153,7 +155,7 @@ public class CompanyVacancyControllerTests {
         CompanyVacancyEntity vacancy = entityFactory.vacancyMethod(jobProfile, origin);
 
         ResponseEntity<Void> response = restTemplate.exchange(
-                "/api/vacancy_company/" + vacancy.getId(),
+                "/api/company_vacancy/" + vacancy.getId(),
                 HttpMethod.DELETE,
                 null,
                 Void.class

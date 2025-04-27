@@ -10,7 +10,7 @@ import com.busquedaCandidato.candidato.exception.type.CannotApplyException;
 import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
 import com.busquedaCandidato.candidato.exception.type.ItAlreadyExistPostulationException;
 import com.busquedaCandidato.candidato.exception.type.ResourceNotFoundException;
-import com.busquedaCandidato.candidato.mapper.IMapperPostulationResponse;
+import com.busquedaCandidato.candidato.mapper.IMapperPostulation;
 import com.busquedaCandidato.candidato.repository.ICandidateRepository;
 import com.busquedaCandidato.candidato.repository.IPostulationRepository;
 import com.busquedaCandidato.candidato.repository.IRoleRepository;
@@ -25,20 +25,20 @@ import java.util.stream.Collectors;
 public class PostulationService {
     private final IPostulationRepository postulationRepository;
     private final ICandidateRepository candidateRepository;
-    private final IMapperPostulationResponse mapperPostulationResponse;
+    private final IMapperPostulation mapperPostulation;
     private final IRoleRepository roleIDRepository;
 
     public PostulationResponseDto getPostulation(Long id){
         PostulationEntity postulationEntity = postulationRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 
-        return mapperPostulationResponse.toDto(postulationEntity);
+        return mapperPostulation.toDto(postulationEntity);
     }
 
     public List<PostulationResponseDto> getAllPostulation(){
         return postulationRepository.findAll().stream()
                 .filter(PostulationEntity::getStatus)
-                .map(mapperPostulationResponse::toDto)
+                .map(mapperPostulation::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -56,7 +56,7 @@ public class PostulationService {
         validationListPostulation(postulations);
 
         return postulations.stream()
-                .map(mapperPostulationResponse::toDto)
+                .map(mapperPostulation::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -74,7 +74,7 @@ public class PostulationService {
         validationListPostulation(postulations);
 
         return postulations.stream()
-                .map(mapperPostulationResponse::toDto)
+                .map(mapperPostulation::toDto)
                 .collect(Collectors.toList());
 
     }
@@ -103,15 +103,16 @@ public class PostulationService {
         postulationEntityNew.setDatePresentation(postulationRequestDto.getDatePresentation());
         postulationEntityNew.setRole(roleEntity);
         postulationEntityNew.setCandidate(candidateEntity);
+        postulationEntityNew.setProcess(null);
         PostulationEntity postulationEntitySave = postulationRepository.save(postulationEntityNew);
 
-        CandidateEntity candidate = new CandidateEntity();
-        candidate.getPostulations().add(postulationEntitySave);
+        candidateEntity.getPostulations().add(postulationEntitySave);
+        candidateRepository.save(candidateEntity);
 
-        RoleEntity role = new RoleEntity();
-        role.getPostulations().add(postulationEntitySave);
+        roleEntity.getPostulations().add(postulationEntitySave);
+        roleIDRepository.save(roleEntity);
 
-        return mapperPostulationResponse.toDto(postulationEntitySave);
+        return mapperPostulation.toDto(postulationEntitySave);
     }
 
     public Optional<PostulationResponseDto> updatePostulation(Long id, PostulationRequestDto postulationRequestDto) {
@@ -143,13 +144,13 @@ public class PostulationService {
 
         PostulationEntity postulationEntitySave = postulationRepository.save(existingEntity);
 
-        CandidateEntity candidate = new CandidateEntity();
-        candidate.getPostulations().add(postulationEntitySave);
+        candidateEntity.getPostulations().add(postulationEntitySave);
+        candidateRepository.save(candidateEntity);
 
-        RoleEntity role = new RoleEntity();
-        role.getPostulations().add(postulationEntitySave);
+        roleEntity.getPostulations().add(postulationEntitySave);
+        roleIDRepository.save(roleEntity);
 
-        return Optional.of(mapperPostulationResponse.toDto(postulationEntitySave));
+        return Optional.of(mapperPostulation.toDto(postulationEntitySave));
     }
 
     public void deletePostulation(long id) {

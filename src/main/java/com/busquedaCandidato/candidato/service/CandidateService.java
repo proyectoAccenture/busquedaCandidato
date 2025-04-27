@@ -7,21 +7,17 @@ import com.busquedaCandidato.candidato.entity.CandidateEntity;
 import com.busquedaCandidato.candidato.entity.JobProfileEntity;
 import com.busquedaCandidato.candidato.entity.OriginEntity;
 import com.busquedaCandidato.candidato.entity.PostulationEntity;
-import com.busquedaCandidato.candidato.entity.ProcessEntity;
 import com.busquedaCandidato.candidato.entity.RoleEntity;
 import com.busquedaCandidato.candidato.exception.type.CandidateNoExistException;
-import com.busquedaCandidato.candidato.exception.type.EntityAlreadyHasRelationException;
 import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
 import com.busquedaCandidato.candidato.exception.type.IdCardAlreadyExistException;
 import com.busquedaCandidato.candidato.exception.type.PhoneAlreadyExistException;
 import com.busquedaCandidato.candidato.exception.type.RoleIdNoExistException;
-import com.busquedaCandidato.candidato.mapper.IMapperCandidateResponse;
+import com.busquedaCandidato.candidato.mapper.IMapperCandidate;
 import com.busquedaCandidato.candidato.repository.ICandidateRepository;
-import com.busquedaCandidato.candidato.repository.ICandidateStateRepository;
 import com.busquedaCandidato.candidato.repository.IJobProfileRepository;
 import com.busquedaCandidato.candidato.repository.IOriginRepository;
 import com.busquedaCandidato.candidato.repository.IPostulationRepository;
-import com.busquedaCandidato.candidato.repository.IProcessRepository;
 import com.busquedaCandidato.candidato.repository.IRoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -41,7 +37,7 @@ public class CandidateService {
     private final IRoleRepository roleIDRepository;
     private final IJobProfileRepository jobProfileRepository;
     private final IOriginRepository originRepository;
-    private final IMapperCandidateResponse mapperCandidateResponse;
+    private final IMapperCandidate mapperCandidate;
 
     public List<CandidateResponseDto> getCandidateByRole(String roleName) {
 
@@ -60,7 +56,7 @@ public class CandidateService {
         List<CandidateEntity> candidates = candidateRepository.findByIdIn(candidateIds);
 
         return candidates.stream()
-                .map(mapperCandidateResponse::toDto)
+                .map(mapperCandidate::toDto)
                 .collect(Collectors.toList());
 
     }
@@ -73,7 +69,7 @@ public class CandidateService {
         validationListPage(candidates);
 
         List<CandidateResponseDto> candidateDTOs = candidates.getContent().stream()
-                .map(mapperCandidateResponse::toDto)
+                .map(mapperCandidate::toDto)
                 .toList();
 
         return new CandidateWithPaginationResponseDto(
@@ -102,7 +98,7 @@ public class CandidateService {
         validationListCandidate(candidates);
 
         List<CandidateResponseDto> candidateDTOs = candidates.stream()
-                .map(mapperCandidateResponse::toDto)
+                .map(mapperCandidate::toDto)
                 .toList();
 
         return new CandidateWithPaginationResponseDto(
@@ -116,7 +112,7 @@ public class CandidateService {
 
     public CandidateResponseDto getByIdCandidate(Long id){
         return candidateRepository.findById(id)
-                .map(mapperCandidateResponse::toDto)
+                .map(mapperCandidate::toDto)
                 .orElseThrow(CandidateNoExistException::new);
     }
 
@@ -124,7 +120,7 @@ public class CandidateService {
         List<CandidateEntity> candidates = candidateRepository.findAll();
 
         return candidates.stream()
-                .map(mapperCandidateResponse::toDto)
+                .map(mapperCandidate::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -164,13 +160,13 @@ public class CandidateService {
 
         CandidateEntity candidateEntitySave = candidateRepository.save(candidateEntityNew);
 
-        JobProfileEntity jobProfile = new JobProfileEntity();
-        jobProfile.getCandidates().add(candidateEntitySave);
+        jobProfileEntity.getCandidates().add(candidateEntitySave);
+        jobProfileRepository.save(jobProfileEntity);
 
-        OriginEntity origin = new OriginEntity();
-        origin.getCandidates().add(candidateEntitySave);
+        originEntity.getCandidates().add(candidateEntitySave);
+        originRepository.save(originEntity);
 
-        return mapperCandidateResponse.toDto(candidateEntitySave);
+        return mapperCandidate.toDto(candidateEntitySave);
     }
 
     public Optional<CandidateResponseDto> updateCandidate(Long id, CandidateRequestDto candidateRequestDto) {
@@ -201,7 +197,15 @@ public class CandidateService {
         existingEntity.setOrigin(originEntity);
         existingEntity.setJobProfile(jobProfileEntity);
 
-        return Optional.of(mapperCandidateResponse.toDto(candidateRepository.save(existingEntity)));
+        CandidateEntity candidateSaved = candidateRepository.save(existingEntity);
+
+        jobProfileEntity.getCandidates().add(candidateSaved);
+        jobProfileRepository.save(jobProfileEntity);
+
+        originEntity.getCandidates().add(candidateSaved);
+        originRepository.save(originEntity);
+
+        return Optional.of(mapperCandidate.toDto(candidateSaved));
     }
 
     public void deleteCandidate(Long id){

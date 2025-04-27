@@ -6,7 +6,7 @@ import com.busquedaCandidato.candidato.entity.OriginEntity;
 import com.busquedaCandidato.candidato.entity.CompanyVacancyEntity;
 import com.busquedaCandidato.candidato.entity.JobProfileEntity;
 import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
-import com.busquedaCandidato.candidato.mapper.IMapperVacancyCompanyResponse;
+import com.busquedaCandidato.candidato.mapper.IMapperVacancyCompany;
 import com.busquedaCandidato.candidato.repository.ICompanyVacancyRepository;
 import com.busquedaCandidato.candidato.repository.IJobProfileRepository;
 import com.busquedaCandidato.candidato.repository.IOriginRepository;
@@ -22,17 +22,17 @@ public class CompanyVacancyService {
     private final ICompanyVacancyRepository vacancyCompanyRepository;
     private final IJobProfileRepository jobProfileRepository;
     private final IOriginRepository originRepository;
-    private final IMapperVacancyCompanyResponse mapperVacancyCompanyResponse;
+    private final IMapperVacancyCompany mapperVacancyCompany;
 
     public CompanyVacancyResponseDto getVacancyCompany(Long id){
         return vacancyCompanyRepository.findById(id)
-                .map(mapperVacancyCompanyResponse::toDto)
+                .map(mapperVacancyCompany::toDto)
                 .orElseThrow(EntityNoExistException::new);
     }
 
     public List<CompanyVacancyResponseDto> getAllVacancyCompany(){
         return vacancyCompanyRepository.findAll().stream()
-                .map(mapperVacancyCompanyResponse::toDto)
+                .map(mapperVacancyCompany::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -56,15 +56,15 @@ public class CompanyVacancyService {
         companyVacancyEntityNew.setOrigin(originEntity);
         companyVacancyEntityNew.setRole(null);
 
-        CompanyVacancyEntity companyVacancyEntitySave = vacancyCompanyRepository.save(companyVacancyEntityNew);
+        CompanyVacancyEntity vacancyEntitySave = vacancyCompanyRepository.save(companyVacancyEntityNew);
 
-        JobProfileEntity jobProfile = new JobProfileEntity();
-        jobProfile.getVacancies().add(companyVacancyEntitySave);
+        jobProfileEntity.getVacancies().add(vacancyEntitySave);
+        jobProfileRepository.save(jobProfileEntity);
 
-        OriginEntity origin = new OriginEntity();
-        origin.getVacancies().add(companyVacancyEntitySave);
+        originEntity.getVacancies().add(vacancyEntitySave);
+        originRepository.save(originEntity);
 
-        return mapperVacancyCompanyResponse.toDto(companyVacancyEntitySave);
+        return mapperVacancyCompany.toDto(vacancyEntitySave);
     }
 
     public Optional<CompanyVacancyResponseDto> updateVacancyCompany(Long id, CompanyVacancyRequestDto companyVacancyRequestDto) {
@@ -89,15 +89,15 @@ public class CompanyVacancyService {
         existingEntity.setOrigin(originEntity);
         existingEntity.setRole(null);
 
-        CompanyVacancyEntity companyVacancyEntitySave = vacancyCompanyRepository.save(existingEntity);
+        CompanyVacancyEntity vacancyEntitySave = vacancyCompanyRepository.save(existingEntity);
 
-        JobProfileEntity jobProfile = new JobProfileEntity();
-        jobProfile.getVacancies().add(companyVacancyEntitySave);
+        jobProfileEntity.getVacancies().add(vacancyEntitySave);
+        jobProfileRepository.save(jobProfileEntity);
 
-        OriginEntity origin = new OriginEntity();
-        origin.getVacancies().add(companyVacancyEntitySave);
+        originEntity.getVacancies().add(vacancyEntitySave);
+        originRepository.save(originEntity);
 
-        return Optional.of(mapperVacancyCompanyResponse.toDto(companyVacancyEntitySave));
+        return Optional.of(mapperVacancyCompany.toDto(vacancyEntitySave));
     }
 
     public void deleteVacancyCompany(Long id){

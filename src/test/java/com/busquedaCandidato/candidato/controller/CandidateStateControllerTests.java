@@ -110,12 +110,18 @@ public class CandidateStateControllerTests {
         PostulationEntity postulation = entityFactory.postulationMethod(candidate, role);
         ProcessEntity process = entityFactory.processMethod(postulation);
         StateEntity state = entityFactory.stateMethod();
-        CandidateStateEntity candidateState1 = entityFactory.candidateStateMethod(process, state);
+
+        CandidateStateRequestDto candidateStateRequestDto = new CandidateStateRequestDto();
+        candidateStateRequestDto.setProcessId(process.getId());
+        candidateStateRequestDto.setStateId(state.getId());
+        candidateStateRequestDto.setStatus(true);
+        candidateStateRequestDto.setDescription("Description");
+        candidateStateRequestDto.setAssignedDate(LocalDate.now());
 
         ResponseEntity<CandidateStateResponseDto> response = restTemplate.exchange(
                 "/api/candidate_state/",
                 HttpMethod.POST,
-                new HttpEntity<>(candidateState1),
+                new HttpEntity<>(candidateStateRequestDto),
                 new ParameterizedTypeReference<>() {}
         );
 

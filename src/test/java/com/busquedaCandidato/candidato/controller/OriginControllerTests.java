@@ -65,7 +65,6 @@ public class OriginControllerTests {
         originRepository.save(new OriginEntity(null, "origen one", null, null));
         originRepository.save(new OriginEntity(null, "origen two", null, null));
 
-
         ResponseEntity<List<OriginResponseDto>> response = restTemplate.exchange(
                 "/api/origin/",
                 HttpMethod.GET,

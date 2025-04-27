@@ -6,7 +6,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
-public interface IMapperCandidateResponse {
+public interface IMapperCandidate {
     @Mapping(source = "jobProfile.id", target = "jobProfileId")
     @Mapping(source = "jobProfile.name", target = "jobProfileName")
     @Mapping(source = "origin.id", target = "originId")

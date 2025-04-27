@@ -12,7 +12,7 @@ import com.busquedaCandidato.candidato.exception.type.InvalidFileTypeException;
 import com.busquedaCandidato.candidato.exception.type.ResourceNotFoundException;
 import com.busquedaCandidato.candidato.exception.type.IdCardAlreadyExistException;
 import com.busquedaCandidato.candidato.exception.type.PhoneAlreadyExistException;
-import com.busquedaCandidato.candidato.mapper.IMapperCandidateResponse;
+import com.busquedaCandidato.candidato.mapper.IMapperCandidate;
 import com.busquedaCandidato.candidato.repository.ICandidateRepository;
 import com.busquedaCandidato.candidato.repository.IJobProfileRepository;
 import com.busquedaCandidato.candidato.repository.IOriginRepository;
@@ -29,7 +29,7 @@ public class CandidateResumeService {
     private final ICandidateRepository candidateRepository;
     private final IJobProfileRepository jobProfileRepository;
     private final IOriginRepository originRepository;
-    private final IMapperCandidateResponse mapperCandidateResponse;
+    private final IMapperCandidate mapperCandidate;
 
     @Transactional
     public void uploadResume(Long candidateId, MultipartFile file) {
@@ -119,7 +119,7 @@ public class CandidateResumeService {
                 candidateEntityNew.setResumeContentType(file.getContentType());
             }
             CandidateEntity candidateEntitySave = candidateRepository.save(candidateEntityNew);
-            CandidateResponseDto responseDto = mapperCandidateResponse.toDto(candidateEntitySave);
+            CandidateResponseDto responseDto = mapperCandidate.toDto(candidateEntitySave);
 
             if (file != null && !file.isEmpty()) {
                 responseDto.setHasResume(true);

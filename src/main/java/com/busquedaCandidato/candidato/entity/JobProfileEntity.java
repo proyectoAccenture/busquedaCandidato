@@ -29,9 +29,9 @@ public class JobProfileEntity {
     private String name;
 
     @OneToMany(mappedBy = "jobProfile", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<CompanyVacancyEntity> vacancies = new ArrayList<>();;
+    private List<CompanyVacancyEntity> vacancies = new ArrayList<>();
 
     @OneToMany(mappedBy = "jobProfile", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<CandidateEntity> candidates = new ArrayList<>();;
+    private List<CandidateEntity> candidates = new ArrayList<>();
 }
 

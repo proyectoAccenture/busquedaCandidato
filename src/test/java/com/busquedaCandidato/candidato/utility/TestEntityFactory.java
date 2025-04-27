@@ -39,12 +39,12 @@ public class TestEntityFactory {
     private ICandidateStateRepository candidateStateRepository;
 
     public JobProfileEntity jobProfileMethod() {
-        JobProfileEntity jobProfile = new JobProfileEntity(null, "Dev Backend", null, null);
+        JobProfileEntity jobProfile = new JobProfileEntity(null, "Dev Backend", new ArrayList<>(), new ArrayList<>());
         return jobProfileRepository.save(jobProfile);
     }
 
     public OriginEntity originMethod() {
-        OriginEntity origin = new OriginEntity(null, "origin", null, null);
+        OriginEntity origin = new OriginEntity(null, "origin", new ArrayList<>(), new ArrayList<>());
         return originRepository.save(origin);
     }
 
@@ -59,7 +59,7 @@ public class TestEntityFactory {
     }
 
     public CompanyVacancyEntity vacancyMethod(JobProfileEntity jobProfile, OriginEntity origin) {
-        CompanyVacancyEntity vacancy = new CompanyVacancyEntity(null, "description", "contract", 1000000L, 1, "seniority", "skills", "experience", "assignment time", jobProfile, origin, null);
+        CompanyVacancyEntity vacancy = new CompanyVacancyEntity(null, "description", "contract", 1000000L, 1, "seniority", "skills", "experience", "assignment time", jobProfile, origin, null );
         return vacancyCompanyRepository.save(vacancy);
     }
 

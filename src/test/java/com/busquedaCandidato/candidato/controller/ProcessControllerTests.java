@@ -9,6 +9,7 @@ import com.busquedaCandidato.candidato.entity.PostulationEntity;
 import com.busquedaCandidato.candidato.entity.ProcessEntity;
 import com.busquedaCandidato.candidato.entity.RoleEntity;
 import com.busquedaCandidato.candidato.entity.CompanyVacancyEntity;
+import com.busquedaCandidato.candidato.repository.IPostulationRepository;
 import com.busquedaCandidato.candidato.repository.IProcessRepository;
 import com.busquedaCandidato.candidato.utility.TestEntityFactory;
 import org.junit.jupiter.api.Test;
@@ -42,6 +43,9 @@ public class ProcessControllerTests {
 
     @Autowired
     IProcessRepository processRepository;
+
+    @Autowired
+    IPostulationRepository postulationRepository;
 
     @Test
     @DirtiesContext
@@ -177,6 +181,6 @@ public class ProcessControllerTests {
 
         assertNotNull(response);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        assertFalse(processRepository.existsById(postulation1.getId()));
+        assertFalse(postulationRepository.existsById(process1.getId()));
     }
 }

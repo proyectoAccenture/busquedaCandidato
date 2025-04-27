@@ -167,11 +167,9 @@ public class PostulationControllerTests {
                 Void.class
         );
 
-        PostulationEntity updated = postulationRepository.findById(postulation.getId()).orElseThrow();
-
         assertNotNull(response);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        assertFalse(updated.getStatus());
+        assertFalse(postulationRepository.existsById(postulation.getId()));
     }
 }
 

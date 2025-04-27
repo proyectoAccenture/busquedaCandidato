@@ -14,7 +14,7 @@ import com.busquedaCandidato.candidato.exception.type.BadRequestException;
 import com.busquedaCandidato.candidato.exception.type.RoleIdNoExistException;
 import com.busquedaCandidato.candidato.exception.type.CandidateNoExistException;
 import com.busquedaCandidato.candidato.exception.type.CandidateNoPostulationException;
-import com.busquedaCandidato.candidato.mapper.IMapperProcessResponse;
+import com.busquedaCandidato.candidato.mapper.IMapperProcess;
 import com.busquedaCandidato.candidato.repository.IPostulationRepository;
 import com.busquedaCandidato.candidato.repository.IProcessRepository;
 import com.busquedaCandidato.candidato.repository.IRoleRepository;
@@ -33,7 +33,7 @@ public class ProcessService {
     private final ICandidateRepository candidateRepository;
     private final IPostulationRepository postulationRepository;
     private final IRoleRepository roleIDRepository;
-    private final IMapperProcessResponse mapperProcessResponse;
+    private final IMapperProcess mapperProcess;
 
     public List<ProcessResponseDto> getProcessOfCandidateByRole(String roleName) {
 
@@ -48,7 +48,7 @@ public class ProcessService {
                 .toList();
 
         return processes.stream()
-                .map(mapperProcessResponse::toDto)
+                .map(mapperProcess::toDto)
                 .collect(Collectors.toList());
 
     }
@@ -65,19 +65,19 @@ public class ProcessService {
                 .orElseThrow(EntityNoExistException::new);
 
         return processRepository.findById(candidateEntity.getId())
-                .map(mapperProcessResponse::toDto)
+                .map(mapperProcess::toDto)
                 .orElseThrow(EntityNoExistException::new);
      }
 
     public ProcessResponseDto getByIdProcess(Long id){
         return processRepository.findById(id)
-                .map(mapperProcessResponse::toDto)
+                .map(mapperProcess::toDto)
                 .orElseThrow(CandidateNoExistException::new);
     }
 
     public List<ProcessResponseDto> getAllProcess(){
         return processRepository.findAll().stream()
-                .map(mapperProcessResponse::toDto)
+                .map(mapperProcess::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -88,7 +88,7 @@ public class ProcessService {
         validateListProcess(processes);
 
         return processes.stream()
-                .map(mapperProcessResponse::toDto).collect(Collectors.toList());
+                .map(mapperProcess::toDto).collect(Collectors.toList());
     }
 
     public List<ProcessResponseDto> getSearchProcessesByCandidateFullName(String query) {
@@ -107,7 +107,7 @@ public class ProcessService {
         validateListProcess(processes);
 
         return processes.stream()
-                .map(mapperProcessResponse::toDto)
+                .map(mapperProcess::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -130,8 +130,13 @@ public class ProcessService {
         process.setDescription(processRequestDto.getDescription());
         process.setAssignmentDate(processRequestDto.getAssignedDate());
         process.setPostulation(postulationEntity);
+
         ProcessEntity processEntitySave = processRepository.save(process);
-        return mapperProcessResponse.toDto(processEntitySave);
+
+        postulationEntity.setProcess(processEntitySave);
+        postulationRepository.save(postulationEntity);
+
+        return mapperProcess.toDto(processEntitySave);
     }
 
     public Optional<ProcessResponseDto> updateProcess(Long id, ProcessRequestDto processRequestDto) {
@@ -144,11 +149,17 @@ public class ProcessService {
         existingEntity.setPostulation(postulation);
         existingEntity.setDescription(processRequestDto.getDescription());
         existingEntity.setAssignmentDate(processRequestDto.getAssignedDate());
-        return Optional.of(mapperProcessResponse.toDto(processRepository.save(existingEntity)));
+
+        ProcessEntity processSaved = processRepository.save(existingEntity);
+
+        postulation.setProcess(processSaved);
+        postulationRepository.save(postulation);
+
+        return Optional.of(mapperProcess.toDto(processSaved));
     }
 
     public void deleteProcess(Long id){
-        PostulationEntity existingProcess = postulationRepository.findById(id)
+        PostulationEntity existingProcess = postulationRepository.findByProcessId(id)
                 .orElseThrow(EntityNoExistException::new);
 
         postulationRepository.delete(existingProcess);

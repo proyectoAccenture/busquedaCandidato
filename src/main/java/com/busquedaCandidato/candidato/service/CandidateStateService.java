@@ -10,7 +10,7 @@ import com.busquedaCandidato.candidato.exception.type.ProcessNoExistException;
 import com.busquedaCandidato.candidato.exception.type.StateNoFoundException;
 import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
 import com.busquedaCandidato.candidato.exception.type.CannotBeCreateCandidateProcessException;
-import com.busquedaCandidato.candidato.mapper.IMapperCandidateStateResponse;
+import com.busquedaCandidato.candidato.mapper.IMapperCandidateState;
 import com.busquedaCandidato.candidato.repository.ICandidateStateRepository;
 import com.busquedaCandidato.candidato.repository.IProcessRepository;
 import com.busquedaCandidato.candidato.repository.IStateRepository;
@@ -27,7 +27,7 @@ public class CandidateStateService {
     private final IProcessRepository processRepository;
     private final IStateRepository stateRepository;
     private final ICandidateStateRepository candidateStateRepository;
-    private final IMapperCandidateStateResponse mapperCandidateStateResponse;
+    private final IMapperCandidateState mapperCandidateState;
 
     public CandidateStateResponseDto addStateToProcess(CandidateStateRequestDto candidateStateRequestDto){
 
@@ -55,19 +55,23 @@ public class CandidateStateService {
         newCandidateProcess.setAssignedDate(candidateStateRequestDto.getAssignedDate());
 
         CandidateStateEntity savedEntity = candidateStateRepository.save(newCandidateProcess);
-        return mapperCandidateStateResponse.toDto(savedEntity);
+
+        processEntity.getCandidateState().add(savedEntity);
+        processRepository.save(processEntity);
+
+        return mapperCandidateState.toDto(savedEntity);
     }
 
     public CandidateStateResponseDto getCandidateStateById(Long processId){
          CandidateStateEntity candidateState = candidateStateRepository.findById(processId)
                 .orElseThrow(ProcessNoExistException::new);
 
-        return mapperCandidateStateResponse.toDto(candidateState);
+        return mapperCandidateState.toDto(candidateState);
     }
 
     public List<CandidateStateResponseDto> getAllCandidateState(){
         return candidateStateRepository.findAll().stream()
-                .map(mapperCandidateStateResponse::toDto)
+                .map(mapperCandidateState::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -82,9 +86,10 @@ public class CandidateStateService {
         existingEntity.setDescription(candidateStateRequestUpdateDto.getDescription());
         existingEntity.setStatus(candidateStateRequestUpdateDto.getStatus());
         existingEntity.setAssignedDate(candidateStateRequestUpdateDto.getAssignedDate());
+
         CandidateStateEntity updatedEntity = candidateStateRepository.save(existingEntity);
 
-        return Optional.of(mapperCandidateStateResponse.toDto(updatedEntity));
+        return Optional.of(mapperCandidateState.toDto(updatedEntity));
     }
 
     public void deleteCandidateState(Long id){

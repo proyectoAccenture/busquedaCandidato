@@ -8,8 +8,7 @@ import org.springframework.stereotype.Service;
 import com.busquedaCandidato.candidato.dto.request.OriginRequestDto;
 import com.busquedaCandidato.candidato.dto.response.OriginResponseDto;
 import com.busquedaCandidato.candidato.exception.type.EntityAlreadyExistsException;
-import com.busquedaCandidato.candidato.mapper.IMapperOriginRequest;
-import com.busquedaCandidato.candidato.mapper.IMapperOriginResponse;
+import com.busquedaCandidato.candidato.mapper.IMapperOrigin;
 import com.busquedaCandidato.candidato.repository.IOriginRepository;
 import lombok.AllArgsConstructor;
 
@@ -18,18 +17,17 @@ import lombok.AllArgsConstructor;
 public class OriginService {
 
     private final IOriginRepository originRepository;
-    private final IMapperOriginResponse mapperOriginResponse;
-    private final IMapperOriginRequest mapperOriginRequest;
+    private final IMapperOrigin mapperOrigin;
 
     public OriginResponseDto getOriginById(Long id){
         return originRepository.findById(id)
-                .map(mapperOriginResponse::toDto)
+                .map(mapperOrigin::toDto)
                 .orElseThrow(EntityNoExistException::new);
     }
 
     public List<OriginResponseDto> getAllOrigin(){
         return originRepository.findAll().stream()
-                .map(mapperOriginResponse::toDto)
+                .map(mapperOrigin::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -38,10 +36,10 @@ public class OriginService {
             throw new EntityAlreadyExistsException();
         }
 
-        OriginEntity originEntity = mapperOriginRequest.toEntity(originRequestDto);
+        OriginEntity originEntity = mapperOrigin.toEntity(originRequestDto);
         OriginEntity originEntitySave = originRepository.save(originEntity);
 
-        return mapperOriginResponse.toDto(originEntitySave);
+        return mapperOrigin.toDto(originEntitySave);
     }
 
     public OriginResponseDto updateOrigin(Long id, OriginRequestDto originRequestDto) {
@@ -51,7 +49,7 @@ public class OriginService {
         existingOrigin.setName(originRequestDto.getName());
         OriginEntity updatedOrigin = originRepository.save(existingOrigin);
 
-        return mapperOriginResponse.toDto(updatedOrigin);
+        return mapperOrigin.toDto(updatedOrigin);
     }
 
     public void deleteOrigin(Long id){

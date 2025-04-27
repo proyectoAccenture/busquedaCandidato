@@ -6,7 +6,7 @@ import com.busquedaCandidato.candidato.entity.RoleEntity;
 import com.busquedaCandidato.candidato.entity.CompanyVacancyEntity;
 import com.busquedaCandidato.candidato.exception.type.EntityAlreadyExistsException;
 import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
-import com.busquedaCandidato.candidato.mapper.IMapperRoleResponse;
+import com.busquedaCandidato.candidato.mapper.IMapperRole;
 import com.busquedaCandidato.candidato.repository.IRoleRepository;
 import com.busquedaCandidato.candidato.repository.ICompanyVacancyRepository;
 import lombok.AllArgsConstructor;
@@ -21,17 +21,17 @@ public class RoleService {
 
     private final IRoleRepository roleIDRepository;
     private final ICompanyVacancyRepository vacancyCompanyRepository;
-    private final IMapperRoleResponse mapperRolIDResponse;
+    private final IMapperRole mapperRolID;
 
     public RoleResponseDto getRolID(Long id) {
         return roleIDRepository.findById(id)
-                .map(mapperRolIDResponse::toDto)
+                .map(mapperRolID::toDto)
                 .orElseThrow(EntityNoExistException::new);
     }
 
     public List<RoleResponseDto> getAllRolID() {
         return roleIDRepository.findAll().stream()
-                .map(mapperRolIDResponse::toDto)
+                .map(mapperRolID::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -58,8 +58,11 @@ public class RoleService {
 
         RoleEntity roleEntitySave = roleIDRepository.save(roleEntityNew);
 
+        assert companyVacancyEntity != null;
+        companyVacancyEntity.setRole(roleEntitySave);
+        vacancyCompanyRepository.save(companyVacancyEntity);
 
-        return mapperRolIDResponse.toDto(roleEntitySave);
+        return mapperRolID.toDto(roleEntitySave);
     }
 
     public RoleResponseDto updateRolID(Long id, RoleRequestDto rolIDRequestDto) {
@@ -81,7 +84,7 @@ public class RoleService {
         existingRolId.setCompanyVacancy(companyVacancyEntity);
         RoleEntity updatedRolId = roleIDRepository.save(existingRolId);
 
-        return mapperRolIDResponse.toDto(updatedRolId);
+        return mapperRolID.toDto(updatedRolId);
     }
 
     public void deleteRolID(Long id) {

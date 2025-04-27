@@ -5,8 +5,7 @@ import com.busquedaCandidato.candidato.dto.response.StateResponseDto;
 import com.busquedaCandidato.candidato.entity.StateEntity;
 import com.busquedaCandidato.candidato.exception.type.EntityAlreadyExistsException;
 import com.busquedaCandidato.candidato.exception.type.EntityNoExistException;
-import com.busquedaCandidato.candidato.mapper.IMapperStateRequest;
-import com.busquedaCandidato.candidato.mapper.IMapperStateResponse;
+import com.busquedaCandidato.candidato.mapper.IMapperState;
 import com.busquedaCandidato.candidato.repository.IStateRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,18 +17,17 @@ import java.util.stream.Collectors;
 public class StateService {
 
     private final IStateRepository stateRepository;
-    private final IMapperStateResponse mapperStateResponse;
-    private final IMapperStateRequest mapperStateRequest;
+    private final IMapperState mapperState;
 
     public StateResponseDto getState(Long id){
         return stateRepository.findById(id)
-                .map(mapperStateResponse::toDto)
+                .map(mapperState::toDto)
                 .orElseThrow(EntityNoExistException::new);
     }
 
     public List<StateResponseDto> getAllState(){
         return stateRepository.findAll().stream()
-                .map(mapperStateResponse::toDto)
+                .map(mapperState::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -38,10 +36,10 @@ public class StateService {
             throw new EntityAlreadyExistsException();
         }
 
-        StateEntity stateEntity = mapperStateRequest.toEntity(stateRequestDto);
+        StateEntity stateEntity = mapperState.toEntity(stateRequestDto);
         StateEntity stateEntitySave = stateRepository.save(stateEntity);
 
-        return mapperStateResponse.toDto(stateEntitySave);
+        return mapperState.toDto(stateEntitySave);
     }
 
     public StateResponseDto updateState(Long id, StateRequestDto stateRequestDto) {
@@ -51,7 +49,7 @@ public class StateService {
         existingState.setName(stateRequestDto.getName());
         StateEntity updatedState = stateRepository.save(existingState);
 
-        return mapperStateResponse.toDto(updatedState);
+        return mapperState.toDto(updatedState);
     }
 
     public void deleteState(Long id){

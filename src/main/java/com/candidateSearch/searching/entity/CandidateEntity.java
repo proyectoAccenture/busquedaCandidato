@@ -35,15 +35,15 @@ public class CandidateEntity {
     private String lastName;
 
     @Column(unique = true, nullable = false)
-    private Long card;
+    private String card;
 
     @Column(unique = true, nullable = false)
-    private Long phone;
+    private String phone;
 
     @Column(nullable = false)
     private String city;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)

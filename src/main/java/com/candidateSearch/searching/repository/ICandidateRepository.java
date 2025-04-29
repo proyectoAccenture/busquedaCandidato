@@ -11,14 +11,14 @@ import java.util.List;
 
 public interface ICandidateRepository extends JpaRepository<CandidateEntity, Long>{
     List<CandidateEntity> findByIdIn(List<Long> candidateIds);
-    boolean existsByCard(Long card);
-    boolean existsByPhone(Long phone);
+    boolean existsByCard(String card);
+    boolean existsByPhone(String phone);
 
     @Query("SELECT c FROM CandidateEntity c " +
             "WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :query, '%')) " +
             "OR LOWER(c.lastName) LIKE LOWER(CONCAT('%', :query, '%')) " +
-            "OR CAST(c.card AS string) LIKE CONCAT('%', :query, '%') " +
-            "OR CAST(c.phone AS string) LIKE CONCAT('%', :query, '%') " +
+            "OR LOWER(c.card) LIKE CONCAT('%', :query, '%') " +
+            "OR LOWER(c.phone) LIKE CONCAT('%', :query, '%') " +
             "OR LOWER(c.city) LIKE LOWER(CONCAT('%', :query, '%')) " +
             "OR LOWER(c.email) LIKE LOWER(CONCAT('%', :query, '%')) " +
             "OR CAST(c.birthdate AS string) LIKE CONCAT('%', :query, '%') " +

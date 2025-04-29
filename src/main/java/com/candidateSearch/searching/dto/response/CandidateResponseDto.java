@@ -23,10 +23,10 @@ public class CandidateResponseDto {
     private String lastName;
 
     @Schema(name = "card",description = "id card of the candidate")
-    private Long card;
+    private String card;
 
     @Schema(name = "phone",description = "phone of the candidate")
-    private Long phone;
+    private String phone;
 
     @Schema(name = "city", description = "city of the candidate")
     private String city;

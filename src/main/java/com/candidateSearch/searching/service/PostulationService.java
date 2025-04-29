@@ -26,7 +26,7 @@ public class PostulationService {
     private final IPostulationRepository postulationRepository;
     private final ICandidateRepository candidateRepository;
     private final IMapperPostulation mapperPostulation;
-    private final IRoleRepository roleIDRepository;
+    private final IRoleRepository roleRepository;
 
     public PostulationResponseDto getPostulation(Long id){
         PostulationEntity postulationEntity = postulationRepository.findById(id)
@@ -70,7 +70,14 @@ public class PostulationService {
         String word3 = words.length > 2 ? words[2] : null;
         String word4 = words.length > 3 ? words[3] : null;
 
-        List<PostulationEntity> postulations = postulationRepository.searchByCandidateNameLastNameAndRole(word1, word2, word3, word4, query);
+        Boolean statusQuery = null;
+        if ("true".equalsIgnoreCase(query) || "1".equals(query)) {
+            statusQuery = true;
+        } else if ("false".equalsIgnoreCase(query) || "0".equals(query)) {
+            statusQuery = false;
+        }
+
+        List<PostulationEntity> postulations = postulationRepository.searchByCandidateNameLastNameAndRole(word1, word2, word3, word4, query, statusQuery);
         validationListPostulation(postulations);
 
         return postulations.stream()
@@ -85,7 +92,7 @@ public class PostulationService {
             throw new CannotApplyException();
         }
 
-        RoleEntity roleEntity = roleIDRepository.findById(postulationRequestDto.getRoleId())
+        RoleEntity roleEntity = roleRepository.findById(postulationRequestDto.getRoleId())
                 .orElseThrow(EntityNoExistException::new);
 
         CandidateEntity candidateEntity = candidateRepository.findById(postulationRequestDto.getCandidateId())
@@ -109,8 +116,8 @@ public class PostulationService {
         candidateEntity.getPostulations().add(postulationEntitySave);
         candidateRepository.save(candidateEntity);
 
-        roleEntity.getPostulations().add(postulationEntitySave);
-        roleIDRepository.save(roleEntity);
+        roleEntity.getPostulation().add(postulationEntitySave);
+        roleRepository.save(roleEntity);
 
         return mapperPostulation.toDto(postulationEntitySave);
     }
@@ -120,7 +127,7 @@ public class PostulationService {
         PostulationEntity existingEntity  = postulationRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 
-        RoleEntity roleEntity = roleIDRepository.findById(postulationRequestDto.getRoleId())
+        RoleEntity roleEntity = roleRepository.findById(postulationRequestDto.getRoleId())
                 .orElseThrow(EntityNoExistException::new);
 
         CandidateEntity candidateEntity = candidateRepository.findById(postulationRequestDto.getCandidateId())
@@ -147,8 +154,8 @@ public class PostulationService {
         candidateEntity.getPostulations().add(postulationEntitySave);
         candidateRepository.save(candidateEntity);
 
-        roleEntity.getPostulations().add(postulationEntitySave);
-        roleIDRepository.save(roleEntity);
+        roleEntity.getPostulation().add(postulationEntitySave);
+        roleRepository.save(roleEntity);
 
         return Optional.of(mapperPostulation.toDto(postulationEntitySave));
     }

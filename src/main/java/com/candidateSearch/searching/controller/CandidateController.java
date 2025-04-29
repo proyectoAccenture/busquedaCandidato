@@ -49,9 +49,9 @@ public class CandidateController {
                             schema = @Schema(implementation = CandidateResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "Candidate not found", content = @Content)
     })
-    @GetMapping("/role/{idRole}")
-    public ResponseEntity<List<CandidateResponseDto>> getCandidateByRole(@PathVariable String idRole){
-        List<CandidateResponseDto> candidates = candidateService.getCandidateByRole(idRole);
+    @GetMapping("/role/{nameRole}")
+    public ResponseEntity<List<CandidateResponseDto>> getCandidateByRole(@PathVariable String nameRole){
+        List<CandidateResponseDto> candidates = candidateService.getCandidateByRole(nameRole);
         return ResponseEntity.ok(candidates);
     }
 

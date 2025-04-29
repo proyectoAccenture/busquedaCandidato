@@ -9,11 +9,10 @@ import com.candidateSearch.searching.exception.type.CannotBeCreateCandidateProce
 import com.candidateSearch.searching.exception.type.EntityAlreadyExistsException;
 import com.candidateSearch.searching.exception.type.EntityAlreadyHasRelationException;
 import com.candidateSearch.searching.exception.type.EntityNoExistException;
-import com.candidateSearch.searching.exception.type.IdCardAlreadyExistException;
+import com.candidateSearch.searching.exception.type.FieldAlreadyExistException;
 import com.candidateSearch.searching.exception.type.InvalidFileTypeException;
 import com.candidateSearch.searching.exception.type.ItAlreadyExistPostulationException;
 import com.candidateSearch.searching.exception.type.ItAlreadyProcessWithIdPostulation;
-import com.candidateSearch.searching.exception.type.PhoneAlreadyExistException;
 import com.candidateSearch.searching.exception.type.PostulationIsOffException;
 import com.candidateSearch.searching.exception.type.ProcessAlreadyExistException;
 import com.candidateSearch.searching.exception.type.ProcessClosedException;
@@ -74,10 +73,10 @@ public class GlobalException {
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.STATE_NO_FOUND.getMessage()));
     }
 
-    @ExceptionHandler(IdCardAlreadyExistException.class)
-    public ResponseEntity<Map<String, String>> IdCardAlreadyExistException(IdCardAlreadyExistException ex) {
+    @ExceptionHandler(FieldAlreadyExistException.class)
+    public ResponseEntity<Map<String, String>> handleFieldAlreadyExistException(FieldAlreadyExistException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ID_CARD_ALREADY_EXISTS.getMessage()));
+                .body(Collections.singletonMap("message", ex.getMessage()));
     }
 
     @ExceptionHandler(CannotBeCreateCandidateProcessException.class)
@@ -114,12 +113,6 @@ public class GlobalException {
     public ResponseEntity<Map<String, String>> RoleIdNoExistException(RoleIdNoExistException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ROLE_ID_DOES_NOT_EXIST.getMessage()));
-    }
-
-    @ExceptionHandler(PhoneAlreadyExistException.class)
-    public ResponseEntity<Map<String, String>> PhoneAlreadyExistException(PhoneAlreadyExistException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.PHONE_ALREADY_EXISTS.getMessage()));
     }
 
     @ExceptionHandler(PostulationIsOffException.class)

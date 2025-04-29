@@ -34,13 +34,14 @@ public class CandidateRequestDto {
 
     @Schema(name = "card",description = "card of the candidate", example = "1000234567")
     @NotNull(message = "card cannot be null")
-    @Digits(integer = 10, fraction = 0, message = "card must have exactly 10 digits")
-    private Long card;
+    @Size(min = 1, max = 10, message = "card must have at least 1 and at most 10 characters")
+    @Pattern(regexp = "^[0-9]+$", message = "card must only contain digits")
+    private String card;
 
     @Schema(name = "phone",description = "phone of the candidate", example = "3002004050")
     @NotNull(message = "phone cannot be null")
-    @Digits(integer = 10, fraction = 0, message = "phone must have exactly 10 digits")
-    private Long phone;
+    @Size(min = 1, max = 15, message = "card must have at least 1 and at most 10 characters")
+    private String phone;
 
     @Schema(name = "city", description = "city of the candidate", example = "string")
     @NotBlank(message = "city cannot be blank")

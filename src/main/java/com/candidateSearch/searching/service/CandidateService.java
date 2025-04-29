@@ -10,8 +10,7 @@ import com.candidateSearch.searching.entity.PostulationEntity;
 import com.candidateSearch.searching.entity.RoleEntity;
 import com.candidateSearch.searching.exception.type.CandidateNoExistException;
 import com.candidateSearch.searching.exception.type.EntityNoExistException;
-import com.candidateSearch.searching.exception.type.IdCardAlreadyExistException;
-import com.candidateSearch.searching.exception.type.PhoneAlreadyExistException;
+import com.candidateSearch.searching.exception.type.FieldAlreadyExistException;
 import com.candidateSearch.searching.exception.type.RoleIdNoExistException;
 import com.candidateSearch.searching.mapper.IMapperCandidate;
 import com.candidateSearch.searching.repository.ICandidateRepository;
@@ -34,14 +33,14 @@ import java.util.stream.Collectors;
 public class CandidateService {
     private final ICandidateRepository candidateRepository;
     private final IPostulationRepository postulationRepository;
-    private final IRoleRepository roleIDRepository;
+    private final IRoleRepository roleRepository;
     private final IJobProfileRepository jobProfileRepository;
     private final IOriginRepository originRepository;
     private final IMapperCandidate mapperCandidate;
 
     public List<CandidateResponseDto> getCandidateByRole(String roleName) {
 
-        RoleEntity role = roleIDRepository.findByName(roleName)
+        RoleEntity role = roleRepository.findByNameRole(roleName)
                 .orElseThrow(RoleIdNoExistException::new);
 
         List<PostulationEntity> postulations = postulationRepository.findByRole(role);
@@ -126,11 +125,11 @@ public class CandidateService {
 
     public CandidateResponseDto saveCandidate(CandidateRequestDto candidateRequestDto) {
         if(candidateRepository.existsByCard(candidateRequestDto.getCard())){
-            throw new IdCardAlreadyExistException();
+            throw new FieldAlreadyExistException("card");
         }
 
         if(candidateRepository.existsByPhone(candidateRequestDto.getPhone())){
-            throw new PhoneAlreadyExistException();
+            throw new FieldAlreadyExistException("phone");
         }
 
         JobProfileEntity jobProfileEntity = jobProfileRepository.findById(candidateRequestDto.getJobProfile())

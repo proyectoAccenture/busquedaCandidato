@@ -10,8 +10,7 @@ import com.candidateSearch.searching.exception.type.EntityNoExistException;
 import com.candidateSearch.searching.exception.type.BadRequestException;
 import com.candidateSearch.searching.exception.type.InvalidFileTypeException;
 import com.candidateSearch.searching.exception.type.ResourceNotFoundException;
-import com.candidateSearch.searching.exception.type.IdCardAlreadyExistException;
-import com.candidateSearch.searching.exception.type.PhoneAlreadyExistException;
+import com.candidateSearch.searching.exception.type.FieldAlreadyExistException;
 import com.candidateSearch.searching.mapper.IMapperCandidate;
 import com.candidateSearch.searching.repository.ICandidateRepository;
 import com.candidateSearch.searching.repository.IJobProfileRepository;
@@ -77,11 +76,11 @@ public class CandidateResumeService {
     public CandidateResponseDto saveCandidateWithResume(CandidateRequestDto candidateRequestDto, MultipartFile file) {
         try {
             if(candidateRepository.existsByCard(candidateRequestDto.getCard())){
-                throw new IdCardAlreadyExistException();
+                throw new FieldAlreadyExistException("card");
             }
 
             if(candidateRepository.existsByPhone(candidateRequestDto.getPhone())){
-                throw new PhoneAlreadyExistException();
+                throw new FieldAlreadyExistException("phone");
             }
 
             JobProfileEntity jobProfileEntity = jobProfileRepository.findById(candidateRequestDto.getJobProfile())

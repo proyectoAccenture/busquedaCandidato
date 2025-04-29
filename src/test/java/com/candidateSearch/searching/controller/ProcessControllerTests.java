@@ -8,7 +8,6 @@ import com.candidateSearch.searching.entity.OriginEntity;
 import com.candidateSearch.searching.entity.PostulationEntity;
 import com.candidateSearch.searching.entity.ProcessEntity;
 import com.candidateSearch.searching.entity.RoleEntity;
-import com.candidateSearch.searching.entity.CompanyVacancyEntity;
 import com.candidateSearch.searching.repository.IPostulationRepository;
 import com.candidateSearch.searching.repository.IProcessRepository;
 import com.candidateSearch.searching.utility.TestEntityFactory;
@@ -53,8 +52,7 @@ public class ProcessControllerTests {
         OriginEntity origin = entityFactory.originMethod();
         JobProfileEntity jobProfile = entityFactory.jobProfileMethod();
         CandidateEntity candidate = entityFactory.candidateMethod(jobProfile, origin);
-        CompanyVacancyEntity vacancy = entityFactory.vacancyMethod(jobProfile, origin);
-        RoleEntity role = entityFactory.roleMethod(vacancy);
+        RoleEntity role = entityFactory.vacancyMethod(jobProfile, origin);
         PostulationEntity postulation = entityFactory.postulationMethod(candidate, role);
         ProcessEntity process = entityFactory.processMethod(postulation);
 
@@ -78,8 +76,7 @@ public class ProcessControllerTests {
         JobProfileEntity jobProfile = entityFactory.jobProfileMethod();
         CandidateEntity candidate1 = entityFactory.candidateMethod(jobProfile, origin);
         CandidateEntity candidate2 = entityFactory.candidateMethod(jobProfile, origin);
-        CompanyVacancyEntity vacancy = entityFactory.vacancyMethod(jobProfile, origin);
-        RoleEntity role = entityFactory.roleMethod(vacancy);
+        RoleEntity role = entityFactory.vacancyMethod(jobProfile, origin);
         PostulationEntity postulation1 = entityFactory.postulationMethod(candidate1, role);
         PostulationEntity postulation2 = entityFactory.postulationMethod(candidate2, role);
         ProcessEntity process1 = entityFactory.processMethod(postulation1);
@@ -106,8 +103,7 @@ public class ProcessControllerTests {
         OriginEntity origin = entityFactory.originMethod();
         JobProfileEntity jobProfile = entityFactory.jobProfileMethod();
         CandidateEntity candidate1 = entityFactory.candidateMethod(jobProfile, origin);
-        CompanyVacancyEntity vacancy = entityFactory.vacancyMethod(jobProfile, origin);
-        RoleEntity role = entityFactory.roleMethod(vacancy);
+        RoleEntity role = entityFactory.vacancyMethod(jobProfile, origin);
         PostulationEntity postulation = entityFactory.postulationMethod(candidate1, role);
 
         ProcessRequestDto requestDto = new ProcessRequestDto();
@@ -135,8 +131,7 @@ public class ProcessControllerTests {
         OriginEntity origin = entityFactory.originMethod();
         JobProfileEntity jobProfile = entityFactory.jobProfileMethod();
         CandidateEntity candidate1 = entityFactory.candidateMethod(jobProfile, origin);
-        CompanyVacancyEntity vacancy = entityFactory.vacancyMethod(jobProfile, origin);
-        RoleEntity role = entityFactory.roleMethod(vacancy);
+        RoleEntity role = entityFactory.vacancyMethod(jobProfile, origin);
         PostulationEntity postulation1 = entityFactory.postulationMethod(candidate1, role);
         ProcessEntity process1 = entityFactory.processMethod(postulation1);
 
@@ -166,8 +161,7 @@ public class ProcessControllerTests {
         OriginEntity origin = entityFactory.originMethod();
         JobProfileEntity jobProfile = entityFactory.jobProfileMethod();
         CandidateEntity candidate1 = entityFactory.candidateMethod(jobProfile, origin);
-        CompanyVacancyEntity vacancy = entityFactory.vacancyMethod(jobProfile, origin);
-        RoleEntity role = entityFactory.roleMethod(vacancy);
+        RoleEntity role = entityFactory.vacancyMethod(jobProfile, origin);
         PostulationEntity postulation1 = entityFactory.postulationMethod(candidate1, role);
         ProcessEntity process1 = entityFactory.processMethod(postulation1);
 

@@ -2,24 +2,24 @@ package com.candidateSearch.searching.utility;
 
 import com.candidateSearch.searching.entity.CandidateEntity;
 import com.candidateSearch.searching.entity.CandidateStateEntity;
-import com.candidateSearch.searching.entity.CompanyVacancyEntity;
+import com.candidateSearch.searching.entity.RoleEntity;
 import com.candidateSearch.searching.entity.JobProfileEntity;
 import com.candidateSearch.searching.entity.OriginEntity;
 import com.candidateSearch.searching.entity.PostulationEntity;
 import com.candidateSearch.searching.entity.ProcessEntity;
-import com.candidateSearch.searching.entity.RoleEntity;
 import com.candidateSearch.searching.entity.StateEntity;
 import com.candidateSearch.searching.repository.ICandidateRepository;
 import com.candidateSearch.searching.repository.ICandidateStateRepository;
-import com.candidateSearch.searching.repository.ICompanyVacancyRepository;
+import com.candidateSearch.searching.repository.IRoleRepository;
 import com.candidateSearch.searching.repository.IJobProfileRepository;
 import com.candidateSearch.searching.repository.IOriginRepository;
 import com.candidateSearch.searching.repository.IPostulationRepository;
 import com.candidateSearch.searching.repository.IProcessRepository;
-import com.candidateSearch.searching.repository.IRoleRepository;
 import com.candidateSearch.searching.repository.IStateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import javax.management.relation.Role;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Random;
@@ -33,13 +33,10 @@ public class TestEntityFactory {
     private IOriginRepository originRepository;
 
     @Autowired
-    private IRoleRepository roleIDRepository;
-
-    @Autowired
     private IJobProfileRepository jobProfileRepository;
 
     @Autowired
-    private ICompanyVacancyRepository vacancyCompanyRepository;
+    private IRoleRepository vacancyCompanyRepository;
 
     @Autowired
     private IPostulationRepository postulationRepository;
@@ -66,21 +63,26 @@ public class TestEntityFactory {
     public CandidateEntity candidateMethod(JobProfileEntity jobProfile, OriginEntity origin) {
         Random random = new Random();
 
-        long card = 1000000000L + random.nextInt(1000000000);
-        long phone = 3000000000L + random.nextInt(1000000000);
+        String card = String.format("%010d", 1000000000L + random.nextInt(1000000000));
+        String phone = String.format("%010d", 3000000000L + random.nextInt(1000000000));
 
         CandidateEntity candidate = new CandidateEntity(null, "name", "lastname", card, phone, "city", "email" + random.nextInt(1000) + "@gmail.com", LocalDate.of(1990, 5, 20), "source", "skills", "5 years", "work experience", "seniority", 1000000L, 1, LocalDate.of(2025, 1, 20), null, null, null, origin, jobProfile, new ArrayList<>());
         return candidateRepository.save(candidate);
     }
 
-    public CompanyVacancyEntity vacancyMethod(JobProfileEntity jobProfile, OriginEntity origin) {
-        CompanyVacancyEntity vacancy = new CompanyVacancyEntity(null, "description", "contract", 1000000L, 1, "seniority", "skills", "experience", "assignment time", jobProfile, origin, null );
-        return vacancyCompanyRepository.save(vacancy);
-    }
+    public RoleEntity vacancyMethod(JobProfileEntity jobProfile, OriginEntity origin) {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        Random random = new Random();
+        StringBuilder roleNameBuilder = new StringBuilder();
 
-    public RoleEntity roleMethod(CompanyVacancyEntity vacancy) {
-        RoleEntity role = new RoleEntity(null, "12345A", "description", vacancy,  new ArrayList<>());
-        return roleIDRepository.save(role);
+        for (int i = 0; i < 8; i++) {
+            roleNameBuilder.append(characters.charAt(random.nextInt(characters.length())));
+        }
+
+        String roleName = roleNameBuilder.toString();
+
+        RoleEntity vacancy = new RoleEntity(null, roleName, "description", "contract", 1000000L, 1, "seniority", "skills", "experience", "assignment time", jobProfile, origin, null );
+        return vacancyCompanyRepository.save(vacancy);
     }
 
     public StateEntity stateMethod() {

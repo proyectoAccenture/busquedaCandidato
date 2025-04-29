@@ -4,8 +4,8 @@ import com.candidateSearch.searching.dto.request.ProcessRequestDto;
 import com.candidateSearch.searching.dto.response.ProcessResponseDto;
 import com.candidateSearch.searching.entity.PostulationEntity;
 import com.candidateSearch.searching.entity.ProcessEntity;
-import com.candidateSearch.searching.entity.RoleEntity;
 import com.candidateSearch.searching.entity.CandidateEntity;
+import com.candidateSearch.searching.entity.RoleEntity;
 import com.candidateSearch.searching.exception.type.EntityNoExistException;
 import com.candidateSearch.searching.exception.type.ItAlreadyProcessWithIdPostulation;
 import com.candidateSearch.searching.exception.type.PostulationIsOffException;
@@ -17,8 +17,8 @@ import com.candidateSearch.searching.exception.type.CandidateNoPostulationExcept
 import com.candidateSearch.searching.mapper.IMapperProcess;
 import com.candidateSearch.searching.repository.IPostulationRepository;
 import com.candidateSearch.searching.repository.IProcessRepository;
-import com.candidateSearch.searching.repository.IRoleRepository;
 import com.candidateSearch.searching.repository.ICandidateRepository;
+import com.candidateSearch.searching.repository.IRoleRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -37,7 +37,7 @@ public class ProcessService {
 
     public List<ProcessResponseDto> getProcessOfCandidateByRole(String roleName) {
 
-        RoleEntity role = roleIDRepository.findByName(roleName)
+        RoleEntity role = roleIDRepository.findByNameRole(roleName)
                 .orElseThrow(RoleIdNoExistException::new);
 
         List<PostulationEntity> postulations = postulationRepository.findByRole(role);

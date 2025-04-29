@@ -92,8 +92,8 @@ public class CandidateControllerTest {
         CandidateRequestDto requestDto = new CandidateRequestDto();
         requestDto.setName("name");
         requestDto.setLastName("lastName");
-        requestDto.setCard(1000000077L);
-        requestDto.setPhone(3005003020L);
+        requestDto.setCard("1000000077");
+        requestDto.setPhone("3005003020");
         requestDto.setCity("city");
         requestDto.setEmail("email@gmail.com");
         requestDto.setBirthdate(LocalDate.of(1990, 5, 20));
@@ -132,8 +132,8 @@ public class CandidateControllerTest {
         CandidateRequestDto requestDto = new CandidateRequestDto();
         requestDto.setName("name");
         requestDto.setLastName("lastName");
-        requestDto.setCard(1000000077L);
-        requestDto.setPhone(3005003020L);
+        requestDto.setCard("1000000077");
+        requestDto.setPhone("3005003020");
         requestDto.setCity("city");
         requestDto.setEmail("email@gmail.com");
         requestDto.setBirthdate(LocalDate.of(1990, 5, 20));

@@ -3,11 +3,10 @@ package com.candidateSearch.searching.controller;
 import com.candidateSearch.searching.dto.request.PostulationRequestDto;
 import com.candidateSearch.searching.dto.response.PostulationResponseDto;
 import com.candidateSearch.searching.entity.CandidateEntity;
-import com.candidateSearch.searching.entity.CompanyVacancyEntity;
+import com.candidateSearch.searching.entity.RoleEntity;
 import com.candidateSearch.searching.entity.JobProfileEntity;
 import com.candidateSearch.searching.entity.OriginEntity;
 import com.candidateSearch.searching.entity.PostulationEntity;
-import com.candidateSearch.searching.entity.RoleEntity;
 import com.candidateSearch.searching.repository.IPostulationRepository;
 import com.candidateSearch.searching.utility.TestEntityFactory;
 import org.junit.jupiter.api.Test;
@@ -48,8 +47,7 @@ public class PostulationControllerTests {
         OriginEntity origin = entityFactory.originMethod();
         JobProfileEntity jobProfile = entityFactory.jobProfileMethod();
         CandidateEntity candidate = entityFactory.candidateMethod(jobProfile, origin);
-        CompanyVacancyEntity vacancy = entityFactory.vacancyMethod(jobProfile, origin);
-        RoleEntity role = entityFactory.roleMethod(vacancy);
+        RoleEntity role = entityFactory.vacancyMethod(jobProfile, origin);
         PostulationEntity postulation = entityFactory.postulationMethod(candidate, role);
 
         ResponseEntity<PostulationEntity> response = restTemplate.exchange(
@@ -72,10 +70,8 @@ public class PostulationControllerTests {
         JobProfileEntity jobProfile = entityFactory.jobProfileMethod();
         CandidateEntity candidate1 = entityFactory.candidateMethod(jobProfile, origin);
         CandidateEntity candidate2 = entityFactory.candidateMethod(jobProfile, origin);
-        CompanyVacancyEntity vacancy1 = entityFactory.vacancyMethod(jobProfile, origin);
-        CompanyVacancyEntity vacancy2 = entityFactory.vacancyMethod(jobProfile, origin);
-        RoleEntity role1 = entityFactory.roleMethod(vacancy1);
-        RoleEntity role2 = entityFactory.roleMethod(vacancy2);
+        RoleEntity role1 = entityFactory.vacancyMethod(jobProfile, origin);
+        RoleEntity role2 = entityFactory.vacancyMethod(jobProfile, origin);
         PostulationEntity postulation1 = entityFactory.postulationMethod(candidate1, role1);
         PostulationEntity postulation2 = entityFactory.postulationMethod(candidate2, role2);
 
@@ -100,8 +96,7 @@ public class PostulationControllerTests {
         OriginEntity origin = entityFactory.originMethod();
         JobProfileEntity jobProfile = entityFactory.jobProfileMethod();
         CandidateEntity candidate = entityFactory.candidateMethod(jobProfile, origin);
-        CompanyVacancyEntity vacancy = entityFactory.vacancyMethod(jobProfile, origin);
-        RoleEntity role = entityFactory.roleMethod(vacancy);
+        RoleEntity role = entityFactory.vacancyMethod(jobProfile, origin);
 
         PostulationRequestDto requestDto = new PostulationRequestDto();
         requestDto.setDatePresentation(LocalDate.now());
@@ -129,8 +124,7 @@ public class PostulationControllerTests {
         OriginEntity origin = entityFactory.originMethod();
         JobProfileEntity jobProfile = entityFactory.jobProfileMethod();
         CandidateEntity candidate = entityFactory.candidateMethod(jobProfile, origin);
-        CompanyVacancyEntity vacancy = entityFactory.vacancyMethod(jobProfile, origin);
-        RoleEntity role = entityFactory.roleMethod(vacancy);
+        RoleEntity role = entityFactory.vacancyMethod(jobProfile, origin);
         PostulationEntity postulation = entityFactory.postulationMethod(candidate, role);
         postulation.setStatus(false);
         postulationRepository.save(postulation);
@@ -160,8 +154,7 @@ public class PostulationControllerTests {
         OriginEntity origin = entityFactory.originMethod();
         JobProfileEntity jobProfile = entityFactory.jobProfileMethod();
         CandidateEntity candidate = entityFactory.candidateMethod(jobProfile, origin);
-        CompanyVacancyEntity vacancy = entityFactory.vacancyMethod(jobProfile, origin);
-        RoleEntity role = entityFactory.roleMethod(vacancy);
+        RoleEntity role = entityFactory.vacancyMethod(jobProfile, origin);
         PostulationEntity postulation = entityFactory.postulationMethod(candidate, role);
 
         ResponseEntity<Void> response = restTemplate.exchange(

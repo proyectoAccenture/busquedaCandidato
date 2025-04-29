@@ -2,12 +2,11 @@ package com.candidateSearch.searching.controller;
 
 import com.candidateSearch.searching.dto.request.RoleRequestDto;
 import com.candidateSearch.searching.dto.response.RoleResponseDto;
-import com.candidateSearch.searching.entity.CompanyVacancyEntity;
+import com.candidateSearch.searching.dto.response.StateResponseDto;
 import com.candidateSearch.searching.entity.JobProfileEntity;
 import com.candidateSearch.searching.entity.OriginEntity;
 import com.candidateSearch.searching.entity.RoleEntity;
 import com.candidateSearch.searching.repository.IRoleRepository;
-import com.candidateSearch.searching.service.RoleService;
 import com.candidateSearch.searching.utility.TestEntityFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +20,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
@@ -37,52 +34,44 @@ public class RoleControllerTests {
     private TestRestTemplate restTemplate;
 
     @Autowired
-    private IRoleRepository roleIDRepository;
-
-    @Autowired
-    private RoleService roleService;
-
-    @Autowired
     TestEntityFactory entityFactory;
+
+    @Autowired
+    private IRoleRepository vacancyCompanyRepository;
 
 
     @Test
     @DirtiesContext
     void get_role_by_id_should_return_200(){
+
         OriginEntity origin = entityFactory.originMethod();
         JobProfileEntity jobProfile = entityFactory.jobProfileMethod();
-        CompanyVacancyEntity vacancy = entityFactory.vacancyMethod(jobProfile, origin);
+        RoleEntity vacancy = entityFactory.vacancyMethod(jobProfile, origin);
 
-        RoleEntity roleEntity = new RoleEntity(null, "12345A", "Description", vacancy, null);
-        RoleEntity saveEntity = roleIDRepository.save(roleEntity);
-
-        ResponseEntity<RoleResponseDto> response = restTemplate.exchange(
-                "/api/role_id/" + saveEntity.getId(),
+        ResponseEntity<StateResponseDto> response = restTemplate.exchange(
+                "/api/role/" + vacancy.getId(),
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<>() {});
-
+                new ParameterizedTypeReference<>() {}
+        );
 
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals("12345A", response.getBody().getName());
     }
+
 
     @Test
     @DirtiesContext
-    void get_all_role_should_return_200() {
+    void get_all_roles_should_return_200() {
+
         OriginEntity origin = entityFactory.originMethod();
         JobProfileEntity jobProfile = entityFactory.jobProfileMethod();
-        CompanyVacancyEntity vacancy1 = entityFactory.vacancyMethod(jobProfile, origin);
-        CompanyVacancyEntity vacancy2 = entityFactory.vacancyMethod(jobProfile, origin);
-
-
-        roleIDRepository.save(new RoleEntity(null, "12345A", "Description", vacancy1, null));
-        roleIDRepository.save(new RoleEntity(null, "12345E", "Description", vacancy2, null));
+        RoleEntity vacancy1 = entityFactory.vacancyMethod(jobProfile, origin);
+        RoleEntity vacancy2 = entityFactory.vacancyMethod(jobProfile, origin);
 
         ResponseEntity<List<RoleResponseDto>> response = restTemplate.exchange(
-                "/api/role_id/",
+                "/api/role/",
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<>() {}
@@ -92,53 +81,63 @@ public class RoleControllerTests {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals(2, response.getBody().size());
-
-        List<String> roleNames = response.getBody().stream().map(RoleResponseDto::getName).toList();
-        assertTrue(roleNames.contains("12345A"));
-        assertTrue(roleNames.contains("12345E"));
     }
 
     @Test
     @DirtiesContext
     void create_role_should_return_201() {
+
         OriginEntity origin = entityFactory.originMethod();
         JobProfileEntity jobProfile = entityFactory.jobProfileMethod();
-        CompanyVacancyEntity vacancy = entityFactory.vacancyMethod(jobProfile, origin);
 
-        RoleRequestDto requestDto = new RoleRequestDto();
-        requestDto.setName("12345A");
-        requestDto.setDescription("Description");
-        requestDto.setVacancyCompanyId(vacancy.getId());
+        RoleRequestDto vacancyRequestDto = new RoleRequestDto();
+        vacancyRequestDto.setNameRole("role");
+        vacancyRequestDto.setDescription("description");
+        vacancyRequestDto.setContract("contract");
+        vacancyRequestDto.setSalary(1000000L);
+        vacancyRequestDto.setLevel(1);
+        vacancyRequestDto.setSeniority("seniority");
+        vacancyRequestDto.setSkills("skills");
+        vacancyRequestDto.setExperience("experience");
+        vacancyRequestDto.setAssignmentTime("assignment time");
+        vacancyRequestDto.setJobProfile(jobProfile.getId());
+        vacancyRequestDto.setOrigin(origin.getId());
 
         ResponseEntity<RoleResponseDto> response = restTemplate.exchange(
-                "/api/role_id/",
+                "/api/role/",
                 HttpMethod.POST,
-                new HttpEntity<>(requestDto),
+                new HttpEntity<>(vacancyRequestDto),
                 new ParameterizedTypeReference<>() {}
         );
 
         assertNotNull(response);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals("12345A", response.getBody().getName());
     }
 
     @Test
     @DirtiesContext
     void update_role_should_return_200() {
+
         OriginEntity origin = entityFactory.originMethod();
         JobProfileEntity jobProfile = entityFactory.jobProfileMethod();
-        CompanyVacancyEntity vacancy = entityFactory.vacancyMethod(jobProfile, origin);
-
-        RoleEntity role = roleIDRepository.save(new RoleEntity(null, "12345A", "Description", vacancy, null));
+        RoleEntity vacancy = entityFactory.vacancyMethod(jobProfile, origin);
 
         RoleRequestDto updateRequest = new RoleRequestDto();
-        updateRequest.setName("123456A");
-        updateRequest.setDescription("Description new");
-        updateRequest.setVacancyCompanyId(vacancy.getId());
+        updateRequest.setNameRole("Role");
+        updateRequest.setDescription("Description");
+        updateRequest.setContract("contract");
+        updateRequest.setSalary(2500000L);
+        updateRequest.setLevel(2);
+        updateRequest.setSeniority("seniority");
+        updateRequest.setSkills("Skills more");
+        updateRequest.setExperience("experience");
+        updateRequest.setAssignmentTime("Assignment day");
+        updateRequest.setJobProfile(1L);
+        updateRequest.setOrigin(1L);
 
         ResponseEntity<RoleResponseDto> response = restTemplate.exchange(
-                "/api/role_id/" + role.getId(),
+                "/api/role/" + vacancy.getId(),
                 HttpMethod.PUT,
                 new HttpEntity<>(updateRequest),
                 new ParameterizedTypeReference<>() {}
@@ -147,20 +146,17 @@ public class RoleControllerTests {
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals("123456A", response.getBody().getName());
     }
 
     @Test
     @DirtiesContext
-    void delete_role_should_return_204() {
+    void delete_vacancy_should_return_204() {
         OriginEntity origin = entityFactory.originMethod();
         JobProfileEntity jobProfile = entityFactory.jobProfileMethod();
-        CompanyVacancyEntity vacancy = entityFactory.vacancyMethod(jobProfile, origin);
-
-        RoleEntity role = roleIDRepository.save(new RoleEntity(null, "12345A", "Description", vacancy, null));
+        RoleEntity vacancy = entityFactory.vacancyMethod(jobProfile, origin);
 
         ResponseEntity<Void> response = restTemplate.exchange(
-                "/api/role_id/" + role.getId(),
+                "/api/role/" + vacancy.getId(),
                 HttpMethod.DELETE,
                 null,
                 Void.class
@@ -168,6 +164,6 @@ public class RoleControllerTests {
 
         assertNotNull(response);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        assertFalse(roleIDRepository.existsById(role.getId()));
+        assertFalse(vacancyCompanyRepository.existsById(vacancy.getId()));
     }
 }

@@ -29,7 +29,7 @@ public class OriginEntity {
     private String name;
 
     @OneToMany(mappedBy = "origin", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<CompanyVacancyEntity> vacancies = new ArrayList<>();;
+    private List<RoleEntity> roles = new ArrayList<>();;
 
     @OneToMany(mappedBy = "origin", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<CandidateEntity> candidates = new ArrayList<>();;

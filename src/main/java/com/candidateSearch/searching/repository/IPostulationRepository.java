@@ -6,10 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import java.util.List;
-import java.util.Optional;
 
 public interface IPostulationRepository extends JpaRepository<PostulationEntity, Long> {
-    Optional<PostulationEntity> findByProcessId(Long idProcess);
     List<PostulationEntity> findByRole(RoleEntity role);
     Boolean existsByCandidateId(Long candidateId);
     boolean existsByCandidate_IdAndRole_IdAndStatus(Long candidateId, Long roleId, Boolean status);
@@ -41,7 +39,8 @@ public interface IPostulationRepository extends JpaRepository<PostulationEntity,
             "(:word3 IS NULL OR LOWER(COALESCE(c.name, '')) LIKE LOWER(CONCAT('%', :word3, '%')) OR LOWER(COALESCE(c.lastName, '')) LIKE LOWER(CONCAT('%', :word3, '%'))) AND " +
             "(:word4 IS NULL OR LOWER(COALESCE(c.name, '')) LIKE LOWER(CONCAT('%', :word4, '%')) OR LOWER(COALESCE(c.lastName, '')) LIKE LOWER(CONCAT('%', :word4, '%'))) " +
             ") OR " +
-            "LOWER(COALESCE(r.name, '')) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+            "( :statusQuery IS NOT NULL AND p.status = :statusQuery ) OR " +
+            "LOWER(COALESCE(r.nameRole, '')) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
             "LOWER(COALESCE(jp.name, '')) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
             "LOWER(COALESCE(o.name, '')) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
             "LOWER(COALESCE(s.name, '')) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
@@ -54,5 +53,7 @@ public interface IPostulationRepository extends JpaRepository<PostulationEntity,
             @Param("word2") String word2,
             @Param("word3") String word3,
             @Param("word4") String word4,
-            @Param("query") String query);
+            @Param("query") String query,
+            @Param("statusQuery") Boolean statusQuery);
+
 }

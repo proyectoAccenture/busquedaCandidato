@@ -1,6 +1,7 @@
 package com.candidateSearch.searching.dto.request;
 
 import com.candidateSearch.searching.utility.Status;
+import com.candidateSearch.searching.validation.date.DateWithinRange;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
@@ -11,7 +12,6 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
-
 import java.time.LocalDate;
 
 @Data
@@ -47,5 +47,6 @@ public class CandidateStateRequestDto {
     @NotNull(message = "Assigned date cannot be null")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @DateWithinRange
     private LocalDate assignedDate;
 }

@@ -1,6 +1,7 @@
 package com.candidateSearch.searching.dto.request;
 
 import com.candidateSearch.searching.utility.Status;
+import com.candidateSearch.searching.validation.date.DateWithinRange;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
@@ -15,7 +16,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
-import com.candidateSearch.searching.validation.ValidAge;
+import com.candidateSearch.searching.validation.age.ValidAge;
 
 @Data
 @NoArgsConstructor
@@ -108,6 +109,7 @@ public class CandidateRequestDto {
     @NotNull(message = "datePresentation cannot be null")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @DateWithinRange
     private LocalDate datePresentation;
 
     @Schema(name = "status", description = "Status of process = 'ACTIVE', 'INACTIVE' ", example = "ACTIVE")

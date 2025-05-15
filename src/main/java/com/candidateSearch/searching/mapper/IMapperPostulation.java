@@ -8,7 +8,8 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface IMapperPostulation {
     @Mapping(source = "role.id", target = "roleId")
-    @Mapping(source = "role.jobProfile.name", target = "roleName")
+    @Mapping(source = "role.nameRole", target = "roleName")
+    @Mapping(source = "role.description", target = "roleDescription")
     @Mapping(source = "candidate.id", target = "candidateId")
     @Mapping(source = "candidate.name", target = "candidateName")
     @Mapping(source = "candidate.lastName", target = "candidateLastName")

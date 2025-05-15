@@ -1,6 +1,7 @@
 package com.candidateSearch.searching.dto.response;
 
 import com.candidateSearch.searching.entity.CandidateStateEntity;
+import com.candidateSearch.searching.utility.Status;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -25,6 +26,9 @@ public class ProcessResponseDto {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate assignmentDate;
+
+    @Schema(name = "status", description = "Status of the process (true if active, false if closed)", example = "false")
+    private Status status;
 
     @Schema(name = "ListCandidateProcess",description = "List all state that is the candidate")
     private List<CandidateStateEntity> candidateState;

@@ -1,5 +1,6 @@
 package com.candidateSearch.searching.dto.request;
 
+import com.candidateSearch.searching.utility.Status;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -27,6 +28,10 @@ public class CandidateStateRequestUpdateDto {
     @Schema(name = "status", description = "Status in which a candidate state is located")
     @NotNull(message = "Status cannot be null")
     private Boolean status;
+
+    @Schema(name = "statusHistory", description = "Status of process = 'ACTIVE', 'INACTIVE' ", example = "ACTIVE")
+    @NotNull(message = "Status cannot be null")
+    private Status statusHistory;
 
     @Schema(name = "assignedDate", description = "Name of the job profile", example = "2025-01-01")
     @NotNull(message = "Date in which a candidate is doing the state")

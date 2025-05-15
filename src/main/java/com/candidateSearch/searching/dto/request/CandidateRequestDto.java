@@ -1,8 +1,8 @@
 package com.candidateSearch.searching.dto.request;
 
+import com.candidateSearch.searching.utility.Status;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -105,6 +105,10 @@ public class CandidateRequestDto {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate datePresentation;
+
+    @Schema(name = "status", description = "Status of process = 'ACTIVE', 'INACTIVE' ", example = "ACTIVE")
+    @NotNull(message = "Status cannot be null")
+    private Status status;
 
     @Schema(name = "origin",description = "Id of origin", example = "1")
     @NotNull(message = "origin cannot be null")

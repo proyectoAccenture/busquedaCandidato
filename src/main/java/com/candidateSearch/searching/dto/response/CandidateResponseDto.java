@@ -1,5 +1,6 @@
 package com.candidateSearch.searching.dto.response;
 
+import com.candidateSearch.searching.utility.Status;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -66,6 +67,9 @@ public class CandidateResponseDto {
 
     @Schema(name = "resumeFileName", description = "Resume file name")
     private String resumeFileName;
+
+    @Schema(name = "status", description = "Status of the candidate (true if active, false if closed)", example = "false")
+    private Status status;
 
     @Schema(name = "originId",description = "Id of origin")
     private Long originId;

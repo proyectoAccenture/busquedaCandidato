@@ -1,6 +1,5 @@
 package com.candidateSearch.searching.entity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -28,9 +27,9 @@ public class OriginEntity {
     @Column(unique = true, nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "origin", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "origin")
     private List<RoleEntity> roles = new ArrayList<>();;
 
-    @OneToMany(mappedBy = "origin", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "origin")
     private List<CandidateEntity> candidates = new ArrayList<>();;
 }

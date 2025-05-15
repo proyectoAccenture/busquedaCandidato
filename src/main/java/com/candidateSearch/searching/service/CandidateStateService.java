@@ -9,11 +9,12 @@ import com.candidateSearch.searching.entity.StateEntity;
 import com.candidateSearch.searching.exception.type.ProcessNoExistException;
 import com.candidateSearch.searching.exception.type.StateNoFoundException;
 import com.candidateSearch.searching.exception.type.EntityNoExistException;
-import com.candidateSearch.searching.exception.type.CannotBeCreateCandidateProcessException;
+import com.candidateSearch.searching.exception.type.CannotBeCreateException;
 import com.candidateSearch.searching.mapper.IMapperCandidateState;
 import com.candidateSearch.searching.repository.ICandidateStateRepository;
 import com.candidateSearch.searching.repository.IProcessRepository;
 import com.candidateSearch.searching.repository.IStateRepository;
+import com.candidateSearch.searching.utility.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -31,6 +32,10 @@ public class CandidateStateService {
 
     public CandidateStateResponseDto addStateToProcess(CandidateStateRequestDto candidateStateRequestDto){
 
+        if(candidateStateRequestDto.getStatusHistory().equals(Status.INACTIVE)){
+            throw new CannotBeCreateException();
+        }
+
         ProcessEntity processEntity = processRepository.findById(candidateStateRequestDto.getProcessId())
                 .orElseThrow(ProcessNoExistException::new);
 
@@ -39,8 +44,9 @@ public class CandidateStateService {
         if (currentStateOptional.isPresent()) {
             CandidateStateEntity lastCandidateState = currentStateOptional.get();
 
-            if (!lastCandidateState.getStatus()) {
-                throw new CannotBeCreateCandidateProcessException();
+            if (!Boolean.TRUE.equals(lastCandidateState.getStatus()) ||
+                    !Status.ACTIVE.equals(lastCandidateState.getStatusHistory())) {
+                throw new CannotBeCreateException();
             }
         }
 
@@ -52,6 +58,7 @@ public class CandidateStateService {
         newCandidateProcess.setState(stateEntity);
         newCandidateProcess.setDescription(candidateStateRequestDto.getDescription());
         newCandidateProcess.setStatus(candidateStateRequestDto.getStatus());
+        newCandidateProcess.setStatusHistory(candidateStateRequestDto.getStatusHistory());
         newCandidateProcess.setAssignedDate(candidateStateRequestDto.getAssignedDate());
 
         CandidateStateEntity savedEntity = candidateStateRepository.save(newCandidateProcess);
@@ -71,6 +78,7 @@ public class CandidateStateService {
 
     public List<CandidateStateResponseDto> getAllCandidateState(){
         return candidateStateRepository.findAll().stream()
+                .filter(cs -> cs.getStatusHistory().equals(Status.ACTIVE))
                 .map(mapperCandidateState::toDto)
                 .collect(Collectors.toList());
     }
@@ -79,12 +87,17 @@ public class CandidateStateService {
         CandidateStateEntity existingEntity  = candidateStateRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 
+        if (existingEntity.getProcess().getStatus() != Status.ACTIVE) {
+            throw new CannotBeCreateException();
+        }
+
         StateEntity newState = stateRepository.findById(candidateStateRequestUpdateDto.getStateId())
                 .orElseThrow(StateNoFoundException::new);
 
         existingEntity.setState(newState);
         existingEntity.setDescription(candidateStateRequestUpdateDto.getDescription());
         existingEntity.setStatus(candidateStateRequestUpdateDto.getStatus());
+        existingEntity.setStatusHistory(candidateStateRequestUpdateDto.getStatusHistory());
         existingEntity.setAssignedDate(candidateStateRequestUpdateDto.getAssignedDate());
 
         CandidateStateEntity updatedEntity = candidateStateRepository.save(existingEntity);
@@ -96,6 +109,7 @@ public class CandidateStateService {
         CandidateStateEntity existingCandidateState = candidateStateRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 
-        candidateStateRepository.delete(existingCandidateState);
+        existingCandidateState.setStatusHistory(Status.INACTIVE);
+        candidateStateRepository.save(existingCandidateState);
     }
 }

@@ -15,6 +15,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
+import com.candidateSearch.searching.validation.ValidAge;
 
 @Data
 @NoArgsConstructor
@@ -59,6 +60,7 @@ public class CandidateRequestDto {
     @Schema(name = "birthdate", description = "birthdate of the candidate", example = "2004-01-01")
     @NotNull(message = "birthdate cannot be null")
     @Past(message = "Birthdate must be in the past")
+    @ValidAge(min = 17, max = 69, message = "The age must be between 17 and 69 years old")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate birthdate;

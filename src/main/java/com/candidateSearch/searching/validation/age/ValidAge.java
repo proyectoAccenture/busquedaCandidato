@@ -1,4 +1,4 @@
-package com.candidateSearch.searching.validation;
+package com.candidateSearch.searching.validation.age;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

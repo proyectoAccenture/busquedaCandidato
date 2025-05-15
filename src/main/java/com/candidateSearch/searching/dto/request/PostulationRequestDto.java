@@ -1,5 +1,6 @@
 package com.candidateSearch.searching.dto.request;
 
+import com.candidateSearch.searching.utility.Status;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
@@ -19,6 +20,10 @@ public class PostulationRequestDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate datePresentation;
 
+    @Schema(name = "status", description = "Status of process = 'ACTIVE', 'INACTIVE' ", example = "ACTIVE")
+    @NotNull(message = "Status cannot be null")
+    private Status status;
+
     @Schema(name = "roleId",description = "Id of role",example = "1")
     @NotNull(message = "roleId cannot be null")
     private Long roleId;
@@ -26,7 +31,4 @@ public class PostulationRequestDto {
     @Schema(name = "candidateId",description = "Id of candidate that appliqued", example = "1")
     @NotNull(message = "candidateId cannot be null")
     private Long candidateId;
-
-    @Schema(name = "status", description = "Status of the postulation (true if active, false if closed)", example = "false")
-    private Boolean status;
 }

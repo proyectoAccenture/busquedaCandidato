@@ -1,8 +1,11 @@
 package com.candidateSearch.searching.entity;
 
+import com.candidateSearch.searching.utility.Status;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -28,8 +31,9 @@ public class PostulationEntity {
     @Column(nullable = false)
     private LocalDate datePresentation;
 
+    @Enumerated(EnumType.ORDINAL)
     @Column(nullable = false)
-    private Boolean status;
+    private Status status;
 
     @ManyToOne
     @JoinColumn(name = "candidate_id", nullable = false)
@@ -39,8 +43,6 @@ public class PostulationEntity {
     @JoinColumn( name = "role_id", nullable = false)
     private RoleEntity role;
 
-    @OneToOne(mappedBy = "postulation",
-            cascade = CascadeType.REMOVE,
-            orphanRemoval = true)
+    @OneToOne(mappedBy = "postulation")
     private ProcessEntity process;
 }

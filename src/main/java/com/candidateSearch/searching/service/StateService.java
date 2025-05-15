@@ -2,11 +2,14 @@ package com.candidateSearch.searching.service;
 
 import com.candidateSearch.searching.dto.request.StateRequestDto;
 import com.candidateSearch.searching.dto.response.StateResponseDto;
+import com.candidateSearch.searching.entity.CandidateStateEntity;
 import com.candidateSearch.searching.entity.StateEntity;
 import com.candidateSearch.searching.exception.type.EntityAlreadyExistsException;
 import com.candidateSearch.searching.exception.type.EntityNoExistException;
 import com.candidateSearch.searching.mapper.IMapperState;
+import com.candidateSearch.searching.repository.ICandidateStateRepository;
 import com.candidateSearch.searching.repository.IStateRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -18,6 +21,7 @@ public class StateService {
 
     private final IStateRepository stateRepository;
     private final IMapperState mapperState;
+    private final ICandidateStateRepository candidateStateRepository;
 
     public StateResponseDto getState(Long id){
         return stateRepository.findById(id)
@@ -52,10 +56,18 @@ public class StateService {
         return mapperState.toDto(updatedState);
     }
 
+    @Transactional
     public void deleteState(Long id){
         StateEntity existingState = stateRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 
+        List<CandidateStateEntity> candidateStateExist = candidateStateRepository.findAllByStateId(id);
+        if(candidateStateExist != null && !candidateStateExist.isEmpty()){
+            for (CandidateStateEntity candidateState : candidateStateExist){
+                candidateState.setState(null);
+                candidateStateRepository.save(candidateState);
+            }
+        }
         stateRepository.delete(existingState);
     }
 }

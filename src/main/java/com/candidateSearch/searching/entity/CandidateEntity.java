@@ -1,8 +1,10 @@
 package com.candidateSearch.searching.entity;
 
-import jakarta.persistence.CascadeType;
+import com.candidateSearch.searching.utility.Status;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -34,16 +36,16 @@ public class CandidateEntity {
     @Column(nullable = false)
     private String lastName;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String card;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String phone;
 
     @Column(nullable = false)
     private String city;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String email;
 
     @Column(nullable = false)
@@ -83,14 +85,18 @@ public class CandidateEntity {
     @Column(name = "resume_content_type")
     private String resumeContentType;
 
+    @Enumerated(EnumType.ORDINAL)
+    @Column(nullable = false)
+    private Status status;
+
     @ManyToOne
-    @JoinColumn(name = "origin_id", nullable = false)
+    @JoinColumn(name = "origin_id")
     private OriginEntity origin;
 
     @ManyToOne
-    @JoinColumn(name = "job_profile_id", nullable = false)
+    @JoinColumn(name = "job_profile_id")
     private JobProfileEntity jobProfile;
 
-    @OneToMany(mappedBy = "candidate", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "candidate")
     private List<PostulationEntity> postulations = new ArrayList<>();
 }

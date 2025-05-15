@@ -2,10 +2,13 @@ package com.candidateSearch.searching.service;
 
 import com.candidateSearch.searching.dto.request.ProcessRequestDto;
 import com.candidateSearch.searching.dto.response.ProcessResponseDto;
+import com.candidateSearch.searching.entity.CandidateStateEntity;
 import com.candidateSearch.searching.entity.PostulationEntity;
 import com.candidateSearch.searching.entity.ProcessEntity;
 import com.candidateSearch.searching.entity.CandidateEntity;
 import com.candidateSearch.searching.entity.RoleEntity;
+import com.candidateSearch.searching.exception.type.CandidateBlockedException;
+import com.candidateSearch.searching.exception.type.CannotBeCreateException;
 import com.candidateSearch.searching.exception.type.EntityNoExistException;
 import com.candidateSearch.searching.exception.type.ItAlreadyProcessWithIdPostulation;
 import com.candidateSearch.searching.exception.type.PostulationIsOffException;
@@ -15,10 +18,12 @@ import com.candidateSearch.searching.exception.type.RoleIdNoExistException;
 import com.candidateSearch.searching.exception.type.CandidateNoExistException;
 import com.candidateSearch.searching.exception.type.CandidateNoPostulationException;
 import com.candidateSearch.searching.mapper.IMapperProcess;
+import com.candidateSearch.searching.repository.ICandidateStateRepository;
 import com.candidateSearch.searching.repository.IPostulationRepository;
 import com.candidateSearch.searching.repository.IProcessRepository;
 import com.candidateSearch.searching.repository.ICandidateRepository;
 import com.candidateSearch.searching.repository.IRoleRepository;
+import com.candidateSearch.searching.utility.Status;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -34,6 +39,8 @@ public class ProcessService {
     private final IPostulationRepository postulationRepository;
     private final IRoleRepository roleIDRepository;
     private final IMapperProcess mapperProcess;
+    private final ICandidateStateRepository candidateStateRepository;
+
 
     public List<ProcessResponseDto> getProcessOfCandidateByRole(String roleName) {
 
@@ -70,13 +77,21 @@ public class ProcessService {
     }
 
     public ProcessResponseDto getByIdProcess(Long id){
-        return processRepository.findById(id)
-                .map(mapperProcess::toDto)
+        ProcessEntity processEntity = processRepository.findById(id)
                 .orElseThrow(CandidateNoExistException::new);
+
+        List<CandidateStateEntity> filteredStates = processEntity.getCandidateState().stream()
+                .filter(cs -> cs.getStatusHistory() == Status.ACTIVE)
+                .toList();
+
+        processEntity.setCandidateState(filteredStates);
+
+        return mapperProcess.toDto(processEntity);
     }
 
     public List<ProcessResponseDto> getAllProcess(){
         return processRepository.findAll().stream()
+                .filter(process -> process.getStatus() == Status.ACTIVE)
                 .map(mapperProcess::toDto)
                 .collect(Collectors.toList());
     }
@@ -113,22 +128,32 @@ public class ProcessService {
 
     public ProcessResponseDto saveProcess(ProcessRequestDto processRequestDto) {
 
-        Optional<ProcessEntity> existingProcess = processRepository.findByPostulationId(processRequestDto.getPostulationId());
-
-        if (existingProcess.isPresent()) {
-            throw new ItAlreadyProcessWithIdPostulation();
+        if(processRequestDto.getStatus().equals(Status.INACTIVE)){
+            throw new CannotBeCreateException();
         }
 
+        if(processRequestDto.getStatus().equals(Status.BLOCKED)){
+            throw new CandidateBlockedException();
+        }
         PostulationEntity postulationEntity = postulationRepository.findById(processRequestDto.getPostulationId())
                 .orElseThrow(CandidateNoPostulationException::new);
 
-        if(!postulationEntity.getStatus()){
+        if (postulationEntity.getStatus().equals(Status.INACTIVE)) {
             throw new PostulationIsOffException();
+        }
+
+        if (postulationEntity.getProcess() != null) {
+            ProcessEntity existingProcess = postulationEntity.getProcess();
+
+            if (existingProcess.getStatus().equals(Status.ACTIVE)) {
+                throw new ItAlreadyProcessWithIdPostulation();
+            }
         }
 
         ProcessEntity process = new ProcessEntity();
         process.setDescription(processRequestDto.getDescription());
         process.setAssignmentDate(processRequestDto.getAssignedDate());
+        process.setStatus(processRequestDto.getStatus());
         process.setPostulation(postulationEntity);
 
         ProcessEntity processEntitySave = processRepository.save(process);
@@ -139,6 +164,7 @@ public class ProcessService {
         return mapperProcess.toDto(processEntitySave);
     }
 
+
     public Optional<ProcessResponseDto> updateProcess(Long id, ProcessRequestDto processRequestDto) {
         ProcessEntity existingEntity  = processRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
@@ -146,9 +172,18 @@ public class ProcessService {
         PostulationEntity postulation = postulationRepository.findById(processRequestDto.getPostulationId())
                 .orElseThrow(CandidateNoPostulationException::new);
 
+        if (processRequestDto.getStatus() == Status.ACTIVE) {
+            ProcessEntity currentActiveProcess = postulation.getProcess();
+
+            if (!existingEntity.equals(currentActiveProcess) && currentActiveProcess != null && currentActiveProcess.getStatus() == Status.ACTIVE) {
+                throw new ItAlreadyProcessWithIdPostulation();
+            }
+        }
+
         existingEntity.setPostulation(postulation);
         existingEntity.setDescription(processRequestDto.getDescription());
         existingEntity.setAssignmentDate(processRequestDto.getAssignedDate());
+        existingEntity.setStatus(processRequestDto.getStatus());
 
         ProcessEntity processSaved = processRepository.save(existingEntity);
 
@@ -162,12 +197,14 @@ public class ProcessService {
         ProcessEntity existingProcess = processRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 
-        PostulationEntity postulation = existingProcess.getPostulation();
-        if(postulation != null){
-            postulation.setProcess(null);
-            postulationRepository.save(postulation);
+        existingProcess.setStatus(Status.INACTIVE);
+        processRepository.save(existingProcess);
+
+        CandidateStateEntity candidateStateFind = candidateStateRepository.findByProcessId(existingProcess.getId());
+        if (candidateStateFind != null && candidateStateFind.getStatusHistory().equals(Status.ACTIVE)) {
+            candidateStateFind.setStatusHistory(Status.INACTIVE);
+            candidateStateRepository.save(candidateStateFind);
         }
-        processRepository.delete(existingProcess);
     }
 
     private void validateLongId(Long id){

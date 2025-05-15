@@ -2,15 +2,17 @@ package com.candidateSearch.searching.repository;
 
 import com.candidateSearch.searching.entity.PostulationEntity;
 import com.candidateSearch.searching.entity.RoleEntity;
+import com.candidateSearch.searching.utility.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface IPostulationRepository extends JpaRepository<PostulationEntity, Long> {
+    PostulationEntity findByCandidateId (Long candidateId);
     List<PostulationEntity> findByRole(RoleEntity role);
     Boolean existsByCandidateId(Long candidateId);
-    boolean existsByCandidate_IdAndRole_IdAndStatus(Long candidateId, Long roleId, Boolean status);
+    boolean existsByCandidate_IdAndRole_IdAndStatus(Long candidateId, Long roleId, Status status);
 
     @Query("SELECT p FROM PostulationEntity p " +
             "JOIN p.candidate c " +

@@ -5,12 +5,14 @@ import com.candidateSearch.searching.dto.response.RoleResponseDto;
 import com.candidateSearch.searching.entity.OriginEntity;
 import com.candidateSearch.searching.entity.RoleEntity;
 import com.candidateSearch.searching.entity.JobProfileEntity;
+import com.candidateSearch.searching.exception.type.CannotBeCreateException;
 import com.candidateSearch.searching.exception.type.EntityNoExistException;
 import com.candidateSearch.searching.exception.type.FieldAlreadyExistException;
 import com.candidateSearch.searching.mapper.IMapperRole;
 import com.candidateSearch.searching.repository.IRoleRepository;
 import com.candidateSearch.searching.repository.IJobProfileRepository;
 import com.candidateSearch.searching.repository.IOriginRepository;
+import com.candidateSearch.searching.utility.Status;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -33,13 +35,19 @@ public class RoleService {
 
     public List<RoleResponseDto> getAllRoles(){
         return roleRepository.findAll().stream()
+                .filter(roles -> roles.getStatus() == Status.ACTIVE)
                 .map(mapperRole::toDto)
                 .collect(Collectors.toList());
     }
 
     public RoleResponseDto saveRole(RoleRequestDto roleRequestDto) {
-        if(roleRepository.existsByNameRole(roleRequestDto.getNameRole())){
-            throw new FieldAlreadyExistException("role name");
+
+        if(roleRequestDto.getStatus().equals(Status.INACTIVE)){
+            throw new CannotBeCreateException();
+        }
+
+        if (roleRepository.existsByNameRoleAndStatusNot(roleRequestDto.getNameRole(), Status.INACTIVE)) {
+            throw new FieldAlreadyExistException(roleRequestDto.getNameRole());
         }
 
         JobProfileEntity jobProfileEntity = jobProfileRepository.findById(roleRequestDto.getJobProfile())
@@ -58,6 +66,7 @@ public class RoleService {
         roleEntityNew.setSkills(roleRequestDto.getSkills());
         roleEntityNew.setExperience(roleRequestDto.getExperience());
         roleEntityNew.setAssignmentTime(roleRequestDto.getAssignmentTime());
+        roleEntityNew.setStatus(roleRequestDto.getStatus());
         roleEntityNew.setJobProfile(jobProfileEntity);
         roleEntityNew.setOrigin(originEntity);
 
@@ -91,6 +100,7 @@ public class RoleService {
         existingEntity.setSkills(roleRequestDto.getSkills());
         existingEntity.setExperience(roleRequestDto.getExperience());
         existingEntity.setAssignmentTime(roleRequestDto.getAssignmentTime());
+        existingEntity.setStatus(Status.ACTIVE);
         existingEntity.setJobProfile(jobProfileEntity);
         existingEntity.setOrigin(originEntity);
 
@@ -109,6 +119,7 @@ public class RoleService {
         RoleEntity existing = roleRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 
-        roleRepository.delete(existing);
+        existing.setStatus(Status.INACTIVE);
+        roleRepository.save(existing);
     }
 }

@@ -15,6 +15,7 @@ import com.candidateSearch.searching.mapper.IMapperCandidate;
 import com.candidateSearch.searching.repository.ICandidateRepository;
 import com.candidateSearch.searching.repository.IJobProfileRepository;
 import com.candidateSearch.searching.repository.IOriginRepository;
+import com.candidateSearch.searching.utility.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,11 +76,11 @@ public class CandidateResumeService {
     @Transactional
     public CandidateResponseDto saveCandidateWithResume(CandidateRequestDto candidateRequestDto, MultipartFile file) {
         try {
-            if(candidateRepository.existsByCard(candidateRequestDto.getCard())){
+            if (candidateRepository.existsByCardAndStatusNot(candidateRequestDto.getCard(), Status.INACTIVE)) {
                 throw new FieldAlreadyExistException("card");
             }
 
-            if(candidateRepository.existsByPhone(candidateRequestDto.getPhone())){
+            if (candidateRepository.existsByPhoneAndStatusNot(candidateRequestDto.getPhone(), Status.INACTIVE)) {
                 throw new FieldAlreadyExistException("phone");
             }
 

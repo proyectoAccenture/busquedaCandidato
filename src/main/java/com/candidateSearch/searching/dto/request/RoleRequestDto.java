@@ -1,5 +1,6 @@
 package com.candidateSearch.searching.dto.request;
 
+import com.candidateSearch.searching.utility.Status;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
@@ -62,6 +63,10 @@ public class RoleRequestDto {
     @NotBlank(message = "Assignment time cannot be blank")
     @Size(min = 1, max = 100, message = "The source must be between 1 and 100 characters")
     private String assignmentTime;
+
+    @Schema(name = "status", description = "Status of process = 'ACTIVE', 'INACTIVE' ", example = "ACTIVE")
+    @NotNull(message = "Status cannot be null")
+    private Status status;
 
     @Schema(name = "jobProfile",description = "Id of jobProfile", example = "1")
     @NotNull(message = "jobProfile cannot be null")

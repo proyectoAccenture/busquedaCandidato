@@ -2,10 +2,11 @@ package com.candidateSearch.searching.exception;
 
 import com.candidateSearch.searching.exception.response.ExceptionResponse;
 import com.candidateSearch.searching.exception.type.BadRequestException;
+import com.candidateSearch.searching.exception.type.CandidateBlockedException;
 import com.candidateSearch.searching.exception.type.CandidateNoExistException;
 import com.candidateSearch.searching.exception.type.CandidateNoPostulationException;
 import com.candidateSearch.searching.exception.type.CannotApplyException;
-import com.candidateSearch.searching.exception.type.CannotBeCreateCandidateProcessException;
+import com.candidateSearch.searching.exception.type.CannotBeCreateException;
 import com.candidateSearch.searching.exception.type.EntityAlreadyExistsException;
 import com.candidateSearch.searching.exception.type.EntityAlreadyHasRelationException;
 import com.candidateSearch.searching.exception.type.EntityNoExistException;
@@ -20,6 +21,7 @@ import com.candidateSearch.searching.exception.type.ProcessNoExistException;
 import com.candidateSearch.searching.exception.type.ResourceNotFoundException;
 import com.candidateSearch.searching.exception.type.RoleIdNoExistException;
 import com.candidateSearch.searching.exception.type.StateNoFoundException;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -42,6 +44,13 @@ public class GlobalException {
                 errors.put(error.getField(), error.getDefaultMessage())
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+    }
+
+    @ExceptionHandler(InvalidFormatException.class)
+    public ResponseEntity<String> handleInvalidFormatException(InvalidFormatException ex) {
+        String fieldName = ex.getPath().get(0).getFieldName();
+        String message = "The value entered for the field '" + fieldName + "' is not valid";
+        return ResponseEntity.badRequest().body(message);
     }
 
     @ExceptionHandler(DateTimeParseException.class)
@@ -79,10 +88,10 @@ public class GlobalException {
                 .body(Collections.singletonMap("message", ex.getMessage()));
     }
 
-    @ExceptionHandler(CannotBeCreateCandidateProcessException.class)
-    public ResponseEntity<Map<String, String>> CannotBeCreateCandidateProcessException(CannotBeCreateCandidateProcessException ex) {
+    @ExceptionHandler(CannotBeCreateException.class)
+    public ResponseEntity<Map<String, String>> CannotBeCreateCandidateProcessException(CannotBeCreateException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.CANNOT_BE_CREATED_CANDIDATE_PROCESS.getMessage()));
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.CANNOT_BE_CREATED.getMessage()));
     }
 
     @ExceptionHandler(EntityNoExistException.class)
@@ -164,6 +173,12 @@ public class GlobalException {
         Map<String, String> response = new HashMap<>();
         response.put("error", ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(CandidateBlockedException.class)
+    public ResponseEntity<Map<String, String>> CandidateBlockedException(CandidateBlockedException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.CANDIDATE_BLOCKED.getMessage()));
     }
 }
 

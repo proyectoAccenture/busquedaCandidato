@@ -1,6 +1,5 @@
 package com.candidateSearch.searching.entity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -28,10 +27,10 @@ public class JobProfileEntity {
     @Column(unique = true, nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "jobProfile", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "jobProfile")
     private List<RoleEntity> vacancies = new ArrayList<>();
 
-    @OneToMany(mappedBy = "jobProfile", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "jobProfile")
     private List<CandidateEntity> candidates = new ArrayList<>();
 }
 

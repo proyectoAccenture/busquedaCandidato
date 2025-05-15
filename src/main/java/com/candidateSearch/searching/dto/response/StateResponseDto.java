@@ -12,4 +12,5 @@ public class StateResponseDto {
 
     @Schema(name = "name", description = "State name")
     private String name;
+
 }

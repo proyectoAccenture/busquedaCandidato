@@ -11,6 +11,7 @@ import com.candidateSearch.searching.exception.type.EntityAlreadyHasRelationExce
 import com.candidateSearch.searching.exception.type.EntityNoExistException;
 import com.candidateSearch.searching.exception.type.FieldAlreadyExistException;
 import com.candidateSearch.searching.exception.type.InvalidFileTypeException;
+import com.candidateSearch.searching.exception.type.InvalidStateTransitionException;
 import com.candidateSearch.searching.exception.type.ItAlreadyExistPostulationException;
 import com.candidateSearch.searching.exception.type.ItAlreadyProcessWithIdPostulation;
 import com.candidateSearch.searching.exception.type.PostulationIsOffException;
@@ -25,6 +26,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
+
+import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -164,6 +168,18 @@ public class GlobalException {
         Map<String, String> response = new HashMap<>();
         response.put("error", ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidStateTransitionException.class)
+    public ResponseEntity<Object> handleInvalidStateTransition(
+            InvalidStateTransitionException ex, WebRequest request) {
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("message", ex.getMessage());
+        body.put("error", "Invalid state transition");
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 }
 

@@ -4,6 +4,7 @@ import com.candidateSearch.searching.utility.Status;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -91,7 +92,8 @@ public class CandidateRequestDto {
 
     @Schema(name = "salaryAspiration", description = "Expected salary", example = "3000000")
     @NotNull(message = "Salary Aspiration cannot be null")
-    @Min(value = 1, message = "The salary aspiration must be at least 1")
+    @Min(value = 1_423_500, message = "The salary aspiration is lower to smmlv")
+    @Max(value = 40_000_000, message = "The salary aspiration is highest to 40000000")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "#,###")
     private Long salaryAspiration;
 

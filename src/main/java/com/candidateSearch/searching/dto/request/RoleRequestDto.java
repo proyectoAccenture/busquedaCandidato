@@ -10,6 +10,9 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -59,10 +62,11 @@ public class RoleRequestDto {
     @Size(min = 1, max = 100, message = "The experience must be between 1 and 100 characters")
     private String experience;
 
-    @Schema(name = "assignmentTime", description = "source where the vacancy was launched ", example = "string")
-    @NotBlank(message = "Assignment time cannot be blank")
-    @Size(min = 1, max = 100, message = "The source must be between 1 and 100 characters")
-    private String assignmentTime;
+    @Schema(name = "assignmentTime", description = "source where the vacancy was launched ", example = "2025-03-01")
+    @NotNull(message = "Assignment cannot be null")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate assignmentTime;
 
     @Schema(name = "status", description = "Status of process = 'ACTIVE', 'INACTIVE' ", example = "ACTIVE")
     @NotNull(message = "Status cannot be null")

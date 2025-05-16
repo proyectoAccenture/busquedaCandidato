@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import java.time.LocalDate;
+
 @Data
 @Schema(name = "RoleResponse", description = "Model represent a vacancy on database")
 public class RoleResponseDto {
@@ -36,8 +38,8 @@ public class RoleResponseDto {
     @Schema(name = "experience", description = "Experience of the candidate")
     private String experience;
 
-    @Schema(name = "assignmentTime", description = "Assignment of the candidate")
-    private String assignmentTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate assignmentTime;
 
     @Schema(name = "status", description = "Status of the role (true if active, false if closed)", example = "false")
     private Status status;

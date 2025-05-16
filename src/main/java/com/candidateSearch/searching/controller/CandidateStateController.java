@@ -3,6 +3,9 @@ package com.candidateSearch.searching.controller;
 import com.candidateSearch.searching.dto.request.CandidateStateRequestDto;
 import com.candidateSearch.searching.dto.request.CandidateStateRequestUpdateDto;
 import com.candidateSearch.searching.dto.response.CandidateStateResponseDto;
+import com.candidateSearch.searching.dto.response.NextValidStatesResponseDto;
+import com.candidateSearch.searching.dto.response.StateResponseDto;
+import com.candidateSearch.searching.mapper.IMapperState;
 import com.candidateSearch.searching.service.CandidateStateService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -65,6 +68,19 @@ public class CandidateStateController {
     public ResponseEntity<List<CandidateStateResponseDto>> getAllCandidateState(){
         List<CandidateStateResponseDto> states = candidateStateService.getAllCandidateState();
         return states.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(states);
+    }
+
+    @Operation(summary = "Get next valid states for a process")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Valid next states returned",
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = StateResponseDto.class)))),
+            @ApiResponse(responseCode = "404", description = "Process not found", content = @Content)
+    })
+    @GetMapping("/process/{processId}/next-states")
+    public ResponseEntity<NextValidStatesResponseDto> getNextValidStates(@PathVariable Long processId) {
+        NextValidStatesResponseDto response = candidateStateService.getNextValidStates(processId);
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "Update an existing candidate state")

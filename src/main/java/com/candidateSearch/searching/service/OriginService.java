@@ -2,8 +2,13 @@ package com.candidateSearch.searching.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import com.candidateSearch.searching.entity.CandidateEntity;
 import com.candidateSearch.searching.entity.OriginEntity;
+import com.candidateSearch.searching.entity.RoleEntity;
 import com.candidateSearch.searching.exception.type.EntityNoExistException;
+import com.candidateSearch.searching.repository.ICandidateRepository;
+import com.candidateSearch.searching.repository.IRoleRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import com.candidateSearch.searching.dto.request.OriginRequestDto;
 import com.candidateSearch.searching.dto.response.OriginResponseDto;
@@ -17,6 +22,8 @@ import lombok.AllArgsConstructor;
 public class OriginService {
 
     private final IOriginRepository originRepository;
+    private final ICandidateRepository candidateRepository;
+    private final IRoleRepository roleRepository;
     private final IMapperOrigin mapperOrigin;
 
     public OriginResponseDto getOriginById(Long id){
@@ -52,9 +59,26 @@ public class OriginService {
         return mapperOrigin.toDto(updatedOrigin);
     }
 
+    @Transactional
     public void deleteOrigin(Long id){
         OriginEntity existingOrigin = originRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
+
+        List<CandidateEntity> candidates = existingOrigin.getCandidates();
+        if (candidates != null && !candidates.isEmpty()) {
+            for (CandidateEntity candidate : candidates) {
+                candidate.setOrigin(null);
+                candidateRepository.save(candidate);
+            }
+        }
+
+        List<RoleEntity> rolesExist = roleRepository.findAllByOriginId(id);
+        if(rolesExist != null && !rolesExist.isEmpty()){
+            for (RoleEntity role : rolesExist){
+                role.setOrigin(null);
+                roleRepository.save(role);
+            }
+        }
 
         originRepository.delete(existingOrigin);
     }

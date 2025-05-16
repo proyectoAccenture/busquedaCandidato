@@ -4,20 +4,27 @@ import com.candidateSearch.searching.dto.request.CandidateRequestDto;
 import com.candidateSearch.searching.dto.response.CandidateWithPaginationResponseDto;
 import com.candidateSearch.searching.dto.response.CandidateResponseDto;
 import com.candidateSearch.searching.entity.CandidateEntity;
+import com.candidateSearch.searching.entity.CandidateStateEntity;
 import com.candidateSearch.searching.entity.JobProfileEntity;
 import com.candidateSearch.searching.entity.OriginEntity;
 import com.candidateSearch.searching.entity.PostulationEntity;
+import com.candidateSearch.searching.entity.ProcessEntity;
 import com.candidateSearch.searching.entity.RoleEntity;
+import com.candidateSearch.searching.exception.type.CandidateBlockedException;
 import com.candidateSearch.searching.exception.type.CandidateNoExistException;
+import com.candidateSearch.searching.exception.type.CannotBeCreateException;
 import com.candidateSearch.searching.exception.type.EntityNoExistException;
 import com.candidateSearch.searching.exception.type.FieldAlreadyExistException;
 import com.candidateSearch.searching.exception.type.RoleIdNoExistException;
 import com.candidateSearch.searching.mapper.IMapperCandidate;
 import com.candidateSearch.searching.repository.ICandidateRepository;
+import com.candidateSearch.searching.repository.ICandidateStateRepository;
 import com.candidateSearch.searching.repository.IJobProfileRepository;
 import com.candidateSearch.searching.repository.IOriginRepository;
 import com.candidateSearch.searching.repository.IPostulationRepository;
+import com.candidateSearch.searching.repository.IProcessRepository;
 import com.candidateSearch.searching.repository.IRoleRepository;
+import com.candidateSearch.searching.utility.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,6 +33,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,7 +44,49 @@ public class CandidateService {
     private final IRoleRepository roleRepository;
     private final IJobProfileRepository jobProfileRepository;
     private final IOriginRepository originRepository;
+    private final IProcessRepository processRepository;
+    private final ICandidateStateRepository candidateStateRepository;
     private final IMapperCandidate mapperCandidate;
+
+    public CandidateResponseDto vetaCandidate(String card){
+        CandidateEntity candidate = candidateRepository
+                .findByCardAndStatusNot(card, Status.INACTIVE)
+                .orElseThrow(EntityNoExistException::new);
+
+        candidate.setStatus(Status.BLOCKED);
+
+        PostulationEntity postulationFind = postulationRepository.findByCandidateId(candidate.getId());
+        if (postulationFind != null) {
+            if (postulationFind.getStatus().equals(Status.ACTIVE)) {
+                postulationFind.setStatus(Status.BLOCKED);
+            }
+            postulationRepository.save(postulationFind);
+
+            Optional<ProcessEntity> processFind = processRepository.findByPostulationId(postulationFind.getId());
+            if (processFind.isPresent()) {
+                ProcessEntity process = processFind.get();
+                if (process.getStatus().equals(Status.ACTIVE)) {
+                    process.setStatus(Status.BLOCKED);
+                }
+                processRepository.save(process);
+
+                CandidateStateEntity candidateStateFind = candidateStateRepository.findByProcessId(process.getId());
+                if (candidateStateFind != null && candidateStateFind.getStatusHistory().equals(Status.ACTIVE)) {
+                    candidateStateFind.setStatusHistory(Status.BLOCKED);
+                    candidateStateRepository.save(candidateStateFind);
+                }
+            }
+        }
+
+        return mapperCandidate.toDto(candidateRepository.save(candidate));
+    }
+
+    public List<CandidateResponseDto> getAllCandidateVeto(){
+        return candidateRepository.findAll().stream()
+                .filter(candidateEntity ->  candidateEntity.getStatus() == Status.BLOCKED)
+                .map(mapperCandidate::toDto)
+                .collect(Collectors.toList());
+    }
 
     public List<CandidateResponseDto> getCandidateByRole(String roleName) {
 
@@ -116,20 +166,53 @@ public class CandidateService {
     }
 
     public List<CandidateResponseDto> getAllCandidate(){
-        List<CandidateEntity> candidates = candidateRepository.findAll();
-
-        return candidates.stream()
+        return candidateRepository.findAll().stream()
+                .filter(candidateEntity ->  candidateEntity.getStatus() == Status.ACTIVE)
                 .map(mapperCandidate::toDto)
                 .collect(Collectors.toList());
     }
 
     public CandidateResponseDto saveCandidate(CandidateRequestDto candidateRequestDto) {
-        if(candidateRepository.existsByCard(candidateRequestDto.getCard())){
-            throw new FieldAlreadyExistException("card");
+
+        if (candidateRequestDto.getStatus() == Status.INACTIVE ||
+                candidateRequestDto.getStatus() == Status.BLOCKED) {
+            throw new CannotBeCreateException();
         }
 
-        if(candidateRepository.existsByPhone(candidateRequestDto.getPhone())){
-            throw new FieldAlreadyExistException("phone");
+        Optional<CandidateEntity> existingOptCard = candidateRepository.findByCardAndStatusNot(candidateRequestDto.getCard(), Status.INACTIVE);
+
+        if(existingOptCard.isPresent()){
+            CandidateEntity existing = existingOptCard.get();
+
+            if (existing.getStatus() == Status.BLOCKED) {
+                throw new CandidateBlockedException();
+            } else {
+                throw new FieldAlreadyExistException("card");
+            }
+        }
+
+        Optional<CandidateEntity> existingOptPhone = candidateRepository.findByPhoneAndStatusNot(candidateRequestDto.getPhone(), Status.INACTIVE);
+
+        if(existingOptPhone.isPresent()){
+            CandidateEntity existing = existingOptPhone.get();
+
+            if (existing.getStatus() == Status.BLOCKED) {
+                throw new CandidateBlockedException();
+            } else {
+                throw new FieldAlreadyExistException("phone");
+            }
+        }
+
+        Optional<CandidateEntity> existingOptEmail = candidateRepository.findByEmailAndStatusNot(candidateRequestDto.getEmail(), Status.INACTIVE);
+
+        if(existingOptEmail.isPresent()){
+            CandidateEntity existing = existingOptEmail.get();
+
+            if (existing.getStatus() == Status.BLOCKED) {
+                throw new CandidateBlockedException();
+            } else {
+                throw new FieldAlreadyExistException("email");
+            }
         }
 
         JobProfileEntity jobProfileEntity = jobProfileRepository.findById(candidateRequestDto.getJobProfile())
@@ -154,6 +237,7 @@ public class CandidateService {
         candidateEntityNew.setSalaryAspiration(candidateRequestDto.getSalaryAspiration());
         candidateEntityNew.setLevel(candidateRequestDto.getLevel());
         candidateEntityNew.setDatePresentation(candidateRequestDto.getDatePresentation());
+        candidateEntityNew.setStatus(candidateRequestDto.getStatus());
         candidateEntityNew.setOrigin(originEntity);
         candidateEntityNew.setJobProfile(jobProfileEntity);
 
@@ -169,14 +253,29 @@ public class CandidateService {
     }
 
     public Optional<CandidateResponseDto> updateCandidate(Long id, CandidateRequestDto candidateRequestDto) {
+
         CandidateEntity existingEntity  = candidateRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
+
 
         JobProfileEntity jobProfileEntity = jobProfileRepository.findById(candidateRequestDto.getJobProfile())
                 .orElseThrow(EntityNoExistException::new);
 
         OriginEntity originEntity = originRepository.findById(candidateRequestDto.getOrigin())
                 .orElseThrow(EntityNoExistException::new);
+
+
+        if (candidateRequestDto.getStatus() == Status.ACTIVE) {
+
+            validateUniqueFieldExceptSelf("card", candidateRequestDto.getCard(), id,
+                    val -> candidateRepository.findByCardAndStatusNot(val, Status.INACTIVE));
+
+            validateUniqueFieldExceptSelf("phone", candidateRequestDto.getPhone(), id,
+                    val -> candidateRepository.findByPhoneAndStatusNot(val, Status.INACTIVE));
+
+            validateUniqueFieldExceptSelf("email", candidateRequestDto.getEmail(), id,
+                    val -> candidateRepository.findByEmailAndStatusNot(val, Status.INACTIVE));
+        }
 
         existingEntity.setName(candidateRequestDto.getName());
         existingEntity.setLastName(candidateRequestDto.getLastName());
@@ -193,6 +292,7 @@ public class CandidateService {
         existingEntity.setSalaryAspiration(candidateRequestDto.getSalaryAspiration());
         existingEntity.setLevel(candidateRequestDto.getLevel());
         existingEntity.setDatePresentation(candidateRequestDto.getDatePresentation());
+        existingEntity.setStatus(Status.ACTIVE);
         existingEntity.setOrigin(originEntity);
         existingEntity.setJobProfile(jobProfileEntity);
 
@@ -201,17 +301,57 @@ public class CandidateService {
         jobProfileEntity.getCandidates().add(candidateSaved);
         jobProfileRepository.save(jobProfileEntity);
 
+        assert originEntity != null;
         originEntity.getCandidates().add(candidateSaved);
         originRepository.save(originEntity);
 
         return Optional.of(mapperCandidate.toDto(candidateSaved));
     }
 
+
+
     public void deleteCandidate(Long id){
         CandidateEntity existingCandidate = candidateRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 
-        candidateRepository.delete(existingCandidate);
+        existingCandidate.setStatus(Status.INACTIVE);
+        candidateRepository.save(existingCandidate);
+
+        PostulationEntity postulationFind = postulationRepository.findByCandidateId(id);
+        if (postulationFind != null) {
+            if (postulationFind.getStatus().equals(Status.ACTIVE)) {
+                postulationFind.setStatus(Status.INACTIVE);
+            }
+            postulationRepository.save(postulationFind);
+
+            Optional<ProcessEntity> processFind = processRepository.findByPostulationId(postulationFind.getId());
+            if (processFind.isPresent()) {
+                ProcessEntity process = processFind.get();
+                if (process.getStatus().equals(Status.ACTIVE)) {
+                    process.setStatus(Status.INACTIVE);
+                }
+                processRepository.save(process);
+
+                CandidateStateEntity candidateStateFind = candidateStateRepository.findByProcessId(process.getId());
+                if (candidateStateFind != null && candidateStateFind.getStatusHistory().equals(Status.ACTIVE)) {
+                    candidateStateFind.setStatusHistory(Status.INACTIVE);
+                    candidateStateRepository.save(candidateStateFind);
+                }
+            }
+        }
+    }
+
+    private void validateUniqueFieldExceptSelf(String fieldName, String value, Long selfId,
+                                               Function<String, Optional<CandidateEntity>> finder) {
+        finder.apply(value).ifPresent(candidate -> {
+            if (!candidate.getId().equals(selfId)) {
+                if (candidate.getStatus() == Status.BLOCKED) {
+                    throw new CandidateBlockedException();
+                } else {
+                    throw new FieldAlreadyExistException(fieldName);
+                }
+            }
+        });
     }
 
     private void validationQuery(String query){

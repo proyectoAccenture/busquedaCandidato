@@ -1,8 +1,11 @@
 package com.candidateSearch.searching.entity;
 
+import com.candidateSearch.searching.utility.Status;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -28,13 +31,17 @@ public class CandidateStateEntity {
     private String description;
 
     @Column(nullable = false)
-    private Boolean status;
-
-    @Column(nullable = false)
     private LocalDate assignedDate;
 
+    @Column(nullable = false)
+    private Boolean status;
+
+    @Enumerated(EnumType.ORDINAL)
+    @Column(nullable = false)
+    private Status statusHistory;
+
     @ManyToOne
-    @JoinColumn(name = "state_id", nullable = false)
+    @JoinColumn(name = "state_id")
     private StateEntity state;
 
     @JsonBackReference

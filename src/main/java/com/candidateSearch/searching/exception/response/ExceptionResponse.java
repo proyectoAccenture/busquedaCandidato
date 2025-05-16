@@ -5,7 +5,7 @@ public enum ExceptionResponse {
     PROCESS_NO_EXIST("There is not process with this id"),
     PROCESS_CLOSED("This process is closed"),
     STATE_NO_FOUND("State has not been found"),
-    CANNOT_BE_CREATED_CANDIDATE_PROCESS("the candidate process cannot be create because the post status is false"),
+    CANNOT_BE_CREATED("Cannot be create because status is inactive"),
     ENTITY_DOES_NOT_EXIST("There is not entity with that identification"),
     CANDIDATE_DOES_NOT_POSTULATION("The candidate must first have been nominated "),
     PROCESS_ALREADY_EXIST("It already exist a process of the candidate with that postulation"),
@@ -15,7 +15,8 @@ public enum ExceptionResponse {
     POSTULATION_IS_OFF("The postulation must be in true"),
     CANNOT_APPLY("You cannot apply, as the application is inactive"),
     IT_ALREADY_EXIST_POSTULATION("You have already submitted an active application"),
-    IT_ALREADY_PROCESS_POSTULATION("There is already a process with that id postulation");
+    IT_ALREADY_PROCESS_POSTULATION("There is already a process with that id postulation"),
+    CANDIDATE_BLOCKED("Candidate is blocked");
 
     private final String message;
 

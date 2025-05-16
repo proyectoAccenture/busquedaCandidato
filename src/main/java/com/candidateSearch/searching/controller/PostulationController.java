@@ -76,8 +76,8 @@ public class PostulationController {
     })
     @GetMapping("/")
     public ResponseEntity<List<PostulationResponseDto>> getAllPostulation(){
-        List<PostulationResponseDto> states = postulationService.getAllPostulation();
-        return states.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(states);
+        List<PostulationResponseDto> postulation = postulationService.getAllPostulation();
+        return postulation.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(postulation);
     }
 
     @Operation(summary = "Add a new postulation")
@@ -86,7 +86,7 @@ public class PostulationController {
             @ApiResponse(responseCode = "409", description = "Active postulation already exists", content = @Content)
     })
     @PostMapping("/")
-    public ResponseEntity<?> savePostulation(@Valid @RequestBody PostulationRequestDto postulationRequestDto) {
+    public ResponseEntity<PostulationResponseDto> savePostulation(@Valid @RequestBody PostulationRequestDto postulationRequestDto) {
             PostulationResponseDto response = postulationService.savePostulation(postulationRequestDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

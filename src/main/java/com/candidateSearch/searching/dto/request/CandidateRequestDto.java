@@ -1,9 +1,11 @@
 package com.candidateSearch.searching.dto.request;
 
+import com.candidateSearch.searching.utility.Status;
+import com.candidateSearch.searching.validation.date.DateWithinRange;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,6 +16,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
+import com.candidateSearch.searching.validation.age.ValidAge;
 
 @Data
 @NoArgsConstructor
@@ -58,6 +61,7 @@ public class CandidateRequestDto {
     @Schema(name = "birthdate", description = "birthdate of the candidate", example = "2004-01-01")
     @NotNull(message = "birthdate cannot be null")
     @Past(message = "Birthdate must be in the past")
+    @ValidAge(min = 17, max = 69, message = "The age must be between 17 and 69 years old")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate birthdate;
@@ -91,7 +95,8 @@ public class CandidateRequestDto {
 
     @Schema(name = "salaryAspiration", description = "Expected salary", example = "3000000")
     @NotNull(message = "Salary Aspiration cannot be null")
-    @Min(value = 1, message = "The salary aspiration must be at least 1")
+    @Min(value = 1_423_500, message = "The salary aspiration is lower to smmlv")
+    @Max(value = 40_000_000, message = "The salary aspiration is highest to 40000000")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "#,###")
     private Long salaryAspiration;
 
@@ -104,7 +109,12 @@ public class CandidateRequestDto {
     @NotNull(message = "datePresentation cannot be null")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @DateWithinRange
     private LocalDate datePresentation;
+
+    @Schema(name = "status", description = "Status of process = 'ACTIVE', 'INACTIVE' ", example = "ACTIVE")
+    @NotNull(message = "Status cannot be null")
+    private Status status;
 
     @Schema(name = "origin",description = "Id of origin", example = "1")
     @NotNull(message = "origin cannot be null")

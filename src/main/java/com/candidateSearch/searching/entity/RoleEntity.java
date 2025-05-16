@@ -1,8 +1,10 @@
 package com.candidateSearch.searching.entity;
 
-import jakarta.persistence.CascadeType;
+import com.candidateSearch.searching.utility.Status;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -28,7 +30,7 @@ public class RoleEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String nameRole;
 
     @Column(nullable = false)
@@ -55,6 +57,10 @@ public class RoleEntity {
     @Column(nullable = false)
     private LocalDate assignmentTime;
 
+    @Enumerated(EnumType.ORDINAL)
+    @Column(nullable = false)
+    private Status status;
+
     @ManyToOne
     @JoinColumn(name = "job_profile_id", nullable = false)
     private JobProfileEntity jobProfile;
@@ -63,8 +69,6 @@ public class RoleEntity {
     @JoinColumn(name = "origin_id", nullable = false)
     private OriginEntity origin;
 
-    @OneToMany(mappedBy = "role",
-            cascade = CascadeType.REMOVE,
-            orphanRemoval = true)
+    @OneToMany(mappedBy = "role")
     private List<PostulationEntity> postulation = new ArrayList<>();
 }

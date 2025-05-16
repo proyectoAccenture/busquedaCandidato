@@ -1,5 +1,6 @@
 package com.candidateSearch.searching.dto.response;
 
+import com.candidateSearch.searching.utility.Status;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -39,6 +40,9 @@ public class RoleResponseDto {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate assignmentTime;
+
+    @Schema(name = "status", description = "Status of the role (true if active, false if closed)", example = "false")
+    private Status status;
 
     @Schema(name = "jobProfileId",description = "Id of job profile")
     private Long jobProfileId;

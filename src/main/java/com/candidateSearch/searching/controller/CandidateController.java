@@ -1,9 +1,11 @@
 package com.candidateSearch.searching.controller;
 
 import com.candidateSearch.searching.dto.request.CandidateRequestDto;
+import com.candidateSearch.searching.dto.request.PostulationRequestDto;
 import com.candidateSearch.searching.dto.response.CandidateWithPaginationResponseDto;
 import com.candidateSearch.searching.dto.response.CandidateResponseDto;
 import com.candidateSearch.searching.dto.response.CandidateResumeResponseDto;
+import com.candidateSearch.searching.dto.response.PostulationResponseDto;
 import com.candidateSearch.searching.service.CandidateResumeService;
 import com.candidateSearch.searching.service.CandidateService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,6 +25,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -41,6 +44,30 @@ public class CandidateController {
 
     private final CandidateService candidateService;
     private final CandidateResumeService candidateResumeService;
+
+    @Operation(summary = "Veto candidate")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Vetoed candidate", content = @Content),
+            @ApiResponse(responseCode = "409", description = "Candidate is already vetoed", content = @Content)
+    })
+    @PatchMapping("/{card}/")
+    public ResponseEntity<CandidateResponseDto> vetoCandidate(@PathVariable String card) {
+        CandidateResponseDto response = candidateService.vetaCandidate(card);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @Operation(summary = "Get all the vetoed candidates")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "All vetoed candidates",
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = PostulationResponseDto.class)))),
+            @ApiResponse(responseCode = "404", description = "No data found", content = @Content)
+    })
+    @GetMapping("/veto/")
+    public ResponseEntity<List<CandidateResponseDto>> getAllCandidateVetoed(){
+        List<CandidateResponseDto> candidates = candidateService.getAllCandidateVeto();
+        return candidates.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(candidates);
+    }
 
     @Operation(summary = "Get a candidate by its role id")
     @ApiResponses(value = {
@@ -63,7 +90,7 @@ public class CandidateController {
             @ApiResponse(responseCode = "404", description = "Candidate not found", content = @Content)
     })
     @GetMapping("/id/{id}")
-    public ResponseEntity<CandidateResponseDto> getByIdCandidate(@PathVariable Long id){
+    public ResponseEntity<CandidateResponseDto> getCandidateById(@PathVariable Long id){
         CandidateResponseDto candidate = candidateService.getByIdCandidate(id);
         return ResponseEntity.ok(candidate);
     }
@@ -110,8 +137,8 @@ public class CandidateController {
     })
     @GetMapping("/")
     public ResponseEntity<List<CandidateResponseDto>> getAllCandidate(){
-        List<CandidateResponseDto> states = candidateService.getAllCandidate();
-        return states.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(states);
+        List<CandidateResponseDto> candidates = candidateService.getAllCandidate();
+        return candidates.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(candidates);
     }
 
     @Operation(summary = "Add a new candidate")

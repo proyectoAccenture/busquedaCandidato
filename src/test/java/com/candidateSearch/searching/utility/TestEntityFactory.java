@@ -66,7 +66,7 @@ public class TestEntityFactory {
         String card = String.format("%010d", 1000000000L + random.nextInt(1000000000));
         String phone = String.format("%010d", 3000000000L + random.nextInt(1000000000));
 
-        CandidateEntity candidate = new CandidateEntity(null, "name", "lastname", card, phone, "city", "email" + random.nextInt(1000) + "@gmail.com", LocalDate.of(1990, 5, 20), "source", "skills", "5 years", "work experience", "seniority", 1000000L, 1, LocalDate.of(2025, 1, 20), null, null, null, origin, jobProfile, new ArrayList<>());
+        CandidateEntity candidate = new CandidateEntity(null, "name", "lastname", card, phone, "city", "email" + random.nextInt(1000) + "@gmail.com", LocalDate.of(1990, 5, 20), "source", "skills", "5 years", "work experience", "seniority", 1000000L, 1, LocalDate.of(2025, 1, 20), null, null, null, Status.ACTIVE, origin, jobProfile, new ArrayList<>());
         return candidateRepository.save(candidate);
     }
 
@@ -81,7 +81,7 @@ public class TestEntityFactory {
 
         String roleName = roleNameBuilder.toString();
 
-        RoleEntity vacancy = new RoleEntity(null, roleName, "description", "contract", 1000000L, 1, "seniority", "skills", "experience", "assignment time", jobProfile, origin, null );
+        RoleEntity vacancy = new RoleEntity(null, roleName, "description", "contract", 1000000L, 1, "seniority", "skills", "experience", "assignment time", Status.ACTIVE, jobProfile, origin, null );
         return vacancyCompanyRepository.save(vacancy);
     }
 
@@ -91,17 +91,17 @@ public class TestEntityFactory {
     }
 
     public PostulationEntity postulationMethod(CandidateEntity candidate, RoleEntity role) {
-        PostulationEntity postulation = new PostulationEntity(null, LocalDate.of(2025, 1, 20), true, candidate, role, null);
+        PostulationEntity postulation = new PostulationEntity(null, LocalDate.of(2025, 1, 20), Status.ACTIVE, candidate, role, null);
         return postulationRepository.save(postulation);
     }
 
     public ProcessEntity processMethod(PostulationEntity postulation) {
-        ProcessEntity process = new ProcessEntity(null, "description", LocalDate.now().plusDays(new Random().nextInt(10)), postulation, new ArrayList<>());
+        ProcessEntity process = new ProcessEntity(null, "description", LocalDate.now().plusDays(new Random().nextInt(10)), Status.ACTIVE, postulation, new ArrayList<>());
         return processRepository.save(process);
     }
 
     public CandidateStateEntity candidateStateMethod(ProcessEntity process, StateEntity state) {
-        CandidateStateEntity candidateState = new CandidateStateEntity(null, "description", true, LocalDate.of(2025, 1, 20), state, process);
+        CandidateStateEntity candidateState = new CandidateStateEntity(null, "description", LocalDate.of(2025, 1, 20), true, Status.ACTIVE, state, process);
         CandidateStateEntity savedCandidateState = candidateStateRepository.save(candidateState);
         process.getCandidateState().add(savedCandidateState);
         processRepository.save(process);

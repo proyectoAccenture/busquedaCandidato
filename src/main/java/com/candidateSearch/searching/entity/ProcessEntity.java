@@ -1,10 +1,12 @@
 package com.candidateSearch.searching.entity;
 
+import com.candidateSearch.searching.utility.Status;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -36,14 +38,16 @@ public class ProcessEntity {
     @Column(nullable = false)
     private LocalDate assignmentDate;
 
+    @Enumerated(EnumType.ORDINAL)
+    @Column(nullable = false)
+    private Status status;
+
     @OneToOne
     @JoinColumn(name = "postulation_id", nullable = false)
     @JsonBackReference
     private PostulationEntity postulation;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "process",
-            cascade = CascadeType.REMOVE,
-            orphanRemoval = true)
+    @OneToMany(mappedBy = "process")
     private List<CandidateStateEntity> candidateState = new ArrayList<>();
 }

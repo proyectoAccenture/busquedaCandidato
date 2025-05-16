@@ -33,7 +33,6 @@ import java.util.List;
 public class CandidateStateController {
 
     private final CandidateStateService candidateStateService;
-    private final IMapperState mapperState;
 
     @Operation(summary = "Add a new state to process ")
     @ApiResponses(value = {
@@ -80,7 +79,7 @@ public class CandidateStateController {
     })
     @GetMapping("/process/{processId}/next-states")
     public ResponseEntity<NextValidStatesResponseDto> getNextValidStates(@PathVariable Long processId) {
-        NextValidStatesResponseDto response = candidateStateService.getNextValidStatesWithInfo(processId);
+        NextValidStatesResponseDto response = candidateStateService.getNextValidStates(processId);
         return ResponseEntity.ok(response);
     }
 

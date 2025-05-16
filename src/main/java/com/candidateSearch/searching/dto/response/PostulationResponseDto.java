@@ -1,5 +1,6 @@
 package com.candidateSearch.searching.dto.response;
 
+import com.candidateSearch.searching.utility.Status;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -21,6 +22,9 @@ public class PostulationResponseDto {
     @Schema(name = "roleName",description = "Name of role", example = "string")
     private String roleName;
 
+    @Schema(name = "roleDescription",description = "Description of role", example = "string")
+    private String roleDescription;
+
     @Schema(name = "candidateId",description = "Id of candidate that appliqued", example = "1")
     private Long candidateId;
 
@@ -31,5 +35,5 @@ public class PostulationResponseDto {
     private String candidateLastName;
 
     @Schema(name = "status", description = "Status of the postulation (true if active, false if closed)", example = "false")
-    private Boolean status;
+    private Status status;
 }

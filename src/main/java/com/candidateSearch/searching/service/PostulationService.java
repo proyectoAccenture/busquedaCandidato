@@ -79,11 +79,11 @@ public class PostulationService {
         String word3 = words.length > 2 ? words[2] : null;
         String word4 = words.length > 3 ? words[3] : null;
 
-        Boolean statusQuery = null;
-        if ("true".equalsIgnoreCase(query) || "1".equals(query)) {
-            statusQuery = true;
-        } else if ("false".equalsIgnoreCase(query) || "0".equals(query)) {
-            statusQuery = false;
+        Status statusQuery = null;
+        if ("ACTIVE".equalsIgnoreCase(query) || "1".equals(query)) {
+            statusQuery = Status.ACTIVE;
+        } else if ("INACTIVE".equalsIgnoreCase(query) || "0".equals(query)) {
+            statusQuery = Status.INACTIVE;
         }
 
         List<PostulationEntity> postulations = postulationRepository.searchByCandidateNameLastNameAndRole(word1, word2, word3, word4, query, statusQuery);
@@ -144,6 +144,10 @@ public class PostulationService {
     }
 
     public Optional<PostulationResponseDto> updatePostulation(Long id, PostulationRequestDto postulationRequestDto) {
+
+        if(postulationRequestDto.getStatus().equals(Status.BLOCKED)){
+            throw new CannotBeCreateException();
+        }
 
         PostulationEntity existingEntity  = postulationRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);

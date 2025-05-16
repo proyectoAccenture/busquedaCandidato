@@ -82,6 +82,11 @@ public class RoleService {
     }
 
     public Optional<RoleResponseDto> updateRole(Long id, RoleRequestDto roleRequestDto) {
+
+        if(roleRequestDto.getStatus().equals(Status.BLOCKED)){
+            throw new CannotBeCreateException();
+        }
+
         RoleEntity existingEntity  = roleRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 

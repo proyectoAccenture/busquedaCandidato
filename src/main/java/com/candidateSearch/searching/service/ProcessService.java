@@ -166,6 +166,11 @@ public class ProcessService {
 
 
     public Optional<ProcessResponseDto> updateProcess(Long id, ProcessRequestDto processRequestDto) {
+
+        if(processRequestDto.getStatus().equals(Status.BLOCKED)){
+            throw new CannotBeCreateException();
+        }
+
         ProcessEntity existingEntity  = processRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 

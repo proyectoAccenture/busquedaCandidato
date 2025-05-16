@@ -254,9 +254,12 @@ public class CandidateService {
 
     public Optional<CandidateResponseDto> updateCandidate(Long id, CandidateRequestDto candidateRequestDto) {
 
+        if(candidateRequestDto.getStatus().equals(Status.BLOCKED)){
+            throw new CannotBeCreateException();
+        }
+
         CandidateEntity existingEntity  = candidateRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
-
 
         JobProfileEntity jobProfileEntity = jobProfileRepository.findById(candidateRequestDto.getJobProfile())
                 .orElseThrow(EntityNoExistException::new);

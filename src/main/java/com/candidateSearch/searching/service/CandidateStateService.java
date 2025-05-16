@@ -127,6 +127,11 @@ public class CandidateStateService {
     }
 
     public Optional<CandidateStateResponseDto> updateCandidateState(Long id, CandidateStateRequestUpdateDto candidateStateRequestUpdateDto) {
+
+        if(candidateStateRequestUpdateDto.getStatusHistory().equals(Status.BLOCKED)){
+            throw new CannotBeCreateException();
+        }
+
         CandidateStateEntity existingEntity = candidateStateRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 

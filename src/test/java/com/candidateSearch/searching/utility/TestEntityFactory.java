@@ -8,6 +8,7 @@ import com.candidateSearch.searching.entity.OriginEntity;
 import com.candidateSearch.searching.entity.PostulationEntity;
 import com.candidateSearch.searching.entity.ProcessEntity;
 import com.candidateSearch.searching.entity.StateEntity;
+import com.candidateSearch.searching.entity.utility.Status;
 import com.candidateSearch.searching.repository.ICandidateRepository;
 import com.candidateSearch.searching.repository.ICandidateStateRepository;
 import com.candidateSearch.searching.repository.IRoleRepository;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.UUID;
 
 @Component
 public class TestEntityFactory {
@@ -64,7 +66,7 @@ public class TestEntityFactory {
         String card = String.format("%010d", 1000000000L + random.nextInt(1000000000));
         String phone = String.format("%010d", 3000000000L + random.nextInt(1000000000));
 
-        CandidateEntity candidate = new CandidateEntity(null, "name", "lastname", card, phone, "city", "email" + random.nextInt(1000) + "@gmail.com", LocalDate.of(1990, 5, 20), "source", "skills", "5 years", "work experience", "seniority", 1000000L, 1, LocalDate.of(2025, 1, 20), null, null, null, Status.ACTIVE, origin, jobProfile, new ArrayList<>());
+        CandidateEntity candidate = new CandidateEntity(null, "name", "lastname", card, phone, "city", "email" + random.nextInt(1000) + "@gmail.com", LocalDate.of(1990, 5, 20), "source", "skills", "5 years", "work experience", "seniority", 2000000L, 12, LocalDate.of(2025, 1, 20), null, null, null, Status.ACTIVE, origin, jobProfile, new ArrayList<>());
         return candidateRepository.save(candidate);
     }
 
@@ -79,12 +81,13 @@ public class TestEntityFactory {
 
         String roleName = roleNameBuilder.toString();
 
-        RoleEntity vacancy = new RoleEntity(null, roleName, "description", "contract", 1000000L, 1, "seniority", "skills", "experience", LocalDate.now(), Status.ACTIVE, jobProfile, origin, null );
+        RoleEntity vacancy = new RoleEntity(null, roleName, "description", "contract", 2000000L, 12, "seniority", "skills", "experience", LocalDate.now(), Status.ACTIVE, jobProfile, origin, null );
         return vacancyCompanyRepository.save(vacancy);
     }
 
     public StateEntity stateMethod() {
-        StateEntity state = new StateEntity(null, "state");
+        long randomId = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
+        StateEntity state = new StateEntity(randomId, "state");
         return stateRepository.save(state);
     }
 

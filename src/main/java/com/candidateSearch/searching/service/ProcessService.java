@@ -23,7 +23,7 @@ import com.candidateSearch.searching.repository.IPostulationRepository;
 import com.candidateSearch.searching.repository.IProcessRepository;
 import com.candidateSearch.searching.repository.ICandidateRepository;
 import com.candidateSearch.searching.repository.IRoleRepository;
-import com.candidateSearch.searching.utility.Status;
+import com.candidateSearch.searching.entity.utility.Status;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;

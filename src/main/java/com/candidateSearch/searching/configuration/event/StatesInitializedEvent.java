@@ -1,4 +1,4 @@
-package com.candidateSearch.searching.event;
+package com.candidateSearch.searching.configuration.event;
 
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;

@@ -8,6 +8,7 @@ import com.candidateSearch.searching.entity.OriginEntity;
 import com.candidateSearch.searching.entity.PostulationEntity;
 import com.candidateSearch.searching.entity.ProcessEntity;
 import com.candidateSearch.searching.entity.RoleEntity;
+import com.candidateSearch.searching.entity.utility.Status;
 import com.candidateSearch.searching.repository.IPostulationRepository;
 import com.candidateSearch.searching.repository.IProcessRepository;
 import com.candidateSearch.searching.utility.TestEntityFactory;
@@ -107,9 +108,10 @@ public class ProcessControllerTests {
         PostulationEntity postulation = entityFactory.postulationMethod(candidate1, role);
 
         ProcessRequestDto requestDto = new ProcessRequestDto();
+        requestDto.setPostulationId(postulation.getId());
         requestDto.setDescription("description");
         requestDto.setAssignedDate(LocalDate.now());
-        requestDto.setPostulationId(postulation.getId());
+        requestDto.setStatus(Status.ACTIVE);
 
         ResponseEntity<ProcessResponseDto> response = restTemplate.exchange(
                 "/api/process/",
@@ -123,7 +125,6 @@ public class ProcessControllerTests {
         assertNotNull(response.getBody());
     }
 
-
     @Test
     @DirtiesContext
     void update_process_should_return_200() {
@@ -136,9 +137,10 @@ public class ProcessControllerTests {
         ProcessEntity process1 = entityFactory.processMethod(postulation1);
 
         ProcessRequestDto requestDto = new ProcessRequestDto();
+        requestDto.setPostulationId(postulation1.getId());
         requestDto.setDescription("description");
         requestDto.setAssignedDate(LocalDate.now());
-        requestDto.setPostulationId(postulation1.getId());
+        requestDto.setStatus(Status.ACTIVE);
 
         ResponseEntity<ProcessResponseDto> response = restTemplate.exchange(
                 "/api/process/" + process1.getId(),
@@ -152,7 +154,6 @@ public class ProcessControllerTests {
         assertNotNull(response.getBody());
         assertEquals("description", response.getBody().getDescription());
     }
-
 
     @Test
     @DirtiesContext
@@ -174,6 +175,8 @@ public class ProcessControllerTests {
 
         assertNotNull(response);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        assertFalse(processRepository.existsById(process1.getId()));
+
+        ProcessEntity processDB = processRepository.findById(process1.getId()).orElseThrow();
+        assertEquals(Status.INACTIVE, processDB.getStatus());
     }
 }

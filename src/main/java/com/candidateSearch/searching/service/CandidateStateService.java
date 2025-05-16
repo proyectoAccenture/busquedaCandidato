@@ -1,5 +1,6 @@
 package com.candidateSearch.searching.service;
 
+import com.candidateSearch.searching.service.state.StateTransitionManager;
 import com.candidateSearch.searching.dto.request.CandidateStateRequestDto;
 import com.candidateSearch.searching.dto.request.CandidateStateRequestUpdateDto;
 import com.candidateSearch.searching.dto.response.CandidateStateResponseDto;
@@ -18,7 +19,7 @@ import com.candidateSearch.searching.mapper.IMapperState;
 import com.candidateSearch.searching.repository.ICandidateStateRepository;
 import com.candidateSearch.searching.repository.IProcessRepository;
 import com.candidateSearch.searching.repository.IStateRepository;
-import com.candidateSearch.searching.utility.Status;
+import com.candidateSearch.searching.entity.utility.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;

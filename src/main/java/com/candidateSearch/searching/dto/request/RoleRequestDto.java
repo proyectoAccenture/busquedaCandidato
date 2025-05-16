@@ -1,8 +1,9 @@
 package com.candidateSearch.searching.dto.request;
 
-import com.candidateSearch.searching.utility.Status;
+import com.candidateSearch.searching.entity.utility.Status;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -37,13 +38,15 @@ public class RoleRequestDto {
 
     @Schema(name = "salary", description = "Expected salary", example = "3000000")
     @NotNull(message = "salary cannot be null")
-    @Min(value = 1, message = "The salary must be at least 1")
+    @Min(value = 1_423_500, message = "The salary aspiration is lower to smmlv")
+    @Max(value = 40_000_000, message = "The salary aspiration is highest to 40000000")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "#,###")
     private Long salary;
 
     @Schema(name= "level",description = "level", example = "13")
     @NotNull(message = "Level scale cannot be null")
-    @Min(value = 1, message = "The level must be greater 1")
+    @Min(value = 1, message = "The level must be greater than or equal to 1")
+    @Max(value = 13, message = "The level must be less than 14")
     private Integer level;
 
     @Schema(name = "seniority", description = "seniority should have of the candidate", example = "string")

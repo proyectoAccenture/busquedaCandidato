@@ -1,7 +1,7 @@
 package com.candidateSearch.searching.dto.request;
 
-import com.candidateSearch.searching.utility.Status;
-import com.candidateSearch.searching.validation.date.DateWithinRange;
+import com.candidateSearch.searching.entity.utility.Status;
+import com.candidateSearch.searching.dto.request.validation.date.DateWithinRange;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;

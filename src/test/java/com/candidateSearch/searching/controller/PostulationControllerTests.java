@@ -7,6 +7,7 @@ import com.candidateSearch.searching.entity.RoleEntity;
 import com.candidateSearch.searching.entity.JobProfileEntity;
 import com.candidateSearch.searching.entity.OriginEntity;
 import com.candidateSearch.searching.entity.PostulationEntity;
+import com.candidateSearch.searching.entity.utility.Status;
 import com.candidateSearch.searching.repository.IPostulationRepository;
 import com.candidateSearch.searching.utility.TestEntityFactory;
 import org.junit.jupiter.api.Test;
@@ -100,9 +101,9 @@ public class PostulationControllerTests {
 
         PostulationRequestDto requestDto = new PostulationRequestDto();
         requestDto.setDatePresentation(LocalDate.now());
+        requestDto.setStatus(Status.ACTIVE);
         requestDto.setRoleId(role.getId());
         requestDto.setCandidateId(candidate.getId());
-        requestDto.setStatus(true);
 
         ResponseEntity<PostulationResponseDto> response = restTemplate.exchange(
                 "/api/postulation/",
@@ -126,14 +127,14 @@ public class PostulationControllerTests {
         CandidateEntity candidate = entityFactory.candidateMethod(jobProfile, origin);
         RoleEntity role = entityFactory.vacancyMethod(jobProfile, origin);
         PostulationEntity postulation = entityFactory.postulationMethod(candidate, role);
-        postulation.setStatus(false);
+        postulation.setStatus(Status.ACTIVE);
         postulationRepository.save(postulation);
 
         PostulationRequestDto updateDto = new PostulationRequestDto();
-        updateDto.setDatePresentation(LocalDate.now().plusDays(1));
+        updateDto.setDatePresentation(LocalDate.now().plusDays(-1));
+        updateDto.setStatus(Status.ACTIVE);
         updateDto.setRoleId(role.getId());
         updateDto.setCandidateId(candidate.getId());
-        updateDto.setStatus(true);
 
         ResponseEntity<PostulationResponseDto> response = restTemplate.exchange(
                 "/api/postulation/" + postulation.getId(),
@@ -166,7 +167,9 @@ public class PostulationControllerTests {
 
         assertNotNull(response);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        assertFalse(postulationRepository.existsById(postulation.getId()));
+
+        PostulationEntity postulationDB = postulationRepository.findById(postulation.getId()).orElseThrow();
+        assertEquals(Status.INACTIVE, postulationDB.getStatus());
     }
 }
 

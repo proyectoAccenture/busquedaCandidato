@@ -1,4 +1,4 @@
-package com.candidateSearch.searching.utility;
+package com.candidateSearch.searching.entity.utility;
 
 import lombok.Getter;
 

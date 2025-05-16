@@ -5,6 +5,7 @@ import com.candidateSearch.searching.dto.response.CandidateResponseDto;
 import com.candidateSearch.searching.entity.CandidateEntity;
 import com.candidateSearch.searching.entity.JobProfileEntity;
 import com.candidateSearch.searching.entity.OriginEntity;
+import com.candidateSearch.searching.entity.utility.Status;
 import com.candidateSearch.searching.repository.ICandidateRepository;
 import com.candidateSearch.searching.utility.TestEntityFactory;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,6 @@ import java.time.LocalDate;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
@@ -102,9 +102,10 @@ public class CandidateControllerTest {
         requestDto.setYearsExperience("5 years");
         requestDto.setWorkExperience("work experience");
         requestDto.setSeniority("seniority");
-        requestDto.setSalaryAspiration(1000000L);
-        requestDto.setLevel(1);
+        requestDto.setSalaryAspiration(2000000L);
+        requestDto.setLevel(12);
         requestDto.setDatePresentation(LocalDate.now());
+        requestDto.setStatus(Status.ACTIVE);
         requestDto.setOrigin(origin.getId());
         requestDto.setJobProfile(jobProfile.getId());
 
@@ -142,9 +143,10 @@ public class CandidateControllerTest {
         requestDto.setYearsExperience("5 years");
         requestDto.setWorkExperience("work experience");
         requestDto.setSeniority("seniority");
-        requestDto.setSalaryAspiration(1000000L);
-        requestDto.setLevel(1);
+        requestDto.setSalaryAspiration(2000000L);
+        requestDto.setLevel(12);
         requestDto.setDatePresentation(LocalDate.now());
+        requestDto.setStatus(Status.ACTIVE);
         requestDto.setOrigin(origin.getId());
         requestDto.setJobProfile(jobProfile.getId());
 
@@ -160,7 +162,6 @@ public class CandidateControllerTest {
         assertNotNull(response.getBody());
         assertEquals("city", response.getBody().getCity());
     }
-
 
     @Test
     @DirtiesContext
@@ -179,6 +180,8 @@ public class CandidateControllerTest {
 
         assertNotNull(response);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        assertFalse(candidateRepository.existsById(candidate1.getId()));
+
+        CandidateEntity candidateDB = candidateRepository.findById(candidate1.getId()).orElseThrow();
+        assertEquals(Status.INACTIVE, candidateDB.getStatus());
     }
 }

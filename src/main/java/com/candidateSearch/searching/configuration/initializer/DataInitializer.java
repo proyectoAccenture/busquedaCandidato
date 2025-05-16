@@ -1,8 +1,8 @@
-package com.candidateSearch.searching.configuration;
+package com.candidateSearch.searching.configuration.initializer;
 
 import com.candidateSearch.searching.entity.StateEntity;
-import com.candidateSearch.searching.utility.StateEnum;
-import com.candidateSearch.searching.event.StatesInitializedEvent;
+import com.candidateSearch.searching.entity.utility.State;
+import com.candidateSearch.searching.configuration.event.StatesInitializedEvent;
 import com.candidateSearch.searching.repository.IStateRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,11 +35,11 @@ public class DataInitializer {
                 if (stateCount == 0) {
                     log.info("No states found. Initializing state data...");
 
-                    List<StateEntity> states = Arrays.stream(StateEnum.values())
-                            .map(stateEnum -> {
+                    List<StateEntity> states = Arrays.stream(State.values())
+                            .map(state -> {
                                 StateEntity stateEntity = new StateEntity();
-                                stateEntity.setId(stateEnum.getId());
-                                stateEntity.setName(stateEnum.getStateName());
+                                stateEntity.setId(state.getId());
+                                stateEntity.setName(state.getStateName());
                                 return stateEntity;
                             })
                             .toList();
@@ -51,11 +51,11 @@ public class DataInitializer {
                     log.info("States table already populated. Verifying consistency with enum...");
 
                     boolean consistent = true;
-                    for (StateEnum stateEnum : StateEnum.values()) {
-                        Optional<StateEntity> stateEntity = stateRepository.findById(stateEnum.getId());
-                        if (stateEntity.isEmpty() || !stateEntity.get().getName().equals(stateEnum.getStateName())) {
+                    for (State state : State.values()) {
+                        Optional<StateEntity> stateEntity = stateRepository.findById(state.getId());
+                        if (stateEntity.isEmpty() || !stateEntity.get().getName().equals(state.getStateName())) {
                             log.warn("Inconsistency found: Enum state '{}' with id {} doesn't match database entry.",
-                                    stateEnum.getStateName(), stateEnum.getId());
+                                    state.getStateName(), state.getId());
                             consistent = false;
                         }
                     }

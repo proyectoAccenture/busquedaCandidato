@@ -1,7 +1,7 @@
 package com.candidateSearch.searching.repository;
 
 import com.candidateSearch.searching.entity.RoleEntity;
-import com.candidateSearch.searching.utility.Status;
+import com.candidateSearch.searching.entity.utility.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

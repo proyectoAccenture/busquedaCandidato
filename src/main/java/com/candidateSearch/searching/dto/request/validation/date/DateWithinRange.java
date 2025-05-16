@@ -1,4 +1,4 @@
-package com.candidateSearch.searching.validation.date;
+package com.candidateSearch.searching.dto.request.validation.date;
 
 import jakarta.validation.Payload;
 import jakarta.validation.Constraint;

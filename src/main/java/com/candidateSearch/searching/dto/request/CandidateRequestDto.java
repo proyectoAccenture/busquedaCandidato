@@ -1,7 +1,7 @@
 package com.candidateSearch.searching.dto.request;
 
-import com.candidateSearch.searching.utility.Status;
-import com.candidateSearch.searching.validation.date.DateWithinRange;
+import com.candidateSearch.searching.entity.utility.Status;
+import com.candidateSearch.searching.dto.request.validation.date.DateWithinRange;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
@@ -16,7 +16,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
-import com.candidateSearch.searching.validation.age.ValidAge;
+import com.candidateSearch.searching.dto.request.validation.age.ValidAge;
 
 @Data
 @NoArgsConstructor
@@ -102,7 +102,8 @@ public class CandidateRequestDto {
 
     @Schema(name= "level",description = "level", example = "13")
     @NotNull(message = "Level scale cannot be null")
-    @Min(value = 1, message = "The level must be greater 1")
+    @Min(value = 1, message = "The level must be greater than or equal to 1")
+    @Max(value = 13, message = "The level must be less than 14")
     private Integer level;
 
     @Schema(name = "datePresentation", description = "date Presentation of the candidate", example = "2025-01-01")

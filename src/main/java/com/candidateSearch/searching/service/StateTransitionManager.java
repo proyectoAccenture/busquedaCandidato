@@ -1,6 +1,6 @@
 package com.candidateSearch.searching.service;
 
-import com.candidateSearch.searching.enums.StateEnum;
+import com.candidateSearch.searching.utility.StateEnum;
 import com.candidateSearch.searching.exception.type.InvalidStateTransitionException;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;

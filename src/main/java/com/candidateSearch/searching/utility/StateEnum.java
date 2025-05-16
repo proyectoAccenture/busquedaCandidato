@@ -1,4 +1,4 @@
-package com.candidateSearch.searching.enums;
+package com.candidateSearch.searching.utility;
 
 import lombok.Getter;
 import java.util.HashMap;

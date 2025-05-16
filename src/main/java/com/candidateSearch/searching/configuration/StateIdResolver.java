@@ -1,9 +1,9 @@
-package com.candidateSearch.searching.service.util;
+package com.candidateSearch.searching.configuration;
 
 import com.candidateSearch.searching.entity.StateEntity;
-import com.candidateSearch.searching.enums.StateEnum;
 import com.candidateSearch.searching.event.StatesInitializedEvent;
 import com.candidateSearch.searching.repository.IStateRepository;
+import com.candidateSearch.searching.utility.StateEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;

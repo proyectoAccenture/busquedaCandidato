@@ -18,8 +18,6 @@ import com.candidateSearch.searching.repository.IProcessRepository;
 import com.candidateSearch.searching.repository.IStateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import javax.management.relation.Role;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Random;
@@ -81,7 +79,7 @@ public class TestEntityFactory {
 
         String roleName = roleNameBuilder.toString();
 
-        RoleEntity vacancy = new RoleEntity(null, roleName, "description", "contract", 1000000L, 1, "seniority", "skills", "experience", "assignment time", Status.ACTIVE, jobProfile, origin, null );
+        RoleEntity vacancy = new RoleEntity(null, roleName, "description", "contract", 1000000L, 1, "seniority", "skills", "experience", LocalDate.now(), Status.ACTIVE, jobProfile, origin, null );
         return vacancyCompanyRepository.save(vacancy);
     }
 

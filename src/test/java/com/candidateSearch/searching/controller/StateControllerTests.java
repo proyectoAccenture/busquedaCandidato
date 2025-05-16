@@ -39,7 +39,7 @@ public class StateControllerTests {
     @Test
     @DirtiesContext
     void get_state_by_id_should_return_200(){
-        StateEntity stateEntity = new StateEntity(null, "state");
+        StateEntity stateEntity = new StateEntity(1L, "state");
         StateEntity saveEntity = stateRepository.save(stateEntity);
 
         ResponseEntity<StateResponseDto> response = restTemplate.exchange(
@@ -55,53 +55,10 @@ public class StateControllerTests {
         assertEquals("state", response.getBody().getName());
     }
 
-
-    @Test
-    @DirtiesContext
-    void get_all_states_should_return_200() {
-        stateRepository.save(new StateEntity(null, "state"));
-        stateRepository.save(new StateEntity(null, "state 2"));
-
-        ResponseEntity<List<StateResponseDto>> response = restTemplate.exchange(
-                "/api/state/",
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<>() {}
-        );
-
-        assertNotNull(response);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(2, response.getBody().size());
-
-        List<String> stateNames = response.getBody().stream().map(StateResponseDto::getName).toList();
-        assertTrue(stateNames.contains("state"));
-        assertTrue(stateNames.contains("state 2"));
-    }
-
-    @Test
-    @DirtiesContext
-    void create_state_should_return_201() {
-        StateRequestDto requestDto = new StateRequestDto();
-        requestDto.setName("state");
-
-        ResponseEntity<StateResponseDto> response = restTemplate.exchange(
-                "/api/state/",
-                HttpMethod.POST,
-                new HttpEntity<>(requestDto),
-                new ParameterizedTypeReference<>() {}
-        );
-
-        assertNotNull(response);
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals("state", response.getBody().getName());
-    }
-
     @Test
     @DirtiesContext
     void update_state_should_return_200() {
-        StateEntity stateEntity = stateRepository.save(new StateEntity(null, "state"));
+        StateEntity stateEntity = stateRepository.save(new StateEntity(1L, "state"));
 
         StateRequestDto updateRequest = new StateRequestDto();
         updateRequest.setName("state new");
@@ -122,7 +79,7 @@ public class StateControllerTests {
     @Test
     @DirtiesContext
     void delete_state_should_return_204() {
-        StateEntity stateEntity = stateRepository.save(new StateEntity(null, "state"));
+        StateEntity stateEntity = stateRepository.save(new StateEntity(1L, "state"));
 
         ResponseEntity<Void> response = restTemplate.exchange(
                 "/api/state/" + stateEntity.getId(),

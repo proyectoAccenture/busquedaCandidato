@@ -6,6 +6,7 @@ import com.candidateSearch.searching.dto.response.StateResponseDto;
 import com.candidateSearch.searching.entity.JobProfileEntity;
 import com.candidateSearch.searching.entity.OriginEntity;
 import com.candidateSearch.searching.entity.RoleEntity;
+import com.candidateSearch.searching.entity.utility.Status;
 import com.candidateSearch.searching.repository.IRoleRepository;
 import com.candidateSearch.searching.utility.TestEntityFactory;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.time.LocalDate;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -94,12 +97,13 @@ public class RoleControllerTests {
         vacancyRequestDto.setNameRole("role");
         vacancyRequestDto.setDescription("description");
         vacancyRequestDto.setContract("contract");
-        vacancyRequestDto.setSalary(1000000L);
-        vacancyRequestDto.setLevel(1);
+        vacancyRequestDto.setSalary(2000000L);
+        vacancyRequestDto.setLevel(12);
         vacancyRequestDto.setSeniority("seniority");
         vacancyRequestDto.setSkills("skills");
         vacancyRequestDto.setExperience("experience");
-        vacancyRequestDto.setAssignmentTime("assignment time");
+        vacancyRequestDto.setAssignmentTime(LocalDate.now());
+        vacancyRequestDto.setStatus(Status.ACTIVE);
         vacancyRequestDto.setJobProfile(jobProfile.getId());
         vacancyRequestDto.setOrigin(origin.getId());
 
@@ -132,7 +136,8 @@ public class RoleControllerTests {
         updateRequest.setSeniority("seniority");
         updateRequest.setSkills("Skills more");
         updateRequest.setExperience("experience");
-        updateRequest.setAssignmentTime("Assignment day");
+        updateRequest.setAssignmentTime(LocalDate.now());
+        updateRequest.setStatus(Status.ACTIVE);
         updateRequest.setJobProfile(1L);
         updateRequest.setOrigin(1L);
 
@@ -164,6 +169,8 @@ public class RoleControllerTests {
 
         assertNotNull(response);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        assertFalse(vacancyCompanyRepository.existsById(vacancy.getId()));
+
+        RoleEntity roleDB = vacancyCompanyRepository.findById(vacancy.getId()).orElseThrow();
+        assertEquals(Status.INACTIVE, roleDB.getStatus());
     }
 }

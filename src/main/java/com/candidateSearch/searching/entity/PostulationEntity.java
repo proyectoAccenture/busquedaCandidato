@@ -1,7 +1,6 @@
 package com.candidateSearch.searching.entity;
 
-import com.candidateSearch.searching.utility.Status;
-import jakarta.persistence.CascadeType;
+import com.candidateSearch.searching.entity.utility.Status;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

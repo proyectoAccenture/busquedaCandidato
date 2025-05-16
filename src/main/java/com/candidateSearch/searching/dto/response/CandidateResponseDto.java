@@ -1,6 +1,6 @@
 package com.candidateSearch.searching.dto.response;
 
-import com.candidateSearch.searching.utility.Status;
+import com.candidateSearch.searching.entity.utility.Status;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -13,7 +13,6 @@ import java.time.LocalDate;
 @Schema(name = "CandidateWithPaginationResponseDto",description = "Model representing a candidate on the database")
 @Data
 public class CandidateResponseDto {
-
     @Schema(name = "id",description = "id of the candidate")
     private Long id;
 

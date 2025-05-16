@@ -1,6 +1,6 @@
 package com.candidateSearch.searching.entity;
 
-import com.candidateSearch.searching.utility.Status;
+import com.candidateSearch.searching.entity.utility.Status;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Column;
@@ -27,7 +27,6 @@ import java.util.List;
 @Data
 @Table(name = "process")
 public class ProcessEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -1,9 +1,9 @@
-package com.candidateSearch.searching.configuration;
+package com.candidateSearch.searching.service.state;
 
 import com.candidateSearch.searching.entity.StateEntity;
-import com.candidateSearch.searching.event.StatesInitializedEvent;
+import com.candidateSearch.searching.configuration.event.StatesInitializedEvent;
 import com.candidateSearch.searching.repository.IStateRepository;
-import com.candidateSearch.searching.utility.StateEnum;
+import com.candidateSearch.searching.entity.utility.State;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class StateIdResolver {
 
     private final IStateRepository stateRepository;
-    private final Map<StateEnum, Long> resolvedIds = new EnumMap<>(StateEnum.class);
+    private final Map<State, Long> resolvedIds = new EnumMap<>(State.class);
     private final AtomicBoolean initialized = new AtomicBoolean(false);
 
     @EventListener
@@ -38,7 +38,7 @@ public class StateIdResolver {
 
         log.info("Initializing state ID resolver...");
 
-        for (StateEnum state : StateEnum.values()) {
+        for (State state : State.values()) {
             Optional<StateEntity> entityById = stateRepository.findById(state.getId());
 
             if (entityById.isPresent() && entityById.get().getName().equals(state.getStateName())) {
@@ -67,12 +67,12 @@ public class StateIdResolver {
         }
     }
 
-    public Long getIdForState(StateEnum stateEnum) {
+    public Long getIdForState(State state) {
         ensureInitialized();
-        return resolvedIds.getOrDefault(stateEnum, stateEnum.getId());
+        return resolvedIds.getOrDefault(state, state.getId());
     }
 
-    public Optional<StateEnum> getStateForId(Long id) {
+    public Optional<State> getStateForId(Long id) {
         ensureInitialized();
         return resolvedIds.entrySet().stream()
                 .filter(entry -> entry.getValue().equals(id))

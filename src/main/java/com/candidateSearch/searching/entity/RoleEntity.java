@@ -1,6 +1,6 @@
 package com.candidateSearch.searching.entity;
 
-import com.candidateSearch.searching.utility.Status;
+import com.candidateSearch.searching.entity.utility.Status;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -62,11 +62,11 @@ public class RoleEntity {
     private Status status;
 
     @ManyToOne
-    @JoinColumn(name = "job_profile_id", nullable = false)
+    @JoinColumn(name = "job_profile_id")
     private JobProfileEntity jobProfile;
 
     @ManyToOne
-    @JoinColumn(name = "origin_id", nullable = false)
+    @JoinColumn(name = "origin_id")
     private OriginEntity origin;
 
     @OneToMany(mappedBy = "role")

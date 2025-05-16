@@ -12,7 +12,7 @@ import com.candidateSearch.searching.mapper.IMapperRole;
 import com.candidateSearch.searching.repository.IRoleRepository;
 import com.candidateSearch.searching.repository.IJobProfileRepository;
 import com.candidateSearch.searching.repository.IOriginRepository;
-import com.candidateSearch.searching.utility.Status;
+import com.candidateSearch.searching.entity.utility.Status;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;

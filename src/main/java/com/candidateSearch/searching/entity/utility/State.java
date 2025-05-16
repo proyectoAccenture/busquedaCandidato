@@ -1,4 +1,4 @@
-package com.candidateSearch.searching.utility;
+package com.candidateSearch.searching.entity.utility;
 
 import lombok.Getter;
 import java.util.HashMap;
@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Getter
-public enum StateEnum {
+public enum State {
 
     NUEVO(1L, "Nuevo"),
     VALIDACION_CCI(2L, "Validación CCI"),
@@ -27,20 +27,20 @@ public enum StateEnum {
     private final Long id;
     private final String stateName;
 
-    private static final Map<Long, StateEnum> ID_MAP = new HashMap<>();
+    private static final Map<Long, State> ID_MAP = new HashMap<>();
 
     static {
-        for (StateEnum state : values()) {
+        for (State state : values()) {
             ID_MAP.put(state.getId(), state);
         }
     }
 
-    StateEnum(Long id, String stateName) {
+    State(Long id, String stateName) {
         this.id = id;
         this.stateName = stateName;
     }
 
-    public static Optional<StateEnum> getById(Long id) {
+    public static Optional<State> getById(Long id) {
         return Optional.ofNullable(ID_MAP.get(id));
     }
 }

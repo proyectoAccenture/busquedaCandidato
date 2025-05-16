@@ -24,7 +24,7 @@ import com.candidateSearch.searching.repository.IOriginRepository;
 import com.candidateSearch.searching.repository.IPostulationRepository;
 import com.candidateSearch.searching.repository.IProcessRepository;
 import com.candidateSearch.searching.repository.IRoleRepository;
-import com.candidateSearch.searching.utility.Status;
+import com.candidateSearch.searching.entity.utility.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

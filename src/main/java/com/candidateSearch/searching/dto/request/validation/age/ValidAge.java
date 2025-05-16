@@ -1,4 +1,4 @@
-package com.candidateSearch.searching.validation.age;
+package com.candidateSearch.searching.dto.request.validation.age;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

@@ -10,6 +10,7 @@ import com.candidateSearch.searching.entity.OriginEntity;
 import com.candidateSearch.searching.entity.PostulationEntity;
 import com.candidateSearch.searching.entity.ProcessEntity;
 import com.candidateSearch.searching.entity.StateEntity;
+import com.candidateSearch.searching.entity.utility.Status;
 import com.candidateSearch.searching.repository.ICandidateStateRepository;
 import com.candidateSearch.searching.utility.TestEntityFactory;
 import org.junit.jupiter.api.Test;
@@ -109,8 +110,9 @@ public class CandidateStateControllerTests {
         CandidateStateRequestDto candidateStateRequestDto = new CandidateStateRequestDto();
         candidateStateRequestDto.setProcessId(process.getId());
         candidateStateRequestDto.setStateId(state.getId());
-        candidateStateRequestDto.setStatus(true);
         candidateStateRequestDto.setDescription("Description");
+        candidateStateRequestDto.setStatus(true);
+        candidateStateRequestDto.setStatusHistory(Status.ACTIVE);
         candidateStateRequestDto.setAssignedDate(LocalDate.now());
 
         ResponseEntity<CandidateStateResponseDto> response = restTemplate.exchange(
@@ -142,8 +144,9 @@ public class CandidateStateControllerTests {
         CandidateStateRequestDto requestDto = new CandidateStateRequestDto();
         requestDto.setProcessId(process.getId());
         requestDto.setStateId(state.getId());
-        requestDto.setStatus(true);
         requestDto.setDescription("description");
+        requestDto.setStatus(true);
+        requestDto.setStatusHistory(Status.ACTIVE);
         requestDto.setAssignedDate(LocalDate.now());
 
         ResponseEntity<CandidateStateResponseDto> response = restTemplate.exchange(
@@ -181,6 +184,8 @@ public class CandidateStateControllerTests {
 
         assertNotNull(response);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        assertFalse(candidateStateRepository.existsById(postulation.getId()));
+
+        CandidateStateEntity candidateDB = candidateStateRepository.findById(candidateState1.getId()).orElseThrow();
+        assertEquals(Status.INACTIVE, candidateDB.getStatusHistory());
     }
 }

@@ -98,5 +98,5 @@ public class CandidateEntity {
     private JobProfileEntity jobProfile;
 
     @OneToMany(mappedBy = "candidate")
-    private List<PostulationEntity> postulations = new ArrayList<>();
+    private List<PostulationEntity> postulation = new ArrayList<>();
 }

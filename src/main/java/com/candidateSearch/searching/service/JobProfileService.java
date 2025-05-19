@@ -63,14 +63,20 @@ public class JobProfileService {
         JobProfileEntity existingJob = jobProfileRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 
-        List<CandidateEntity> candidatesExist = candidateRepository.findAllByJobProfileId(id);
-        if(!candidatesExist.isEmpty()){
-            candidateRepository.detachJobProfileFromCandidates(id);
+        List<CandidateEntity> candidates = existingJob.getCandidates();
+        if (candidates != null && !candidates.isEmpty()) {
+            for (CandidateEntity candidate : candidates) {
+                candidate.setJobProfile(null);
+                candidateRepository.save(candidate);
+            }
         }
 
         List<RoleEntity> rolesExist = roleRepository.findAllByJobProfileId(id);
-        if(!rolesExist.isEmpty()){
-            roleRepository.detachJobProfileFromRole(id);
+        if(rolesExist != null && !rolesExist.isEmpty()){
+            for (RoleEntity role : rolesExist){
+                role.setJobProfile(null);
+                roleRepository.save(role);
+            }
         }
         jobProfileRepository.delete(existingJob);
     }

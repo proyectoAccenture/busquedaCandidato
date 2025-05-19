@@ -57,5 +57,4 @@ public interface IPostulationRepository extends JpaRepository<PostulationEntity,
             @Param("word4") String word4,
             @Param("query") String query,
             @Param("statusQuery") Status statusQuery);
-
 }

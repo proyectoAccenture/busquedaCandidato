@@ -1,6 +1,7 @@
 package com.candidateSearch.searching.controller;
 
 import com.candidateSearch.searching.dto.request.PostulationRequestDto;
+import com.candidateSearch.searching.dto.response.PostulationFullResponseDto;
 import com.candidateSearch.searching.dto.response.PostulationResponseDto;
 import com.candidateSearch.searching.service.PostulationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,9 +40,22 @@ public class PostulationController {
                             schema = @Schema(implementation = PostulationResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "Postulation not found", content = @Content)
     })
+    @GetMapping("/full/{id}")
+    public ResponseEntity<PostulationFullResponseDto> getPostulationFull(@PathVariable Long id){
+        PostulationFullResponseDto postulation = postulationService.getPostulationFullById(id);
+        return ResponseEntity.ok(postulation);
+    }
+
+    @Operation(summary = "Get a postulation by its Number")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Postulation found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PostulationResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "Postulation not found", content = @Content)
+    })
     @GetMapping("/{id}")
     public ResponseEntity<PostulationResponseDto> getByIdPostulation(@PathVariable Long id){
-        PostulationResponseDto getByIdPostulation = postulationService.getPostulation(id);
+        PostulationResponseDto getByIdPostulation = postulationService.getPostulationById(id);
         return ResponseEntity.ok(getByIdPostulation);
     }
 

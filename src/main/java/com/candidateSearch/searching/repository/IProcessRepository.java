@@ -25,5 +25,4 @@ public interface IProcessRepository extends JpaRepository<ProcessEntity, Long> {
             @Param("word2") String word2,
             @Param("word3") String word3,
             @Param("word4") String word4);
-
 }

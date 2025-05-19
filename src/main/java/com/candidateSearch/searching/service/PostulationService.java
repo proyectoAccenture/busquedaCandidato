@@ -1,6 +1,7 @@
 package com.candidateSearch.searching.service;
 
 import com.candidateSearch.searching.dto.request.PostulationRequestDto;
+import com.candidateSearch.searching.dto.response.PostulationFullResponseDto;
 import com.candidateSearch.searching.dto.response.PostulationResponseDto;
 import com.candidateSearch.searching.entity.CandidateEntity;
 import com.candidateSearch.searching.entity.CandidateStateEntity;
@@ -37,7 +38,14 @@ public class PostulationService {
     private final IProcessRepository processRepository;
     private final ICandidateStateRepository candidateStateRepository;
 
-    public PostulationResponseDto getPostulation(Long id){
+    public PostulationFullResponseDto getPostulationFullById(Long id){
+        PostulationEntity postulationEntity = postulationRepository.findById(id)
+                .orElseThrow(EntityNoExistException::new);
+
+        return mapperPostulation.toDtoFull(postulationEntity);
+    }
+
+    public PostulationResponseDto getPostulationById(Long id){
         PostulationEntity postulationEntity = postulationRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 
@@ -134,7 +142,7 @@ public class PostulationService {
         postulationEntityNew.setProcess(null);
         PostulationEntity postulationEntitySave = postulationRepository.save(postulationEntityNew);
 
-        candidateEntity.getPostulations().add(postulationEntitySave);
+        candidateEntity.getPostulation().add(postulationEntitySave);
         candidateRepository.save(candidateEntity);
 
         roleEntity.getPostulation().add(postulationEntitySave);
@@ -176,7 +184,7 @@ public class PostulationService {
 
         PostulationEntity postulationEntitySave = postulationRepository.save(existingEntity);
 
-        candidateEntity.getPostulations().add(postulationEntitySave);
+        candidateEntity.getPostulation().add(postulationEntitySave);
         candidateRepository.save(candidateEntity);
 
         roleEntity.getPostulation().add(postulationEntitySave);

@@ -1,6 +1,7 @@
 package com.candidateSearch.searching.dto.request;
 
 import com.candidateSearch.searching.dto.request.validation.date.DateWithinRange;
+import com.candidateSearch.searching.dto.request.validation.date.NotBeforeThreeMonths;
 import com.candidateSearch.searching.entity.utility.Status;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -70,7 +71,7 @@ public class RoleRequestDto {
     @NotNull(message = "Assignment cannot be null")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    @DateWithinRange
+    @NotBeforeThreeMonths
     private LocalDate assignmentTime;
 
     @Schema(name = "status", description = "Status of process = 'ACTIVE', 'INACTIVE' ", example = "ACTIVE")

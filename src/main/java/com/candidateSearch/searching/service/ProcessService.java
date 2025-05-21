@@ -24,6 +24,7 @@ import com.candidateSearch.searching.repository.IProcessRepository;
 import com.candidateSearch.searching.repository.ICandidateRepository;
 import com.candidateSearch.searching.repository.IRoleRepository;
 import com.candidateSearch.searching.entity.utility.Status;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -198,18 +199,20 @@ public class ProcessService {
         return Optional.of(mapperProcess.toDto(processSaved));
     }
 
+    @Transactional
     public void deleteProcess(Long id){
         ProcessEntity existingProcess = processRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 
         existingProcess.setStatus(Status.INACTIVE);
-        processRepository.save(existingProcess);
 
         CandidateStateEntity candidateStateFind = candidateStateRepository.findByProcessId(existingProcess.getId());
         if (candidateStateFind != null && candidateStateFind.getStatusHistory().equals(Status.ACTIVE)) {
             candidateStateFind.setStatusHistory(Status.INACTIVE);
             candidateStateRepository.save(candidateStateFind);
         }
+
+        processRepository.save(existingProcess);
     }
 
     private void validateLongId(Long id){

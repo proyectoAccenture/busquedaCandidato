@@ -25,6 +25,7 @@ import com.candidateSearch.searching.repository.IPostulationRepository;
 import com.candidateSearch.searching.repository.IProcessRepository;
 import com.candidateSearch.searching.repository.IRoleRepository;
 import com.candidateSearch.searching.entity.utility.Status;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -311,29 +312,27 @@ public class CandidateService {
         return Optional.of(mapperCandidate.toDto(candidateSaved));
     }
 
-
-
+    @Transactional
     public void deleteCandidate(Long id){
         CandidateEntity existingCandidate = candidateRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 
         existingCandidate.setStatus(Status.INACTIVE);
-        candidateRepository.save(existingCandidate);
 
         PostulationEntity postulationFind = postulationRepository.findByCandidateId(id);
         if (postulationFind != null) {
             if (postulationFind.getStatus().equals(Status.ACTIVE)) {
                 postulationFind.setStatus(Status.INACTIVE);
+                postulationRepository.save(postulationFind);
             }
-            postulationRepository.save(postulationFind);
 
             Optional<ProcessEntity> processFind = processRepository.findByPostulationId(postulationFind.getId());
             if (processFind.isPresent()) {
                 ProcessEntity process = processFind.get();
                 if (process.getStatus().equals(Status.ACTIVE)) {
                     process.setStatus(Status.INACTIVE);
+                    processRepository.save(process);
                 }
-                processRepository.save(process);
 
                 CandidateStateEntity candidateStateFind = candidateStateRepository.findByProcessId(process.getId());
                 if (candidateStateFind != null && candidateStateFind.getStatusHistory().equals(Status.ACTIVE)) {
@@ -342,6 +341,8 @@ public class CandidateService {
                 }
             }
         }
+
+        candidateRepository.save(existingCandidate);
     }
 
     private void validateUniqueFieldExceptSelf(String fieldName, String value, Long selfId,

@@ -22,6 +22,7 @@ import com.candidateSearch.searching.repository.IPostulationRepository;
 import com.candidateSearch.searching.repository.IProcessRepository;
 import com.candidateSearch.searching.repository.IRoleRepository;
 import com.candidateSearch.searching.entity.utility.Status;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -193,12 +194,12 @@ public class PostulationService {
         return Optional.of(mapperPostulation.toDto(postulationEntitySave));
     }
 
+    @Transactional
     public void deletePostulation(Long id) {
         PostulationEntity postulation = postulationRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 
         postulation.setStatus(Status.INACTIVE);
-        postulationRepository.save(postulation);
 
         Optional<ProcessEntity> processFind = processRepository.findByPostulationId(postulation.getId());
         if (processFind.isPresent()) {
@@ -206,8 +207,8 @@ public class PostulationService {
 
             if (process.getStatus().equals(Status.ACTIVE)) {
                 process.setStatus(Status.INACTIVE);
+                processRepository.save(process);
             }
-            processRepository.save(process);
 
             CandidateStateEntity candidateStateFind = candidateStateRepository.findByProcessId(process.getId());
             if (candidateStateFind != null && candidateStateFind.getStatusHistory().equals(Status.ACTIVE)) {
@@ -215,6 +216,8 @@ public class PostulationService {
                 candidateStateRepository.save(candidateStateFind);
             }
         }
+
+        postulationRepository.save(postulation);
     }
 
     private void validationListPostulation(List<PostulationEntity> postulations){

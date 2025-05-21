@@ -20,6 +20,7 @@ import com.candidateSearch.searching.repository.ICandidateStateRepository;
 import com.candidateSearch.searching.repository.IProcessRepository;
 import com.candidateSearch.searching.repository.IStateRepository;
 import com.candidateSearch.searching.entity.utility.Status;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -46,7 +47,7 @@ public class CandidateStateService {
         ProcessEntity processEntity = processRepository.findById(candidateStateRequestDto.getProcessId())
                 .orElseThrow(ProcessNoExistException::new);
 
-        Optional<CandidateStateEntity> currentStateOptional = candidateStateRepository.findTopByProcessOrderByIdDesc(processEntity);
+        Optional<CandidateStateEntity> currentStateOptional = candidateStateRepository.findTopByProcessAndStatusHistoryOrderByIdDesc(processEntity, Status.ACTIVE);
 
         if (currentStateOptional.isPresent()) {
             CandidateStateEntity lastCandidateState = currentStateOptional.get();
@@ -91,7 +92,8 @@ public class CandidateStateService {
         response.setCandidateName(candidate.getName());
         response.setCandidateLastName(candidate.getLastName());
 
-        Optional<CandidateStateEntity> currentState = candidateStateRepository.findTopByProcessOrderByIdDesc(process);
+        Optional<CandidateStateEntity> currentState = candidateStateRepository
+                .findTopByProcessAndStatusHistoryOrderByIdDesc(process, Status.ACTIVE);
 
         List<StateEntity> validStates;
         if (currentState.isEmpty()) {
@@ -160,6 +162,7 @@ public class CandidateStateService {
         return Optional.of(mapperCandidateState.toDto(updatedEntity));
     }
 
+    @Transactional
     public void deleteCandidateState(Long id){
         CandidateStateEntity existingCandidateState = candidateStateRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);

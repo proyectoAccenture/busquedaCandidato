@@ -26,7 +26,7 @@ public class CandidateStateResponseDto {
     @Schema(name = "stateName", description = "Name of state where is of the candidate")
     private String stateName;
 
-    @Schema(name = "statusHistory", description = "Status of the candidate state (true if active, false if closed)", example = "false")
+    @Schema(name = "statusHistory", description = "Status of the candidate state (ACTIVE or INACTIVE)", example = "INACTIVE")
     private Status statusHistory;
 
     @Schema(name = "status", description = "Status of the candidate state (true if active, false if closed)", example = "false")

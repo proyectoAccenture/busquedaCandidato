@@ -165,7 +165,6 @@ public class ProcessService {
         return mapperProcess.toDto(processEntitySave);
     }
 
-
     public Optional<ProcessResponseDto> updateProcess(Long id, ProcessRequestDto processRequestDto) {
 
         if(processRequestDto.getStatus().equals(Status.BLOCKED)){
@@ -206,10 +205,14 @@ public class ProcessService {
 
         existingProcess.setStatus(Status.INACTIVE);
 
-        CandidateStateEntity candidateStateFind = candidateStateRepository.findByProcessId(existingProcess.getId());
-        if (candidateStateFind != null && candidateStateFind.getStatusHistory().equals(Status.ACTIVE)) {
-            candidateStateFind.setStatusHistory(Status.INACTIVE);
-            candidateStateRepository.save(candidateStateFind);
+        List<CandidateStateEntity> candidateStateFind = candidateStateRepository.findByProcessId(existingProcess.getId());
+        if (candidateStateFind != null) {
+            for (CandidateStateEntity candidateState : candidateStateFind) {
+                if (candidateState.getStatusHistory().equals(Status.ACTIVE)) {
+                    candidateState.setStatusHistory(Status.INACTIVE);
+                    candidateStateRepository.save(candidateState);
+                }
+            }
         }
 
         processRepository.save(existingProcess);

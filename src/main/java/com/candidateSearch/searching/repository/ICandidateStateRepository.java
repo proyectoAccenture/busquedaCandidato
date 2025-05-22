@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ICandidateStateRepository extends JpaRepository<CandidateStateEntity, Long> {
-    CandidateStateEntity findByProcessId (Long idProcess);
+    List<CandidateStateEntity> findByProcessId (Long idProcess);
     Optional<CandidateStateEntity> findTopByProcessAndStatusHistoryOrderByIdDesc(ProcessEntity process, Status statusHistory);
     List<CandidateStateEntity> findAllByStateId(Long stateId);
 }

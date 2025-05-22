@@ -71,10 +71,14 @@ public class CandidateService {
                 }
                 processRepository.save(process);
 
-                CandidateStateEntity candidateStateFind = candidateStateRepository.findByProcessId(process.getId());
-                if (candidateStateFind != null && candidateStateFind.getStatusHistory().equals(Status.ACTIVE)) {
-                    candidateStateFind.setStatusHistory(Status.BLOCKED);
-                    candidateStateRepository.save(candidateStateFind);
+                List<CandidateStateEntity> candidateStateFind = candidateStateRepository.findByProcessId(process.getId());
+                if (candidateStateFind != null) {
+                    for (CandidateStateEntity candidateState : candidateStateFind) {
+                        if (candidateState.getStatusHistory().equals(Status.ACTIVE)) {
+                            candidateState.setStatusHistory(Status.INACTIVE);
+                            candidateStateRepository.save(candidateState);
+                        }
+                    }
                 }
             }
         }
@@ -334,10 +338,14 @@ public class CandidateService {
                     processRepository.save(process);
                 }
 
-                CandidateStateEntity candidateStateFind = candidateStateRepository.findByProcessId(process.getId());
-                if (candidateStateFind != null && candidateStateFind.getStatusHistory().equals(Status.ACTIVE)) {
-                    candidateStateFind.setStatusHistory(Status.INACTIVE);
-                    candidateStateRepository.save(candidateStateFind);
+                List<CandidateStateEntity> candidateStateFind = candidateStateRepository.findByProcessId(process.getId());
+                if (candidateStateFind != null) {
+                    for (CandidateStateEntity candidateState : candidateStateFind) {
+                        if (candidateState.getStatusHistory().equals(Status.ACTIVE)) {
+                            candidateState.setStatusHistory(Status.INACTIVE);
+                            candidateStateRepository.save(candidateState);
+                        }
+                    }
                 }
             }
         }

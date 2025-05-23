@@ -11,6 +11,7 @@ import com.candidateSearch.searching.entity.RoleEntity;
 import com.candidateSearch.searching.exception.type.BadRequestException;
 import com.candidateSearch.searching.exception.type.CannotApplyException;
 import com.candidateSearch.searching.exception.type.CannotBeCreateException;
+import com.candidateSearch.searching.exception.type.CannotBeUpdateException;
 import com.candidateSearch.searching.exception.type.EntityNoExistException;
 import com.candidateSearch.searching.exception.type.ItAlreadyExistPostulationException;
 import com.candidateSearch.searching.exception.type.ResourceNotFoundException;
@@ -150,12 +151,50 @@ public class PostulationService {
 
     public Optional<PostulationResponseDto> updatePostulation(Long id, PostulationRequestDto postulationRequestDto) {
 
-        if(postulationRequestDto.getStatus().equals(Status.BLOCKED)){
+        PostulationEntity existingEntity  = postulationRepository.findById(id)
+                .orElseThrow(EntityNoExistException::new);
+
+        if (postulationRequestDto.getStatus().equals(Status.BLOCKED)) {
             throw new CannotBeCreateException();
         }
 
-        PostulationEntity existingEntity  = postulationRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
+        if (postulationRequestDto.getStatus() == Status.ACTIVE) {
+
+            CandidateEntity candidate = candidateRepository.findByPostulation(existingEntity);
+
+            if (candidate.getStatus() == Status.INACTIVE) {
+                throw new CannotBeUpdateException();
+            }
+
+            Optional<PostulationEntity> postulationFind = postulationRepository.findById(id);
+            if (postulationFind.isPresent()) {
+                PostulationEntity postulation = postulationFind.get();
+                if (postulation.getStatus().equals(Status.INACTIVE)) {
+                    postulation.setStatus(Status.ACTIVE);
+                    postulationRepository.save(postulation);
+                }
+
+                Optional<ProcessEntity> processFind = processRepository.findByPostulationId(postulation.getId());
+                if (processFind.isPresent()) {
+                    ProcessEntity process = processFind.get();
+                    if (process.getStatus().equals(Status.INACTIVE)) {
+                        process.setStatus(Status.ACTIVE);
+                        processRepository.save(process);
+                    }
+
+                        List<CandidateStateEntity> candidateStateFind = candidateStateRepository.findByProcessId(process.getId());
+                        if (candidateStateFind != null) {
+                            for (CandidateStateEntity candidateState : candidateStateFind) {
+                                if (candidateState.getStatusHistory().equals(Status.INACTIVE)) {
+                                    candidateState.setStatusHistory(Status.ACTIVE);
+                                    candidateStateRepository.save(candidateState);
+                                }
+                            }
+                        }
+                    }
+
+                }
+        }
 
         RoleEntity roleEntity = roleRepository.findById(postulationRequestDto.getRoleId())
                 .orElseThrow(EntityNoExistException::new);

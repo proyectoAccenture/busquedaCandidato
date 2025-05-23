@@ -56,7 +56,7 @@ public class CandidateService {
 
         candidate.setStatus(Status.BLOCKED);
 
-        List<PostulationEntity> postulationFind = postulationRepository.findByCandidateId(candidate.getId());
+        List<PostulationEntity> postulationFind = postulationRepository.findAllByCandidateId(candidate.getId());
         if (postulationFind != null) {
             for (PostulationEntity postulation : postulationFind) {
                 if (postulation.getStatus().equals(Status.ACTIVE)) {
@@ -174,7 +174,7 @@ public class CandidateService {
 
     public List<CandidateResponseDto> getAllCandidate(){
         return candidateRepository.findAll().stream()
-                .filter(candidateEntity ->  candidateEntity.getStatus() == Status.ACTIVE)
+                .filter(candidateEntity ->  candidateEntity.getStatus() != Status.BLOCKED)
                 .map(mapperCandidate::toDto)
                 .collect(Collectors.toList());
     }
@@ -265,7 +265,7 @@ public class CandidateService {
                 .orElseThrow(EntityNoExistException::new);
 
         if(candidateRequestDto.getStatus() == Status.ACTIVE) {
-            List<PostulationEntity> postulationFind = postulationRepository.findByCandidateId(id);
+            List<PostulationEntity> postulationFind = postulationRepository.findAllByCandidateId(id);
             if (postulationFind != null) {
                 for (PostulationEntity postulation : postulationFind) {
                     if (postulation.getStatus().equals(Status.INACTIVE) || postulation.getStatus().equals(Status.BLOCKED)) {
@@ -291,7 +291,6 @@ public class CandidateService {
                                 }
                             }
                         }
-
                     }
                 }
             }
@@ -358,7 +357,7 @@ public class CandidateService {
 
         existingCandidate.setStatus(Status.INACTIVE);
 
-        List<PostulationEntity> postulationFind = postulationRepository.findByCandidateId(id);
+        List<PostulationEntity> postulationFind = postulationRepository.findAllByCandidateId(id);
         if (postulationFind != null) {
             for (PostulationEntity postulation : postulationFind) {
                 if (postulation.getStatus().equals(Status.ACTIVE)) {

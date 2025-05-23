@@ -1,9 +1,7 @@
 package com.candidateSearch.searching.repository;
 
 import com.candidateSearch.searching.entity.ProcessEntity;
-import com.candidateSearch.searching.entity.RoleEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import java.util.List;
@@ -11,6 +9,7 @@ import java.util.Optional;
 
 public interface IProcessRepository extends JpaRepository<ProcessEntity, Long> {
     Optional<ProcessEntity> findByPostulationId(Long id);
+    List<ProcessEntity> findAllByPostulationId(Long id);
 
     @Query("SELECT p FROM ProcessEntity p " +
             "JOIN p.postulation po " +

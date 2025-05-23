@@ -6,6 +6,8 @@ import com.candidateSearch.searching.dto.response.CandidateResumeResponseDto;
 import com.candidateSearch.searching.entity.CandidateEntity;
 import com.candidateSearch.searching.entity.JobProfileEntity;
 import com.candidateSearch.searching.entity.OriginEntity;
+import com.candidateSearch.searching.exception.type.CandidateBlockedException;
+import com.candidateSearch.searching.exception.type.CannotBeCreateException;
 import com.candidateSearch.searching.exception.type.EntityNoExistException;
 import com.candidateSearch.searching.exception.type.BadRequestException;
 import com.candidateSearch.searching.exception.type.InvalidFileTypeException;
@@ -22,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +37,6 @@ public class CandidateResumeService {
     @Transactional
     public void uploadResume(Long candidateId, MultipartFile file) {
         try {
-
             if (file.isEmpty()) {
                 throw new BadRequestException("The file is empty");
             }
@@ -76,12 +78,45 @@ public class CandidateResumeService {
     @Transactional
     public CandidateResponseDto saveCandidateWithResume(CandidateRequestDto candidateRequestDto, MultipartFile file) {
         try {
-            if (candidateRepository.existsByCardAndStatusNot(candidateRequestDto.getCard(), Status.INACTIVE)) {
-                throw new FieldAlreadyExistException("card");
+            if (candidateRequestDto.getStatus() == Status.INACTIVE ||
+                    candidateRequestDto.getStatus() == Status.BLOCKED) {
+                throw new CannotBeCreateException();
             }
 
-            if (candidateRepository.existsByPhoneAndStatusNot(candidateRequestDto.getPhone(), Status.INACTIVE)) {
-                throw new FieldAlreadyExistException("phone");
+            Optional<CandidateEntity> existingOptCard = candidateRepository.findByCardAndStatusNot(candidateRequestDto.getCard(), Status.INACTIVE);
+
+            if(existingOptCard.isPresent()){
+                CandidateEntity existing = existingOptCard.get();
+
+                if (existing.getStatus() == Status.BLOCKED) {
+                    throw new CandidateBlockedException();
+                } else {
+                    throw new FieldAlreadyExistException("card");
+                }
+            }
+
+            Optional<CandidateEntity> existingOptPhone = candidateRepository.findByPhoneAndStatusNot(candidateRequestDto.getPhone(), Status.INACTIVE);
+
+            if(existingOptPhone.isPresent()){
+                CandidateEntity existing = existingOptPhone.get();
+
+                if (existing.getStatus() == Status.BLOCKED) {
+                    throw new CandidateBlockedException();
+                } else {
+                    throw new FieldAlreadyExistException("phone");
+                }
+            }
+
+            Optional<CandidateEntity> existingOptEmail = candidateRepository.findByEmailAndStatusNot(candidateRequestDto.getEmail(), Status.INACTIVE);
+
+            if(existingOptEmail.isPresent()){
+                CandidateEntity existing = existingOptEmail.get();
+
+                if (existing.getStatus() == Status.BLOCKED) {
+                    throw new CandidateBlockedException();
+                } else {
+                    throw new FieldAlreadyExistException("email");
+                }
             }
 
             JobProfileEntity jobProfileEntity = jobProfileRepository.findById(candidateRequestDto.getJobProfile())
@@ -106,6 +141,7 @@ public class CandidateResumeService {
             candidateEntityNew.setSalaryAspiration(candidateRequestDto.getSalaryAspiration());
             candidateEntityNew.setLevel(candidateRequestDto.getLevel());
             candidateEntityNew.setDatePresentation(candidateRequestDto.getDatePresentation());
+            candidateEntityNew.setStatus(candidateRequestDto.getStatus());
             candidateEntityNew.setOrigin(originEntity);
             candidateEntityNew.setJobProfile(jobProfileEntity);
 

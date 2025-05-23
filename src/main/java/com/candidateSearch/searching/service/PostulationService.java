@@ -9,7 +9,6 @@ import com.candidateSearch.searching.entity.PostulationEntity;
 import com.candidateSearch.searching.entity.ProcessEntity;
 import com.candidateSearch.searching.entity.RoleEntity;
 import com.candidateSearch.searching.exception.type.BadRequestException;
-import com.candidateSearch.searching.exception.type.CandidateBlockedException;
 import com.candidateSearch.searching.exception.type.CannotApplyException;
 import com.candidateSearch.searching.exception.type.CannotBeCreateException;
 import com.candidateSearch.searching.exception.type.EntityNoExistException;
@@ -106,12 +105,9 @@ public class PostulationService {
 
     public PostulationResponseDto savePostulation(PostulationRequestDto postulationRequestDto) {
 
-        if(postulationRequestDto.getStatus().equals(Status.INACTIVE)){
+        if (postulationRequestDto.getStatus() == Status.INACTIVE ||
+                postulationRequestDto.getStatus() == Status.BLOCKED) {
             throw new CannotBeCreateException();
-        }
-
-        if(postulationRequestDto.getStatus().equals(Status.BLOCKED)){
-            throw new CandidateBlockedException();
         }
 
         RoleEntity roleEntity = roleRepository.findById(postulationRequestDto.getRoleId())

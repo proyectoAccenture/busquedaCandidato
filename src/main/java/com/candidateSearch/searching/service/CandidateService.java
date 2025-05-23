@@ -56,27 +56,29 @@ public class CandidateService {
 
         candidate.setStatus(Status.BLOCKED);
 
-        PostulationEntity postulationFind = postulationRepository.findByCandidateId(candidate.getId());
+        List<PostulationEntity> postulationFind = postulationRepository.findByCandidateId(candidate.getId());
         if (postulationFind != null) {
-            if (postulationFind.getStatus().equals(Status.ACTIVE)) {
-                postulationFind.setStatus(Status.BLOCKED);
-            }
-            postulationRepository.save(postulationFind);
-
-            Optional<ProcessEntity> processFind = processRepository.findByPostulationId(postulationFind.getId());
-            if (processFind.isPresent()) {
-                ProcessEntity process = processFind.get();
-                if (process.getStatus().equals(Status.ACTIVE)) {
-                    process.setStatus(Status.BLOCKED);
+            for (PostulationEntity postulation : postulationFind) {
+                if (postulation.getStatus().equals(Status.ACTIVE)) {
+                    postulation.setStatus(Status.INACTIVE);
+                    postulationRepository.save(postulation);
                 }
-                processRepository.save(process);
 
-                List<CandidateStateEntity> candidateStateFind = candidateStateRepository.findByProcessId(process.getId());
-                if (candidateStateFind != null) {
-                    for (CandidateStateEntity candidateState : candidateStateFind) {
-                        if (candidateState.getStatusHistory().equals(Status.ACTIVE)) {
-                            candidateState.setStatusHistory(Status.INACTIVE);
-                            candidateStateRepository.save(candidateState);
+                Optional<ProcessEntity> processFind = processRepository.findByPostulationId(postulation.getId());
+                if (processFind.isPresent()) {
+                    ProcessEntity process = processFind.get();
+                    if (process.getStatus().equals(Status.ACTIVE)) {
+                        process.setStatus(Status.INACTIVE);
+                        processRepository.save(process);
+                    }
+
+                    List<CandidateStateEntity> candidateStateFind = candidateStateRepository.findByProcessId(process.getId());
+                    if (candidateStateFind != null) {
+                        for (CandidateStateEntity candidateState : candidateStateFind) {
+                            if (candidateState.getStatusHistory().equals(Status.ACTIVE)) {
+                                candidateState.setStatusHistory(Status.INACTIVE);
+                                candidateStateRepository.save(candidateState);
+                            }
                         }
                     }
                 }
@@ -259,12 +261,46 @@ public class CandidateService {
 
     public Optional<CandidateResponseDto> updateCandidate(Long id, CandidateRequestDto candidateRequestDto) {
 
-        if(candidateRequestDto.getStatus().equals(Status.BLOCKED)){
-            throw new CannotBeCreateException();
-        }
-
         CandidateEntity existingEntity  = candidateRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
+
+        if(candidateRequestDto.getStatus() == Status.ACTIVE) {
+            List<PostulationEntity> postulationFind = postulationRepository.findByCandidateId(id);
+            if (postulationFind != null) {
+                for (PostulationEntity postulation : postulationFind) {
+                    if (postulation.getStatus().equals(Status.INACTIVE) || postulation.getStatus().equals(Status.BLOCKED)) {
+                        postulation.setStatus(Status.ACTIVE);
+                        postulationRepository.save(postulation);
+                    }
+
+                    List<ProcessEntity> processAllFind = processRepository.findAllByPostulationId(postulation.getId());
+                    if (processAllFind != null) {
+                        for (ProcessEntity process : processAllFind){
+                            if (process.getStatus().equals(Status.INACTIVE) || process.getStatus().equals(Status.BLOCKED)) {
+                                process.setStatus(Status.ACTIVE);
+                                processRepository.save(process);
+                            }
+
+                            List<CandidateStateEntity> candidateStateFind = candidateStateRepository.findByProcessId(process.getId());
+                            if (candidateStateFind != null) {
+                                for (CandidateStateEntity candidateState : candidateStateFind) {
+                                    if (candidateState.getStatusHistory().equals(Status.INACTIVE) || candidateState.getStatusHistory().equals(Status.BLOCKED)) {
+                                        candidateState.setStatusHistory(Status.ACTIVE);
+                                        candidateStateRepository.save(candidateState);
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+
+        if (candidateRequestDto.getStatus() == Status.INACTIVE ||
+                candidateRequestDto.getStatus() == Status.BLOCKED) {
+            throw new CannotBeCreateException();
+        }
 
         JobProfileEntity jobProfileEntity = jobProfileRepository.findById(candidateRequestDto.getJobProfile())
                 .orElseThrow(EntityNoExistException::new);
@@ -274,7 +310,6 @@ public class CandidateService {
 
 
         if (candidateRequestDto.getStatus() == Status.ACTIVE) {
-
             validateUniqueFieldExceptSelf("card", candidateRequestDto.getCard(), id,
                     val -> candidateRepository.findByCardAndStatusNot(val, Status.INACTIVE));
 
@@ -323,33 +358,34 @@ public class CandidateService {
 
         existingCandidate.setStatus(Status.INACTIVE);
 
-        PostulationEntity postulationFind = postulationRepository.findByCandidateId(id);
+        List<PostulationEntity> postulationFind = postulationRepository.findByCandidateId(id);
         if (postulationFind != null) {
-            if (postulationFind.getStatus().equals(Status.ACTIVE)) {
-                postulationFind.setStatus(Status.INACTIVE);
-                postulationRepository.save(postulationFind);
-            }
-
-            Optional<ProcessEntity> processFind = processRepository.findByPostulationId(postulationFind.getId());
-            if (processFind.isPresent()) {
-                ProcessEntity process = processFind.get();
-                if (process.getStatus().equals(Status.ACTIVE)) {
-                    process.setStatus(Status.INACTIVE);
-                    processRepository.save(process);
+            for (PostulationEntity postulation : postulationFind) {
+                if (postulation.getStatus().equals(Status.ACTIVE)) {
+                    postulation.setStatus(Status.INACTIVE);
+                    postulationRepository.save(postulation);
                 }
 
-                List<CandidateStateEntity> candidateStateFind = candidateStateRepository.findByProcessId(process.getId());
-                if (candidateStateFind != null) {
-                    for (CandidateStateEntity candidateState : candidateStateFind) {
-                        if (candidateState.getStatusHistory().equals(Status.ACTIVE)) {
-                            candidateState.setStatusHistory(Status.INACTIVE);
-                            candidateStateRepository.save(candidateState);
+                Optional<ProcessEntity> processFind = processRepository.findByPostulationId(postulation.getId());
+                if (processFind.isPresent()) {
+                    ProcessEntity process = processFind.get();
+                    if (process.getStatus().equals(Status.ACTIVE)) {
+                        process.setStatus(Status.INACTIVE);
+                        processRepository.save(process);
+                    }
+
+                    List<CandidateStateEntity> candidateStateFind = candidateStateRepository.findByProcessId(process.getId());
+                    if (candidateStateFind != null) {
+                        for (CandidateStateEntity candidateState : candidateStateFind) {
+                            if (candidateState.getStatusHistory().equals(Status.ACTIVE)) {
+                                candidateState.setStatusHistory(Status.INACTIVE);
+                                candidateStateRepository.save(candidateState);
+                            }
                         }
                     }
                 }
             }
         }
-
         candidateRepository.save(existingCandidate);
     }
 

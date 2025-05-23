@@ -5,7 +5,7 @@ public enum ExceptionResponse {
     PROCESS_NO_EXIST("There is not process with this id"),
     PROCESS_CLOSED("This process is closed"),
     STATE_NO_FOUND("State has not been found"),
-    CANNOT_BE_CREATED("Cannot be create, valid your status"),
+    CANNOT_BE_CREATED("Cannot be create or update, valid your status"),
     ENTITY_DOES_NOT_EXIST("There is not entity with that identification"),
     CANDIDATE_DOES_NOT_POSTULATION("The candidate must first have been nominated "),
     PROCESS_ALREADY_EXIST("It already exist a process of the candidate with that postulation"),

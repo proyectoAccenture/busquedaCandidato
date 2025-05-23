@@ -7,7 +7,6 @@ import com.candidateSearch.searching.entity.PostulationEntity;
 import com.candidateSearch.searching.entity.ProcessEntity;
 import com.candidateSearch.searching.entity.CandidateEntity;
 import com.candidateSearch.searching.entity.RoleEntity;
-import com.candidateSearch.searching.exception.type.CandidateBlockedException;
 import com.candidateSearch.searching.exception.type.CannotBeCreateException;
 import com.candidateSearch.searching.exception.type.EntityNoExistException;
 import com.candidateSearch.searching.exception.type.ItAlreadyProcessWithIdPostulation;
@@ -81,12 +80,26 @@ public class ProcessService {
         ProcessEntity processEntity = processRepository.findById(id)
                 .orElseThrow(CandidateNoExistException::new);
 
-        List<CandidateStateEntity> filteredStates = processEntity.getCandidateState().stream()
-                .filter(cs -> cs.getStatusHistory() == Status.ACTIVE)
-                .toList();
+        if(processEntity.getStatus().equals(Status.ACTIVE)){
+            List<CandidateStateEntity> filteredStates = processEntity.getCandidateState().stream()
+                    .filter(cs -> cs.getStatusHistory() == Status.ACTIVE)
+                    .toList();
+            processEntity.setCandidateState(filteredStates);
+        }
 
-        processEntity.setCandidateState(filteredStates);
+        if(processEntity.getStatus().equals(Status.INACTIVE)){
+            List<CandidateStateEntity> filteredStates = processEntity.getCandidateState().stream()
+                    .filter(cs -> cs.getStatusHistory() == Status.INACTIVE)
+                    .toList();
+            processEntity.setCandidateState(filteredStates);
+        }
 
+        if(processEntity.getStatus().equals(Status.BLOCKED)){
+            List<CandidateStateEntity> filteredStates = processEntity.getCandidateState().stream()
+                    .filter(cs -> cs.getStatusHistory() == Status.BLOCKED)
+                    .toList();
+            processEntity.setCandidateState(filteredStates);
+        }
         return mapperProcess.toDto(processEntity);
     }
 
@@ -129,13 +142,10 @@ public class ProcessService {
 
     public ProcessResponseDto saveProcess(ProcessRequestDto processRequestDto) {
 
-        if(processRequestDto.getStatus().equals(Status.INACTIVE)){
+        if(processRequestDto.getStatus().equals(Status.INACTIVE) || processRequestDto.getStatus().equals(Status.BLOCKED)){
             throw new CannotBeCreateException();
         }
 
-        if(processRequestDto.getStatus().equals(Status.BLOCKED)){
-            throw new CandidateBlockedException();
-        }
         PostulationEntity postulationEntity = postulationRepository.findById(processRequestDto.getPostulationId())
                 .orElseThrow(CandidateNoPostulationException::new);
 
@@ -167,7 +177,8 @@ public class ProcessService {
 
     public Optional<ProcessResponseDto> updateProcess(Long id, ProcessRequestDto processRequestDto) {
 
-        if(processRequestDto.getStatus().equals(Status.BLOCKED)){
+        if (processRequestDto.getStatus() == Status.INACTIVE ||
+                processRequestDto.getStatus() == Status.BLOCKED) {
             throw new CannotBeCreateException();
         }
 

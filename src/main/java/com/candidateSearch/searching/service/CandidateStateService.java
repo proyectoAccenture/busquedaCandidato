@@ -40,7 +40,7 @@ public class CandidateStateService {
 
     public CandidateStateResponseDto addStateToProcess(CandidateStateRequestDto candidateStateRequestDto){
 
-        if(candidateStateRequestDto.getStatusHistory().equals(Status.INACTIVE)){
+        if(candidateStateRequestDto.getStatusHistory().equals(Status.INACTIVE) || candidateStateRequestDto.getStatusHistory().equals(Status.BLOCKED)){
             throw new CannotBeCreateException();
         }
 
@@ -130,7 +130,7 @@ public class CandidateStateService {
 
     public Optional<CandidateStateResponseDto> updateCandidateState(Long id, CandidateStateRequestUpdateDto candidateStateRequestUpdateDto) {
 
-        if(candidateStateRequestUpdateDto.getStatusHistory().equals(Status.BLOCKED)){
+        if(candidateStateRequestUpdateDto.getStatusHistory().equals(Status.BLOCKED) || candidateStateRequestUpdateDto.getStatusHistory().equals(Status.INACTIVE)){
             throw new CannotBeCreateException();
         }
 

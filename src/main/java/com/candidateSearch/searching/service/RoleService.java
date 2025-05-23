@@ -42,7 +42,7 @@ public class RoleService {
 
     public RoleResponseDto saveRole(RoleRequestDto roleRequestDto) {
 
-        if(roleRequestDto.getStatus().equals(Status.INACTIVE)){
+        if(roleRequestDto.getStatus().equals(Status.INACTIVE) || roleRequestDto.getStatus().equals(Status.BLOCKED)){
             throw new CannotBeCreateException();
         }
 
@@ -83,7 +83,8 @@ public class RoleService {
 
     public Optional<RoleResponseDto> updateRole(Long id, RoleRequestDto roleRequestDto) {
 
-        if(roleRequestDto.getStatus().equals(Status.BLOCKED)){
+        if (roleRequestDto.getStatus() == Status.INACTIVE ||
+                roleRequestDto.getStatus() == Status.BLOCKED) {
             throw new CannotBeCreateException();
         }
 

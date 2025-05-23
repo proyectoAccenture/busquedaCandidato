@@ -1,6 +1,7 @@
 package com.candidateSearch.searching.repository;
 
 import com.candidateSearch.searching.entity.CandidateEntity;
+import com.candidateSearch.searching.entity.PostulationEntity;
 import com.candidateSearch.searching.entity.utility.Status;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +13,7 @@ import java.util.Optional;
 
 public interface ICandidateRepository extends JpaRepository<CandidateEntity, Long>{
     List<CandidateEntity> findByIdIn(List<Long> candidateIds);
+    CandidateEntity findByPostulation(PostulationEntity postulation);
     Optional<CandidateEntity> findByCardAndStatusNot(String card, Status status);
     Optional<CandidateEntity> findByPhoneAndStatusNot(String card, Status status);
     Optional<CandidateEntity> findByEmailAndStatusNot(String card, Status status);

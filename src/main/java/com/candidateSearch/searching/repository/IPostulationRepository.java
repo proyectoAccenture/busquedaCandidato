@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface IPostulationRepository extends JpaRepository<PostulationEntity, Long> {
-    List<PostulationEntity> findByCandidateId (Long candidateId);
+    List<PostulationEntity> findAllByCandidateId(Long candidateId);
     List<PostulationEntity> findByRole(RoleEntity role);
     Boolean existsByCandidateId(Long candidateId);
     boolean existsByCandidate_IdAndRole_IdAndStatus(Long candidateId, Long roleId, Status status);

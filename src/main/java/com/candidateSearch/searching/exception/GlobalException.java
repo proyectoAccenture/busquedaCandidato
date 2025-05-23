@@ -7,6 +7,7 @@ import com.candidateSearch.searching.exception.type.CandidateNoExistException;
 import com.candidateSearch.searching.exception.type.CandidateNoPostulationException;
 import com.candidateSearch.searching.exception.type.CannotApplyException;
 import com.candidateSearch.searching.exception.type.CannotBeCreateException;
+import com.candidateSearch.searching.exception.type.CannotBeUpdateException;
 import com.candidateSearch.searching.exception.type.EntityAlreadyExistsException;
 import com.candidateSearch.searching.exception.type.EntityAlreadyHasRelationException;
 import com.candidateSearch.searching.exception.type.EntityNoExistException;
@@ -163,6 +164,12 @@ public class GlobalException {
     public ResponseEntity<Map<String, String>> ItAlreadyExistException(ItAlreadyExistPostulationException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.IT_ALREADY_EXIST_POSTULATION.getMessage()));
+    }
+
+    @ExceptionHandler(CannotBeUpdateException.class)
+    public ResponseEntity<Map<String, String>> CannotBeUpdateException(CannotBeUpdateException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.CANNOT_BE_UPDATE.getMessage()));
     }
 
     @ExceptionHandler(ItAlreadyProcessWithIdPostulation.class)

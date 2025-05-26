@@ -20,6 +20,8 @@ public interface IMapperPostulation {
     @Mapping(source = "candidate.origin.name", target = "candidateResponseDto.originName")
     @Mapping(source = "candidate.jobProfile.id", target = "candidateResponseDto.jobProfileId")
     @Mapping(source = "candidate.jobProfile.name", target = "candidateResponseDto.jobProfileName")
+    @Mapping(source = "candidate.resumeFileName", target = "candidateResponseDto.resumeFileName")
+    @Mapping(target = "candidate.hasResume", expression = "java(candidateEntity.getResumePdf() != null)")
 
     @Mapping(source = "process.postulation.id", target = "processResponseDto.postulationId")
     @Mapping(source = "process.postulation.candidate.name", target = "processResponseDto.postulationName")

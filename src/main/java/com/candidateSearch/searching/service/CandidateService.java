@@ -36,6 +36,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import static com.candidateSearch.searching.service.operationsbusiness.OperationsBusiness.activateCascade;
+import static com.candidateSearch.searching.service.operationsbusiness.OperationsBusiness.validateNoOtherActivePostulation;
 
 @Service
 @RequiredArgsConstructor
@@ -174,7 +176,7 @@ public class CandidateService {
 
     public List<CandidateResponseDto> getAllCandidate(){
         return candidateRepository.findAll().stream()
-                .filter(candidateEntity ->  candidateEntity.getStatus() != Status.BLOCKED)
+                .filter(candidateEntity ->  candidateEntity.getStatus() == Status.ACTIVE)
                 .map(mapperCandidate::toDto)
                 .collect(Collectors.toList());
     }
@@ -259,81 +261,56 @@ public class CandidateService {
         return mapperCandidate.toDto(candidateEntitySave);
     }
 
-    public Optional<CandidateResponseDto> updateCandidate(Long id, CandidateRequestDto candidateRequestDto) {
+    public Optional<CandidateResponseDto> updateCandidate(Long id, CandidateRequestDto candidateDto) {
 
         CandidateEntity existingEntity  = candidateRepository.findById(id)
                 .orElseThrow(EntityNoExistException::new);
 
-        if(candidateRequestDto.getStatus() == Status.ACTIVE) {
-            List<PostulationEntity> postulationFind = postulationRepository.findAllByCandidateId(id);
-            if (postulationFind != null) {
-                for (PostulationEntity postulation : postulationFind) {
-                    if (postulation.getStatus().equals(Status.INACTIVE) || postulation.getStatus().equals(Status.BLOCKED)) {
-                        postulation.setStatus(Status.ACTIVE);
-                        postulationRepository.save(postulation);
-                    }
-
-                    List<ProcessEntity> processAllFind = processRepository.findAllByPostulationId(postulation.getId());
-                    if (processAllFind != null) {
-                        for (ProcessEntity process : processAllFind){
-                            if (process.getStatus().equals(Status.INACTIVE) || process.getStatus().equals(Status.BLOCKED)) {
-                                process.setStatus(Status.ACTIVE);
-                                processRepository.save(process);
-                            }
-
-                            List<CandidateStateEntity> candidateStateFind = candidateStateRepository.findByProcessId(process.getId());
-                            if (candidateStateFind != null) {
-                                for (CandidateStateEntity candidateState : candidateStateFind) {
-                                    if (candidateState.getStatusHistory().equals(Status.INACTIVE) || candidateState.getStatusHistory().equals(Status.BLOCKED)) {
-                                        candidateState.setStatusHistory(Status.ACTIVE);
-                                        candidateStateRepository.save(candidateState);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        if (candidateRequestDto.getStatus() == Status.INACTIVE ||
-                candidateRequestDto.getStatus() == Status.BLOCKED) {
+        if (candidateDto.getStatus() == Status.INACTIVE ||
+                candidateDto.getStatus() == Status.BLOCKED) {
             throw new CannotBeCreateException();
         }
 
-        JobProfileEntity jobProfileEntity = jobProfileRepository.findById(candidateRequestDto.getJobProfile())
-                .orElseThrow(EntityNoExistException::new);
-
-        OriginEntity originEntity = originRepository.findById(candidateRequestDto.getOrigin())
-                .orElseThrow(EntityNoExistException::new);
-
-
-        if (candidateRequestDto.getStatus() == Status.ACTIVE) {
-            validateUniqueFieldExceptSelf("card", candidateRequestDto.getCard(), id,
+        if (candidateDto.getStatus() == Status.ACTIVE) {
+            validateUniqueFieldExceptSelf("card", candidateDto.getCard(), id,
                     val -> candidateRepository.findByCardAndStatusNot(val, Status.INACTIVE));
 
-            validateUniqueFieldExceptSelf("phone", candidateRequestDto.getPhone(), id,
+            validateUniqueFieldExceptSelf("phone", candidateDto.getPhone(), id,
                     val -> candidateRepository.findByPhoneAndStatusNot(val, Status.INACTIVE));
 
-            validateUniqueFieldExceptSelf("email", candidateRequestDto.getEmail(), id,
+            validateUniqueFieldExceptSelf("email", candidateDto.getEmail(), id,
                     val -> candidateRepository.findByEmailAndStatusNot(val, Status.INACTIVE));
         }
 
-        existingEntity.setName(candidateRequestDto.getName());
-        existingEntity.setLastName(candidateRequestDto.getLastName());
-        existingEntity.setCard(candidateRequestDto.getCard());
-        existingEntity.setPhone(candidateRequestDto.getPhone());
-        existingEntity.setCity(candidateRequestDto.getCity());
-        existingEntity.setEmail(candidateRequestDto.getEmail());
-        existingEntity.setBirthdate(candidateRequestDto.getBirthdate());
-        existingEntity.setSource(candidateRequestDto.getSource());
-        existingEntity.setSkills(candidateRequestDto.getSkills());
-        existingEntity.setYearsExperience(candidateRequestDto.getYearsExperience());
-        existingEntity.setWorkExperience(candidateRequestDto.getWorkExperience());
-        existingEntity.setSeniority(candidateRequestDto.getSeniority());
-        existingEntity.setSalaryAspiration(candidateRequestDto.getSalaryAspiration());
-        existingEntity.setLevel(candidateRequestDto.getLevel());
-        existingEntity.setDatePresentation(candidateRequestDto.getDatePresentation());
+        if (candidateDto.getStatus() == Status.ACTIVE &&
+                (existingEntity.getStatus() == Status.INACTIVE || existingEntity.getStatus() == Status.BLOCKED)) {
+
+            validateNoOtherActivePostulation(existingEntity.getId());
+            activateCascade(existingEntity.getId());
+            existingEntity.setStatus(Status.ACTIVE);
+        }
+
+        JobProfileEntity jobProfileEntity = jobProfileRepository.findById(candidateDto.getJobProfile())
+                .orElseThrow(EntityNoExistException::new);
+
+        OriginEntity originEntity = originRepository.findById(candidateDto.getOrigin())
+                .orElseThrow(EntityNoExistException::new);
+
+        existingEntity.setName(candidateDto.getName());
+        existingEntity.setLastName(candidateDto.getLastName());
+        existingEntity.setCard(candidateDto.getCard());
+        existingEntity.setPhone(candidateDto.getPhone());
+        existingEntity.setCity(candidateDto.getCity());
+        existingEntity.setEmail(candidateDto.getEmail());
+        existingEntity.setBirthdate(candidateDto.getBirthdate());
+        existingEntity.setSource(candidateDto.getSource());
+        existingEntity.setSkills(candidateDto.getSkills());
+        existingEntity.setYearsExperience(candidateDto.getYearsExperience());
+        existingEntity.setWorkExperience(candidateDto.getWorkExperience());
+        existingEntity.setSeniority(candidateDto.getSeniority());
+        existingEntity.setSalaryAspiration(candidateDto.getSalaryAspiration());
+        existingEntity.setLevel(candidateDto.getLevel());
+        existingEntity.setDatePresentation(candidateDto.getDatePresentation());
         existingEntity.setStatus(Status.ACTIVE);
         existingEntity.setOrigin(originEntity);
         existingEntity.setJobProfile(jobProfileEntity);
@@ -343,7 +320,6 @@ public class CandidateService {
         jobProfileEntity.getCandidates().add(candidateSaved);
         jobProfileRepository.save(jobProfileEntity);
 
-        assert originEntity != null;
         originEntity.getCandidates().add(candidateSaved);
         originRepository.save(originEntity);
 

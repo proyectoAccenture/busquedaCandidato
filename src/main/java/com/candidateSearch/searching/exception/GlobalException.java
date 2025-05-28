@@ -3,16 +3,11 @@ package com.candidateSearch.searching.exception;
 import com.candidateSearch.searching.exception.response.ExceptionResponse;
 import com.candidateSearch.searching.exception.type.BadRequestException;
 import com.candidateSearch.searching.exception.type.BusinessException;
-import com.candidateSearch.searching.exception.type.CandidateBlockedException;
-import com.candidateSearch.searching.exception.type.CandidateNoExistException;
 import com.candidateSearch.searching.exception.type.CandidateNoPostulationException;
 import com.candidateSearch.searching.exception.type.CannotApplyException;
-import com.candidateSearch.searching.exception.type.CannotBeCreateException;
 import com.candidateSearch.searching.exception.type.CannotBeUpdateException;
 import com.candidateSearch.searching.exception.type.EntityAlreadyExistsException;
 import com.candidateSearch.searching.exception.type.EntityAlreadyHasRelationException;
-import com.candidateSearch.searching.exception.type.EntityNoExistException;
-import com.candidateSearch.searching.exception.type.FieldAlreadyExistException;
 import com.candidateSearch.searching.exception.type.InvalidFileTypeException;
 import com.candidateSearch.searching.exception.type.InvalidStateTransitionException;
 import com.candidateSearch.searching.exception.type.ItAlreadyExistPostulationException;
@@ -51,7 +46,6 @@ public class GlobalException {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
 
-
     @ExceptionHandler(InvalidFormatException.class)
     public ResponseEntity<String> handleInvalidFormatException(InvalidFormatException ex) {
         String fieldName = ex.getPath().get(0).getFieldName();
@@ -67,8 +61,8 @@ public class GlobalException {
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<Map<String, String>> handleBusinessException(BusinessException ex) {
         Map<String, String> error = new HashMap<>();
-        error.put("status", ex.getError().getStatusCode());
-        error.put("message", ex.getMessage());
+        error.put("Status", ex.getError().getStatusCode());
+        error.put("Message", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
@@ -96,23 +90,6 @@ public class GlobalException {
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.STATE_NO_FOUND.getMessage()));
     }
 
-    @ExceptionHandler(FieldAlreadyExistException.class)
-    public ResponseEntity<Map<String, String>> handleFieldAlreadyExistException(FieldAlreadyExistException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(Collections.singletonMap("message", ex.getMessage()));
-    }
-
-    @ExceptionHandler(CannotBeCreateException.class)
-    public ResponseEntity<Map<String, String>> CannotBeCreateCandidateProcessException(CannotBeCreateException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.CANNOT_BE_CREATED.getMessage()));
-    }
-
-    @ExceptionHandler(EntityNoExistException.class)
-    public ResponseEntity<Map<String, String>> EntityNoExistException(EntityNoExistException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ENTITY_DOES_NOT_EXIST.getMessage()));
-    }
 
     @ExceptionHandler(CandidateNoPostulationException.class)
     public ResponseEntity<Map<String, String>> CandidateNoPostulationException(CandidateNoPostulationException ex) {
@@ -124,12 +101,6 @@ public class GlobalException {
     public ResponseEntity<Map<String, String>> ProcessAlreadyExistException(ProcessAlreadyExistException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.PROCESS_ALREADY_EXIST.getMessage()));
-    }
-
-    @ExceptionHandler(CandidateNoExistException.class)
-    public ResponseEntity<Map<String, String>> CandidateNoExistException(CandidateNoExistException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.CANDIDATE_DOES_NOT_EXIST.getMessage()));
     }
 
     @ExceptionHandler(RoleIdNoExistException.class)
@@ -147,14 +118,14 @@ public class GlobalException {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Map<String, String>> handleResourceNotFound(ResourceNotFoundException ex) {
         Map<String, String> response = new HashMap<>();
-        response.put("error", ex.getMessage());
+        response.put("Error", ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<Map<String, String>> handleBadRequest(BadRequestException ex) {
         Map<String, String> response = new HashMap<>();
-        response.put("error", ex.getMessage());
+        response.put("Error", ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
@@ -191,7 +162,7 @@ public class GlobalException {
     @ExceptionHandler(InvalidFileTypeException.class)
     public ResponseEntity<Map<String, String>> handleInvalidFileType(InvalidFileTypeException ex) {
         Map<String, String> response = new HashMap<>();
-        response.put("error", ex.getMessage());
+        response.put("Error", ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
@@ -200,17 +171,11 @@ public class GlobalException {
             InvalidStateTransitionException ex, WebRequest request) {
 
         Map<String, Object> body = new HashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("message", ex.getMessage());
-        body.put("error", "Invalid state transition");
+        body.put("Timestamp", LocalDateTime.now());
+        body.put("Message", ex.getMessage());
+        body.put("Error", "Invalid state transition");
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(CandidateBlockedException.class)
-    public ResponseEntity<Map<String, String>> CandidateBlockedException(CandidateBlockedException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.CANDIDATE_BLOCKED.getMessage()));
     }
 }
 

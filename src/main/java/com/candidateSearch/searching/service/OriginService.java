@@ -5,7 +5,8 @@ import java.util.stream.Collectors;
 import com.candidateSearch.searching.entity.CandidateEntity;
 import com.candidateSearch.searching.entity.OriginEntity;
 import com.candidateSearch.searching.entity.RoleEntity;
-import com.candidateSearch.searching.exception.type.EntityNoExistException;
+import com.candidateSearch.searching.exception.globalmessage.GlobalMessage;
+import com.candidateSearch.searching.exception.type.BusinessException;
 import com.candidateSearch.searching.repository.ICandidateRepository;
 import com.candidateSearch.searching.repository.IRoleRepository;
 import jakarta.transaction.Transactional;
@@ -29,7 +30,7 @@ public class OriginService {
     public OriginResponseDto getOriginById(Long id){
         return originRepository.findById(id)
                 .map(mapperOrigin::toDto)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(() -> new BusinessException(GlobalMessage.ENTITY_DOES_NOT_EXIST));
     }
 
     public List<OriginResponseDto> getAllOrigin(){
@@ -51,7 +52,7 @@ public class OriginService {
 
     public OriginResponseDto updateOrigin(Long id, OriginRequestDto originRequestDto) {
         OriginEntity existingOrigin = originRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(() -> new BusinessException(GlobalMessage.ENTITY_DOES_NOT_EXIST));
 
         existingOrigin.setName(originRequestDto.getName());
         OriginEntity updatedOrigin = originRepository.save(existingOrigin);
@@ -62,7 +63,7 @@ public class OriginService {
     @Transactional
     public void deleteOrigin(Long id){
         OriginEntity existingOrigin = originRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(() -> new BusinessException(GlobalMessage.ENTITY_DOES_NOT_EXIST));
 
         List<CandidateEntity> candidates = existingOrigin.getCandidates();
         if (candidates != null && !candidates.isEmpty()) {

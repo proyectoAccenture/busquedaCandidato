@@ -1,5 +1,7 @@
 package com.candidateSearch.searching.service;
 
+import com.candidateSearch.searching.exception.globalmessage.GlobalMessage;
+import com.candidateSearch.searching.exception.type.BusinessException;
 import com.candidateSearch.searching.service.state.StateTransitionManager;
 import com.candidateSearch.searching.dto.request.CandidateStateRequestDto;
 import com.candidateSearch.searching.dto.request.CandidateStateRequestUpdateDto;
@@ -12,8 +14,6 @@ import com.candidateSearch.searching.entity.CandidateStateEntity;
 import com.candidateSearch.searching.entity.StateEntity;
 import com.candidateSearch.searching.exception.type.ProcessNoExistException;
 import com.candidateSearch.searching.exception.type.StateNoFoundException;
-import com.candidateSearch.searching.exception.type.EntityNoExistException;
-import com.candidateSearch.searching.exception.type.CannotBeCreateException;
 import com.candidateSearch.searching.mapper.IMapperCandidateState;
 import com.candidateSearch.searching.mapper.IMapperState;
 import com.candidateSearch.searching.repository.ICandidateStateRepository;
@@ -41,7 +41,7 @@ public class CandidateStateService {
     public CandidateStateResponseDto addStateToProcess(CandidateStateRequestDto candidateStateRequestDto){
 
         if(candidateStateRequestDto.getStatusHistory().equals(Status.INACTIVE) || candidateStateRequestDto.getStatusHistory().equals(Status.BLOCKED)){
-            throw new CannotBeCreateException();
+            throw new BusinessException(GlobalMessage.CANNOT_BE_CREATED);
         }
 
         ProcessEntity processEntity = processRepository.findById(candidateStateRequestDto.getProcessId())
@@ -54,7 +54,7 @@ public class CandidateStateService {
 
             if (!Boolean.TRUE.equals(lastCandidateState.getStatus()) ||
                     !Status.ACTIVE.equals(lastCandidateState.getStatusHistory())) {
-                throw new CannotBeCreateException();
+                throw new BusinessException(GlobalMessage.CANNOT_BE_CREATED);
             }
             Long fromStateId = lastCandidateState.getState().getId();
 
@@ -131,11 +131,11 @@ public class CandidateStateService {
     public Optional<CandidateStateResponseDto> updateCandidateState(Long id, CandidateStateRequestUpdateDto candidateStateRequestUpdateDto) {
 
         if(candidateStateRequestUpdateDto.getStatusHistory().equals(Status.BLOCKED) || candidateStateRequestUpdateDto.getStatusHistory().equals(Status.INACTIVE)){
-            throw new CannotBeCreateException();
+            throw new BusinessException(GlobalMessage.CANNOT_BE_CREATED);
         }
 
         CandidateStateEntity existingEntity = candidateStateRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(() -> new BusinessException(GlobalMessage.ENTITY_DOES_NOT_EXIST));
 
         Long currentStateId = existingEntity.getState().getId();
         Long newStateId = candidateStateRequestUpdateDto.getStateId();
@@ -145,7 +145,7 @@ public class CandidateStateService {
         }
 
         if (existingEntity.getProcess().getStatus() != Status.ACTIVE) {
-            throw new CannotBeCreateException();
+            throw new BusinessException(GlobalMessage.CANNOT_BE_CREATED);
         }
 
         StateEntity newState = stateRepository.findById(candidateStateRequestUpdateDto.getStateId())
@@ -165,7 +165,7 @@ public class CandidateStateService {
     @Transactional
     public void deleteCandidateState(Long id){
         CandidateStateEntity existingCandidateState = candidateStateRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(() -> new BusinessException(GlobalMessage.ENTITY_DOES_NOT_EXIST));
 
         existingCandidateState.setStatusHistory(Status.INACTIVE);
         candidateStateRepository.save(existingCandidateState);

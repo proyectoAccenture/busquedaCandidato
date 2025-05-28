@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ICandidateRepository extends JpaRepository<CandidateEntity, Long>{
-    List<CandidateEntity> findByIdIn(List<Long> candidateIds);
     CandidateEntity findByPostulation(PostulationEntity postulation);
     Optional<CandidateEntity> findByCardAndStatusNot(String card, Status status);
     Optional<CandidateEntity> findByPhoneAndStatusNot(String card, Status status);

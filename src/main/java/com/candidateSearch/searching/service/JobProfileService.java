@@ -5,8 +5,9 @@ import com.candidateSearch.searching.dto.response.JobProfileResponseDto;
 import com.candidateSearch.searching.entity.CandidateEntity;
 import com.candidateSearch.searching.entity.JobProfileEntity;
 import com.candidateSearch.searching.entity.RoleEntity;
+import com.candidateSearch.searching.exception.globalmessage.GlobalMessage;
+import com.candidateSearch.searching.exception.type.BusinessException;
 import com.candidateSearch.searching.exception.type.EntityAlreadyExistsException;
-import com.candidateSearch.searching.exception.type.EntityNoExistException;
 import com.candidateSearch.searching.mapper.IMapperJobProfile;
 import com.candidateSearch.searching.repository.ICandidateRepository;
 import com.candidateSearch.searching.repository.IJobProfileRepository;
@@ -28,7 +29,7 @@ public class JobProfileService {
     public JobProfileResponseDto getJobProfile(Long id){
         return jobProfileRepository.findById(id)
                 .map(mapperJobProfile::toDto)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(() -> new BusinessException(GlobalMessage.ENTITY_DOES_NOT_EXIST));
     }
 
     public List<JobProfileResponseDto> getAllJobProfile(){
@@ -50,7 +51,7 @@ public class JobProfileService {
 
     public JobProfileResponseDto updateJobProfile(Long id, JobProfileRequestDto jobProfileRequestDto) {
         JobProfileEntity existingJob = jobProfileRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(() -> new BusinessException(GlobalMessage.ENTITY_DOES_NOT_EXIST));
 
         existingJob.setName(jobProfileRequestDto.getName());
         JobProfileEntity updatedJob = jobProfileRepository.save(existingJob);
@@ -61,7 +62,7 @@ public class JobProfileService {
     @Transactional
     public void deleteJobProfile(Long id){
         JobProfileEntity existingJob = jobProfileRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(() -> new BusinessException(GlobalMessage.ENTITY_DOES_NOT_EXIST));
 
         List<CandidateEntity> candidates = existingJob.getCandidates();
         if (candidates != null && !candidates.isEmpty()) {

@@ -6,25 +6,23 @@ import com.candidateSearch.searching.dto.response.CandidateResumeResponseDto;
 import com.candidateSearch.searching.entity.CandidateEntity;
 import com.candidateSearch.searching.entity.JobProfileEntity;
 import com.candidateSearch.searching.entity.OriginEntity;
-import com.candidateSearch.searching.exception.type.CandidateBlockedException;
-import com.candidateSearch.searching.exception.type.CannotBeCreateException;
-import com.candidateSearch.searching.exception.type.EntityNoExistException;
+import com.candidateSearch.searching.exception.globalmessage.GlobalMessage;
+import com.candidateSearch.searching.exception.type.BusinessException;
 import com.candidateSearch.searching.exception.type.BadRequestException;
 import com.candidateSearch.searching.exception.type.InvalidFileTypeException;
 import com.candidateSearch.searching.exception.type.ResourceNotFoundException;
-import com.candidateSearch.searching.exception.type.FieldAlreadyExistException;
 import com.candidateSearch.searching.mapper.IMapperCandidate;
 import com.candidateSearch.searching.repository.ICandidateRepository;
 import com.candidateSearch.searching.repository.IJobProfileRepository;
 import com.candidateSearch.searching.repository.IOriginRepository;
 import com.candidateSearch.searching.entity.utility.Status;
+import com.candidateSearch.searching.service.operationsbusiness.candidate.OperationCandidate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +31,7 @@ public class CandidateResumeService {
     private final IJobProfileRepository jobProfileRepository;
     private final IOriginRepository originRepository;
     private final IMapperCandidate mapperCandidate;
+    private final OperationCandidate operationCandidate;
 
     @Transactional
     public void uploadResume(Long candidateId, MultipartFile file) {
@@ -80,82 +79,30 @@ public class CandidateResumeService {
         try {
             if (candidateRequestDto.getStatus() == Status.INACTIVE ||
                     candidateRequestDto.getStatus() == Status.BLOCKED) {
-                throw new CannotBeCreateException();
+                throw new BusinessException(GlobalMessage.CANNOT_BE_CREATED);
             }
 
-            Optional<CandidateEntity> existingOptCard = candidateRepository.findByCardAndStatusNot(candidateRequestDto.getCard(), Status.INACTIVE);
-
-            if(existingOptCard.isPresent()){
-                CandidateEntity existing = existingOptCard.get();
-
-                if (existing.getStatus() == Status.BLOCKED) {
-                    throw new CandidateBlockedException();
-                } else {
-                    throw new FieldAlreadyExistException("card");
-                }
-            }
-
-            Optional<CandidateEntity> existingOptPhone = candidateRepository.findByPhoneAndStatusNot(candidateRequestDto.getPhone(), Status.INACTIVE);
-
-            if(existingOptPhone.isPresent()){
-                CandidateEntity existing = existingOptPhone.get();
-
-                if (existing.getStatus() == Status.BLOCKED) {
-                    throw new CandidateBlockedException();
-                } else {
-                    throw new FieldAlreadyExistException("phone");
-                }
-            }
-
-            Optional<CandidateEntity> existingOptEmail = candidateRepository.findByEmailAndStatusNot(candidateRequestDto.getEmail(), Status.INACTIVE);
-
-            if(existingOptEmail.isPresent()){
-                CandidateEntity existing = existingOptEmail.get();
-
-                if (existing.getStatus() == Status.BLOCKED) {
-                    throw new CandidateBlockedException();
-                } else {
-                    throw new FieldAlreadyExistException("email");
-                }
-            }
+            operationCandidate.validateUniqueFields(candidateRequestDto);
 
             JobProfileEntity jobProfileEntity = jobProfileRepository.findById(candidateRequestDto.getJobProfile())
-                    .orElseThrow(EntityNoExistException::new);
+                    .orElseThrow(() -> new BusinessException(GlobalMessage.ENTITY_DOES_NOT_EXIST));
 
             OriginEntity originEntity = originRepository.findById(candidateRequestDto.getOrigin())
-                    .orElseThrow(EntityNoExistException::new);
+                    .orElseThrow(() -> new BusinessException(GlobalMessage.ENTITY_DOES_NOT_EXIST));
 
-            CandidateEntity candidateEntityNew = new CandidateEntity();
-            candidateEntityNew.setName(candidateRequestDto.getName());
-            candidateEntityNew.setLastName(candidateRequestDto.getLastName());
-            candidateEntityNew.setCard(candidateRequestDto.getCard());
-            candidateEntityNew.setPhone(candidateRequestDto.getPhone());
-            candidateEntityNew.setCity(candidateRequestDto.getCity());
-            candidateEntityNew.setEmail(candidateRequestDto.getEmail());
-            candidateEntityNew.setBirthdate(candidateRequestDto.getBirthdate());
-            candidateEntityNew.setSource(candidateRequestDto.getSource());
-            candidateEntityNew.setSkills(candidateRequestDto.getSkills());
-            candidateEntityNew.setYearsExperience(candidateRequestDto.getYearsExperience());
-            candidateEntityNew.setWorkExperience(candidateRequestDto.getWorkExperience());
-            candidateEntityNew.setSeniority(candidateRequestDto.getSeniority());
-            candidateEntityNew.setSalaryAspiration(candidateRequestDto.getSalaryAspiration());
-            candidateEntityNew.setLevel(candidateRequestDto.getLevel());
-            candidateEntityNew.setDatePresentation(candidateRequestDto.getDatePresentation());
-            candidateEntityNew.setStatus(candidateRequestDto.getStatus());
-            candidateEntityNew.setOrigin(originEntity);
-            candidateEntityNew.setJobProfile(jobProfileEntity);
+            CandidateEntity toSave = operationCandidate.buildCandidate(candidateRequestDto, jobProfileEntity, originEntity);
 
             if (file != null && !file.isEmpty()) {
                 if (!Objects.equals(file.getContentType(), "application/pdf")) {
                     throw new InvalidFileTypeException("The file must be a PDF");
                 }
 
-                candidateEntityNew.setResumePdf(file.getBytes());
-                candidateEntityNew.setResumeFileName(file.getOriginalFilename());
-                candidateEntityNew.setResumeContentType(file.getContentType());
+                toSave.setResumePdf(file.getBytes());
+                toSave.setResumeFileName(file.getOriginalFilename());
+                toSave.setResumeContentType(file.getContentType());
             }
-            CandidateEntity candidateEntitySave = candidateRepository.save(candidateEntityNew);
-            CandidateResponseDto responseDto = mapperCandidate.toDto(candidateEntitySave);
+            CandidateEntity saved = candidateRepository.save(toSave);
+            CandidateResponseDto responseDto = mapperCandidate.toDto(saved);
 
             if (file != null && !file.isEmpty()) {
                 responseDto.setHasResume(true);

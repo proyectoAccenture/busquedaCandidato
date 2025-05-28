@@ -7,14 +7,13 @@ import com.candidateSearch.searching.entity.PostulationEntity;
 import com.candidateSearch.searching.entity.ProcessEntity;
 import com.candidateSearch.searching.entity.CandidateEntity;
 import com.candidateSearch.searching.entity.RoleEntity;
-import com.candidateSearch.searching.exception.type.CannotBeCreateException;
-import com.candidateSearch.searching.exception.type.EntityNoExistException;
+import com.candidateSearch.searching.exception.globalmessage.GlobalMessage;
+import com.candidateSearch.searching.exception.type.BusinessException;
 import com.candidateSearch.searching.exception.type.ItAlreadyProcessWithIdPostulation;
 import com.candidateSearch.searching.exception.type.PostulationIsOffException;
 import com.candidateSearch.searching.exception.type.ResourceNotFoundException;
 import com.candidateSearch.searching.exception.type.BadRequestException;
 import com.candidateSearch.searching.exception.type.RoleIdNoExistException;
-import com.candidateSearch.searching.exception.type.CandidateNoExistException;
 import com.candidateSearch.searching.exception.type.CandidateNoPostulationException;
 import com.candidateSearch.searching.mapper.IMapperProcess;
 import com.candidateSearch.searching.repository.ICandidateStateRepository;
@@ -65,20 +64,20 @@ public class ProcessService {
         Boolean postulationEntity = postulationRepository.existsByCandidateId(id);
 
         if(!postulationEntity){
-            throw new EntityNoExistException();
+            throw new BusinessException(GlobalMessage.ENTITY_DOES_NOT_EXIST);
         }
 
         CandidateEntity candidateEntity = candidateRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(() -> new BusinessException(GlobalMessage.ENTITY_DOES_NOT_EXIST));
 
         return processRepository.findById(candidateEntity.getId())
                 .map(mapperProcess::toDto)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(() -> new BusinessException(GlobalMessage.ENTITY_DOES_NOT_EXIST));
     }
 
     public ProcessResponseDto getByIdProcess(Long id){
         ProcessEntity processEntity = processRepository.findById(id)
-                .orElseThrow(CandidateNoExistException::new);
+                .orElseThrow(() -> new BusinessException(GlobalMessage.CANDIDATE_DOES_NOT_EXIST));
 
         if(processEntity.getStatus().equals(Status.ACTIVE)){
             List<CandidateStateEntity> filteredStates = processEntity.getCandidateState().stream()
@@ -143,7 +142,7 @@ public class ProcessService {
     public ProcessResponseDto saveProcess(ProcessRequestDto processRequestDto) {
 
         if(processRequestDto.getStatus().equals(Status.INACTIVE) || processRequestDto.getStatus().equals(Status.BLOCKED)){
-            throw new CannotBeCreateException();
+            throw new BusinessException(GlobalMessage.CANNOT_BE_CREATED);
         }
 
         PostulationEntity postulationEntity = postulationRepository.findById(processRequestDto.getPostulationId())
@@ -179,11 +178,11 @@ public class ProcessService {
 
         if (processRequestDto.getStatus() == Status.INACTIVE ||
                 processRequestDto.getStatus() == Status.BLOCKED) {
-            throw new CannotBeCreateException();
+            throw new BusinessException(GlobalMessage.CANNOT_BE_CREATED);
         }
 
         ProcessEntity existingEntity  = processRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(() -> new BusinessException(GlobalMessage.ENTITY_DOES_NOT_EXIST));
 
         PostulationEntity postulation = postulationRepository.findById(processRequestDto.getPostulationId())
                 .orElseThrow(CandidateNoPostulationException::new);
@@ -212,7 +211,7 @@ public class ProcessService {
     @Transactional
     public void deleteProcess(Long id){
         ProcessEntity existingProcess = processRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(() -> new BusinessException(GlobalMessage.ENTITY_DOES_NOT_EXIST));
 
         existingProcess.setStatus(Status.INACTIVE);
 

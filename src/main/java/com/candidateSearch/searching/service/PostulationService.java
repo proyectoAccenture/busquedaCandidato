@@ -8,11 +8,11 @@ import com.candidateSearch.searching.entity.CandidateStateEntity;
 import com.candidateSearch.searching.entity.PostulationEntity;
 import com.candidateSearch.searching.entity.ProcessEntity;
 import com.candidateSearch.searching.entity.RoleEntity;
+import com.candidateSearch.searching.exception.globalmessage.GlobalMessage;
 import com.candidateSearch.searching.exception.type.BadRequestException;
+import com.candidateSearch.searching.exception.type.BusinessException;
 import com.candidateSearch.searching.exception.type.CannotApplyException;
-import com.candidateSearch.searching.exception.type.CannotBeCreateException;
 import com.candidateSearch.searching.exception.type.CannotBeUpdateException;
-import com.candidateSearch.searching.exception.type.EntityNoExistException;
 import com.candidateSearch.searching.exception.type.ItAlreadyExistPostulationException;
 import com.candidateSearch.searching.exception.type.ResourceNotFoundException;
 import com.candidateSearch.searching.mapper.IMapperPostulation;
@@ -41,14 +41,14 @@ public class PostulationService {
 
     public PostulationFullResponseDto getPostulationFullById(Long id){
         PostulationEntity postulationEntity = postulationRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(() -> new BusinessException(GlobalMessage.ENTITY_DOES_NOT_EXIST));
 
         return mapperPostulation.toDtoFull(postulationEntity);
     }
 
     public PostulationResponseDto getPostulationById(Long id){
         PostulationEntity postulationEntity = postulationRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(() -> new BusinessException(GlobalMessage.ENTITY_DOES_NOT_EXIST));
 
         return mapperPostulation.toDto(postulationEntity);
     }
@@ -74,6 +74,7 @@ public class PostulationService {
         validationListPostulation(postulations);
 
         return postulations.stream()
+                .filter(candidateEntity ->  candidateEntity.getStatus() != Status.INACTIVE)
                 .map(mapperPostulation::toDto)
                 .collect(Collectors.toList());
     }
@@ -91,35 +92,35 @@ public class PostulationService {
         Status statusQuery = null;
         if ("ACTIVE".equalsIgnoreCase(query) || "1".equals(query)) {
             statusQuery = Status.ACTIVE;
-        } else if ("INACTIVE".equalsIgnoreCase(query) || "0".equals(query)) {
-            statusQuery = Status.INACTIVE;
+        } else if ("BLOCKED".equalsIgnoreCase(query) || "0".equals(query)) {
+            statusQuery = Status.BLOCKED;
         }
 
         List<PostulationEntity> postulations = postulationRepository.searchByCandidateNameLastNameAndRole(word1, word2, word3, word4, query, statusQuery);
         validationListPostulation(postulations);
 
         return postulations.stream()
+                .filter(postulationEntity ->  postulationEntity.getStatus() != Status.INACTIVE)
                 .map(mapperPostulation::toDto)
                 .collect(Collectors.toList());
-
     }
 
     public PostulationResponseDto savePostulation(PostulationRequestDto postulationRequestDto) {
 
         if (postulationRequestDto.getStatus() == Status.INACTIVE ||
                 postulationRequestDto.getStatus() == Status.BLOCKED) {
-            throw new CannotBeCreateException();
+            throw new BusinessException(GlobalMessage.CANNOT_BE_CREATED);
         }
 
         RoleEntity roleEntity = roleRepository.findById(postulationRequestDto.getRoleId())
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(() -> new BusinessException(GlobalMessage.ENTITY_DOES_NOT_EXIST));
 
         if(roleEntity.getStatus().equals(Status.INACTIVE)){
             throw new CannotApplyException();
         }
 
         CandidateEntity candidateEntity = candidateRepository.findById(postulationRequestDto.getCandidateId())
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(() -> new BusinessException(GlobalMessage.ENTITY_DOES_NOT_EXIST));
 
         if(candidateEntity.getStatus().equals(Status.BLOCKED) || candidateEntity.getStatus().equals(Status.INACTIVE)){
             throw new CannotApplyException();
@@ -152,10 +153,10 @@ public class PostulationService {
     public Optional<PostulationResponseDto> updatePostulation(Long id, PostulationRequestDto postulationRequestDto) {
 
         PostulationEntity existingEntity  = postulationRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(() -> new BusinessException(GlobalMessage.ENTITY_DOES_NOT_EXIST));
 
         if (postulationRequestDto.getStatus().equals(Status.BLOCKED)) {
-            throw new CannotBeCreateException();
+            throw new BusinessException(GlobalMessage.CANNOT_BE_CREATED);
         }
 
         if (postulationRequestDto.getStatus() == Status.ACTIVE) {
@@ -197,10 +198,10 @@ public class PostulationService {
         }
 
         RoleEntity roleEntity = roleRepository.findById(postulationRequestDto.getRoleId())
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(() -> new BusinessException(GlobalMessage.ENTITY_DOES_NOT_EXIST));
 
         CandidateEntity candidateEntity = candidateRepository.findById(postulationRequestDto.getCandidateId())
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(() -> new BusinessException(GlobalMessage.ENTITY_DOES_NOT_EXIST));
 
         boolean alreadyApplied = postulationRepository
                 .existsByCandidate_IdAndRole_IdAndStatus(candidateEntity.getId(), roleEntity.getId(), Status.ACTIVE);
@@ -232,7 +233,7 @@ public class PostulationService {
     @Transactional
     public void deletePostulation(Long id) {
         PostulationEntity postulation = postulationRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(() -> new BusinessException(GlobalMessage.ENTITY_DOES_NOT_EXIST));
 
         postulation.setStatus(Status.INACTIVE);
 
@@ -264,6 +265,7 @@ public class PostulationService {
             throw new ResourceNotFoundException("No postulations found for the given search criteria.");
         }
     }
+
     private void validateStringQuery(String query) {
         if (query == null || query.trim().isEmpty()) {
             throw new BadRequestException("The search query cannot be empty.");

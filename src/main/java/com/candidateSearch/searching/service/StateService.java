@@ -4,8 +4,9 @@ import com.candidateSearch.searching.dto.request.StateRequestDto;
 import com.candidateSearch.searching.dto.response.StateResponseDto;
 import com.candidateSearch.searching.entity.CandidateStateEntity;
 import com.candidateSearch.searching.entity.StateEntity;
+import com.candidateSearch.searching.exception.globalmessage.GlobalMessage;
+import com.candidateSearch.searching.exception.type.BusinessException;
 import com.candidateSearch.searching.exception.type.EntityAlreadyExistsException;
-import com.candidateSearch.searching.exception.type.EntityNoExistException;
 import com.candidateSearch.searching.mapper.IMapperState;
 import com.candidateSearch.searching.repository.ICandidateStateRepository;
 import com.candidateSearch.searching.repository.IStateRepository;
@@ -26,7 +27,7 @@ public class StateService {
     public StateResponseDto getState(Long id){
         return stateRepository.findById(id)
                 .map(mapperState::toDto)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(() -> new BusinessException(GlobalMessage.ENTITY_DOES_NOT_EXIST));
     }
 
     public List<StateResponseDto> getAllState(){
@@ -48,7 +49,7 @@ public class StateService {
 
     public StateResponseDto updateState(Long id, StateRequestDto stateRequestDto) {
         StateEntity existingState = stateRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(() -> new BusinessException(GlobalMessage.ENTITY_DOES_NOT_EXIST));
 
         existingState.setName(stateRequestDto.getName());
         StateEntity updatedState = stateRepository.save(existingState);
@@ -59,7 +60,7 @@ public class StateService {
     @Transactional
     public void deleteState(Long id){
         StateEntity existingState = stateRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(() -> new BusinessException(GlobalMessage.ENTITY_DOES_NOT_EXIST));
 
         List<CandidateStateEntity> candidateStateExist = candidateStateRepository.findAllByStateId(id);
         if(candidateStateExist != null && !candidateStateExist.isEmpty()){

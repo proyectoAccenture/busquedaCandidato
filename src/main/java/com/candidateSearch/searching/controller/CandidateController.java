@@ -6,6 +6,7 @@ import com.candidateSearch.searching.dto.response.CandidateWithPaginationRespons
 import com.candidateSearch.searching.dto.response.CandidateResponseDto;
 import com.candidateSearch.searching.dto.response.CandidateResumeResponseDto;
 import com.candidateSearch.searching.dto.response.PostulationResponseDto;
+import com.candidateSearch.searching.entity.utility.Status;
 import com.candidateSearch.searching.service.CandidateResumeService;
 import com.candidateSearch.searching.service.CandidateService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -50,9 +51,9 @@ public class CandidateController {
             @ApiResponse(responseCode = "201", description = "Vetoed candidate", content = @Content),
             @ApiResponse(responseCode = "409", description = "Candidate is already vetoed", content = @Content)
     })
-    @PatchMapping("/{card}/")
-    public ResponseEntity<CandidateResponseDto> vetoCandidate(@PathVariable String card) {
-        CandidateResponseDto response = candidateService.vetaCandidate(card);
+    @PatchMapping("/")
+    public ResponseEntity<CandidateResponseDto> vetoCandidate(@RequestParam("card") @NotBlank String card, @RequestParam("status") @NotBlank String status) {
+        CandidateResponseDto response = candidateService.vetaCandidate(card, status);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -67,19 +68,6 @@ public class CandidateController {
     public ResponseEntity<List<CandidateResponseDto>> getAllCandidateVetoed(){
         List<CandidateResponseDto> candidates = candidateService.getAllCandidateVeto();
         return candidates.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(candidates);
-    }
-
-    @Operation(summary = "Get a candidate by its role id")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Candidate found",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = CandidateResponseDto.class))),
-            @ApiResponse(responseCode = "404", description = "Candidate not found", content = @Content)
-    })
-    @GetMapping("/role/{nameRole}")
-    public ResponseEntity<List<CandidateResponseDto>> getCandidateByRole(@PathVariable String nameRole){
-        List<CandidateResponseDto> candidates = candidateService.getCandidateByRole(nameRole);
-        return ResponseEntity.ok(candidates);
     }
 
     @Operation(summary = "Get a candidate by its number")
@@ -119,9 +107,9 @@ public class CandidateController {
             @ApiResponse(responseCode = "400", description = "Invalid query", content = @Content),
             @ApiResponse(responseCode = "404", description = "No candidates found", content = @Content)
     })
-    @GetMapping("/search-fullName/{fullName}")
-    public ResponseEntity<CandidateWithPaginationResponseDto> getSearchCandidatesFullName(@PathVariable @NotBlank String fullName) {
-        CandidateWithPaginationResponseDto candidateWithPaginationResponseDto = candidateService.getSearchCandidatesFullName(fullName);
+    @GetMapping("/search-fullName/")
+    public ResponseEntity<CandidateWithPaginationResponseDto> getSearchCandidatesFullName(@RequestParam("fullName") @NotBlank String fullName, @RequestParam("status") @NotBlank String status) {
+        CandidateWithPaginationResponseDto candidateWithPaginationResponseDto = candidateService.getSearchCandidatesFullName(fullName, status);
         if (candidateWithPaginationResponseDto.toString().isEmpty()){
             return ResponseEntity.notFound().build();
         }

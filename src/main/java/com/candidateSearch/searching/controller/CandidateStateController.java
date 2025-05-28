@@ -34,7 +34,7 @@ public class CandidateStateController {
 
     private final CandidateStateService candidateStateService;
 
-    @Operation(summary = "Add a new state to process ")
+    @Operation(summary = "Add a new state to process")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "State created", content = @Content),
             @ApiResponse(responseCode = "409", description = "State already exists", content = @Content)

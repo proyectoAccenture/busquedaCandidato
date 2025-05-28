@@ -119,9 +119,9 @@ public class CandidateController {
             @ApiResponse(responseCode = "400", description = "Invalid query", content = @Content),
             @ApiResponse(responseCode = "404", description = "No candidates found", content = @Content)
     })
-    @GetMapping("/search-fullName/{fullName}")
-    public ResponseEntity<CandidateWithPaginationResponseDto> getSearchCandidatesFullName(@PathVariable @NotBlank String fullName) {
-        CandidateWithPaginationResponseDto candidateWithPaginationResponseDto = candidateService.getSearchCandidatesFullName(fullName);
+    @GetMapping("/search-fullName/")
+    public ResponseEntity<CandidateWithPaginationResponseDto> getSearchCandidatesFullName(@RequestParam("fullName") @NotBlank String fullName, @RequestParam("status") @NotBlank String status) {
+        CandidateWithPaginationResponseDto candidateWithPaginationResponseDto = candidateService.getSearchCandidatesFullName(fullName, status);
         if (candidateWithPaginationResponseDto.toString().isEmpty()){
             return ResponseEntity.notFound().build();
         }

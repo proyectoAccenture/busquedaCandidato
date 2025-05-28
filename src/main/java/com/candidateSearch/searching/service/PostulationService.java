@@ -264,6 +264,7 @@ public class PostulationService {
             throw new ResourceNotFoundException("No postulations found for the given search criteria.");
         }
     }
+
     private void validateStringQuery(String query) {
         if (query == null || query.trim().isEmpty()) {
             throw new BadRequestException("The search query cannot be empty.");

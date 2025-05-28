@@ -2,6 +2,7 @@ package com.candidateSearch.searching.exception;
 
 import com.candidateSearch.searching.exception.response.ExceptionResponse;
 import com.candidateSearch.searching.exception.type.BadRequestException;
+import com.candidateSearch.searching.exception.type.BusinessException;
 import com.candidateSearch.searching.exception.type.CandidateBlockedException;
 import com.candidateSearch.searching.exception.type.CandidateNoExistException;
 import com.candidateSearch.searching.exception.type.CandidateNoPostulationException;
@@ -50,6 +51,7 @@ public class GlobalException {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
 
+
     @ExceptionHandler(InvalidFormatException.class)
     public ResponseEntity<String> handleInvalidFormatException(InvalidFormatException ex) {
         String fieldName = ex.getPath().get(0).getFieldName();
@@ -60,6 +62,14 @@ public class GlobalException {
     @ExceptionHandler(DateTimeParseException.class)
     public ResponseEntity<String> handleDateTimeParseException(DateTimeParseException ex) {
         return ResponseEntity.badRequest().body("Invalid date format. Please use 'yyyy-MM-dd'");
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<Map<String, String>> handleBusinessException(BusinessException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("status", ex.getError().getStatusCode());
+        error.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(EntityAlreadyExistsException.class)

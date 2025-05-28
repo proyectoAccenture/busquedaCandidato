@@ -10,6 +10,8 @@ import com.candidateSearch.searching.entity.OriginEntity;
 import com.candidateSearch.searching.entity.PostulationEntity;
 import com.candidateSearch.searching.entity.ProcessEntity;
 import com.candidateSearch.searching.entity.RoleEntity;
+import com.candidateSearch.searching.exception.globalmessage.GlobalMessage;
+import com.candidateSearch.searching.exception.type.BusinessException;
 import com.candidateSearch.searching.exception.type.CandidateBlockedException;
 import com.candidateSearch.searching.exception.type.CandidateNoExistException;
 import com.candidateSearch.searching.exception.type.CannotBeCreateException;
@@ -62,7 +64,7 @@ public class CandidateService {
         if (postulationFind != null) {
             for (PostulationEntity postulation : postulationFind) {
                 if (postulation.getStatus().equals(Status.ACTIVE)) {
-                    postulation.setStatus(Status.INACTIVE);
+                    postulation.setStatus(Status.BLOCKED);
                     postulationRepository.save(postulation);
                 }
 
@@ -70,7 +72,7 @@ public class CandidateService {
                 if (processFind.isPresent()) {
                     ProcessEntity process = processFind.get();
                     if (process.getStatus().equals(Status.ACTIVE)) {
-                        process.setStatus(Status.INACTIVE);
+                        process.setStatus(Status.BLOCKED);
                         processRepository.save(process);
                     }
 
@@ -78,7 +80,7 @@ public class CandidateService {
                     if (candidateStateFind != null) {
                         for (CandidateStateEntity candidateState : candidateStateFind) {
                             if (candidateState.getStatusHistory().equals(Status.ACTIVE)) {
-                                candidateState.setStatusHistory(Status.INACTIVE);
+                                candidateState.setStatusHistory(Status.BLOCKED);
                                 candidateStateRepository.save(candidateState);
                             }
                         }
@@ -139,10 +141,18 @@ public class CandidateService {
         );
     }
 
-    public CandidateWithPaginationResponseDto getSearchCandidatesFullName(String query) {
+    public CandidateWithPaginationResponseDto getSearchCandidatesFullName(String query, String statusParam) {
         validationQuery(query);
         validationQueryNumber(query);
         Pageable pageable = PageRequest.of(0, 10);
+
+        Status status;
+
+        try {
+            status = Status.valueOf(statusParam.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid status: " + statusParam);
+        }
 
         String[] keywords = query.toLowerCase().split(" ");
 
@@ -156,6 +166,7 @@ public class CandidateService {
         validationListCandidate(candidates);
 
         List<CandidateResponseDto> candidateDTOs = candidates.stream()
+                .filter(candidate -> candidate.getStatus().equals(status))
                 .map(mapperCandidate::toDto)
                 .toList();
 
@@ -225,7 +236,7 @@ public class CandidateService {
         }
 
         JobProfileEntity jobProfileEntity = jobProfileRepository.findById(candidateRequestDto.getJobProfile())
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(() -> new BusinessException(GlobalMessage.ENTITY_ALREADY_EXISTS));
 
         OriginEntity originEntity = originRepository.findById(candidateRequestDto.getOrigin())
                 .orElseThrow(EntityNoExistException::new);

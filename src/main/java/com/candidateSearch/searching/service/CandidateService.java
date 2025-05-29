@@ -1,8 +1,9 @@
 package com.candidateSearch.searching.service;
 
 import com.candidateSearch.searching.dto.request.CandidateRequestDto;
-import com.candidateSearch.searching.dto.response.CandidateWithPaginationResponseDto;
+import com.candidateSearch.searching.dto.request.validation.validator.CandidateValidator;
 import com.candidateSearch.searching.dto.response.CandidateResponseDto;
+import com.candidateSearch.searching.dto.response.PaginationResponseDto;
 import com.candidateSearch.searching.entity.CandidateEntity;
 import com.candidateSearch.searching.entity.CandidateStateEntity;
 import com.candidateSearch.searching.entity.JobProfileEntity;
@@ -10,12 +11,7 @@ import com.candidateSearch.searching.entity.OriginEntity;
 import com.candidateSearch.searching.entity.PostulationEntity;
 import com.candidateSearch.searching.entity.ProcessEntity;
 import com.candidateSearch.searching.entity.RoleEntity;
-import com.candidateSearch.searching.exception.type.CandidateBlockedException;
-import com.candidateSearch.searching.exception.type.CandidateNoExistException;
-import com.candidateSearch.searching.exception.type.CannotBeCreateException;
-import com.candidateSearch.searching.exception.type.EntityNoExistException;
-import com.candidateSearch.searching.exception.type.FieldAlreadyExistException;
-import com.candidateSearch.searching.exception.type.RoleIdNoExistException;
+import com.candidateSearch.searching.exception.type.*;
 import com.candidateSearch.searching.mapper.IMapperCandidate;
 import com.candidateSearch.searching.repository.ICandidateRepository;
 import com.candidateSearch.searching.repository.ICandidateStateRepository;
@@ -52,7 +48,8 @@ public class CandidateService {
     public CandidateResponseDto vetaCandidate(String card){
         CandidateEntity candidate = candidateRepository
                 .findByCardAndStatusNot(card, Status.INACTIVE)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(()-> new CustomNotFoundException(
+                        "The candidate with that card does not exist."));
 
         candidate.setStatus(Status.BLOCKED);
 
@@ -98,7 +95,8 @@ public class CandidateService {
     public List<CandidateResponseDto> getCandidateByRole(String roleName) {
 
         RoleEntity role = roleRepository.findByNameRole(roleName)
-                .orElseThrow(RoleIdNoExistException::new);
+                .orElseThrow(()-> new CustomNotFoundException(
+                        "The role does not exist."));
 
         List<PostulationEntity> postulations = postulationRepository.findByRole(role);
 
@@ -117,18 +115,41 @@ public class CandidateService {
 
     }
 
-    public CandidateWithPaginationResponseDto getSearchCandidates(String query, int page, int size) {
-        validationQuery(query);
+    public PaginationResponseDto<CandidateResponseDto> getSearchCandidates(String query, int page, int size) {
+        CandidateValidator.validateQueryNotEmpty(query);
         Pageable pageable = PageRequest.of(page, size);
 
         Page<CandidateEntity> candidates = candidateRepository.searchCandidates(query, pageable);
-        validationListPage(candidates);
+        CandidateValidator.validateCandidatePageNotEmpty(candidates);
 
         List<CandidateResponseDto> candidateDTOs = candidates.getContent().stream()
                 .map(mapperCandidate::toDto)
                 .toList();
 
-        return new CandidateWithPaginationResponseDto(
+        return new PaginationResponseDto<>(
+                candidateDTOs,
+                candidates.getNumber(),
+                candidates.getSize(),
+                candidates.getTotalPages(),
+                candidates.getTotalElements()
+        );
+    }
+    public PaginationResponseDto<CandidateResponseDto> getSearchCandidatesV2(String query, int page, int size,List<Status> statuses) {
+        CandidateValidator.validateQueryNotEmpty(query);
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<CandidateEntity> candidates = candidateRepository.searchCandidatesV2(
+                query,
+                CandidateValidator.validateStatusesOrDefault(statuses),
+                pageable);
+
+        CandidateValidator.validateCandidatePageNotEmpty(candidates);
+
+        List<CandidateResponseDto> candidateDTOs = candidates.getContent().stream()
+                .map(mapperCandidate::toDto)
+                .toList();
+
+        return new PaginationResponseDto<>(
                 candidateDTOs,
                 candidates.getNumber(),
                 candidates.getSize(),
@@ -137,9 +158,9 @@ public class CandidateService {
         );
     }
 
-    public CandidateWithPaginationResponseDto getSearchCandidatesFullName(String query) {
-        validationQuery(query);
-        validationQueryNumber(query);
+    public PaginationResponseDto<CandidateResponseDto> getSearchCandidatesFullName(String query) {
+        CandidateValidator.validateQueryNotEmpty(query);
+        CandidateValidator.validateQueryHasNoNumbers(query);
         Pageable pageable = PageRequest.of(0, 10);
 
         String[] keywords = query.toLowerCase().split(" ");
@@ -151,25 +172,60 @@ public class CandidateService {
             candidates = candidateRepository.searchByFullName(query, pageable);
         }
 
-        validationListCandidate(candidates);
+        CandidateValidator.validateCandidateListNotEmpty(candidates);
 
         List<CandidateResponseDto> candidateDTOs = candidates.stream()
                 .map(mapperCandidate::toDto)
                 .toList();
 
-        return new CandidateWithPaginationResponseDto(
+        return new PaginationResponseDto<>(candidateDTOs, 0, candidateDTOs.size(), 1, candidateDTOs.size());
+    }
+
+    public PaginationResponseDto<CandidateResponseDto> getSearchCandidatesFullNameV2(String query, int page, int size, List<Status> statuses) {
+        CandidateValidator.validateQueryNotEmpty(query);
+        CandidateValidator.validateQueryHasNoNumbers(query);
+
+        Pageable pageable = PageRequest.of(page, size);
+        String[] keywords = query.toLowerCase().split(" ");
+
+        Page<CandidateEntity> candidatePage;
+        if (keywords.length > 1) {
+            candidatePage = candidateRepository.searchByPartialNameV2(
+                    keywords[0],
+                    keywords[1],
+                    CandidateValidator.validateStatusesOrDefault(statuses),
+                    pageable
+            );
+        } else {
+            candidatePage = candidateRepository.searchByFullNameV2(
+                    query,
+                    CandidateValidator.validateStatusesOrDefault(statuses),
+                    pageable
+            );
+        }
+
+        CandidateValidator.validateCandidateListNotEmpty(candidatePage.getContent());
+
+        List<CandidateResponseDto> candidateDTOs = candidatePage.getContent()
+                .stream()
+                .map(mapperCandidate::toDto)
+                .toList();
+
+        return new PaginationResponseDto<>(
                 candidateDTOs,
-                0,
-                candidateDTOs.size(),
-                1,
-                candidateDTOs.size()
+                candidatePage.getNumber(),
+                candidatePage.getSize(),
+                candidatePage.getTotalPages(),
+                candidatePage.getTotalElements()
         );
     }
+
+
 
     public CandidateResponseDto getByIdCandidate(Long id){
         return candidateRepository.findById(id)
                 .map(mapperCandidate::toDto)
-                .orElseThrow(CandidateNoExistException::new);
+                .orElseThrow(()-> new CustomNotFoundException("There is no candidate with that ID."));
     }
 
     public List<CandidateResponseDto> getAllCandidate(){
@@ -179,11 +235,33 @@ public class CandidateService {
                 .collect(Collectors.toList());
     }
 
+    public PaginationResponseDto<CandidateResponseDto> getAllCandidates(List<Status> statuses, int page, int size) {
+           Pageable pageable = PageRequest.of(page, size);
+
+           Page<CandidateEntity> candidatePage = candidateRepository.findByStatusIn(
+                   CandidateValidator.validateStatusesOrDefault(statuses),
+                   pageable);
+
+           List<CandidateResponseDto> candidates = candidatePage.getContent()
+                .stream()
+                .map(mapperCandidate::toDto)
+                .toList();
+
+           return new PaginationResponseDto<>(
+                candidates,
+                candidatePage.getNumber(),
+                candidatePage.getSize(),
+                candidatePage.getTotalPages(),
+                candidatePage.getTotalElements()
+        );
+    }
+
+
     public CandidateResponseDto saveCandidate(CandidateRequestDto candidateRequestDto) {
 
         if (candidateRequestDto.getStatus() == Status.INACTIVE ||
                 candidateRequestDto.getStatus() == Status.BLOCKED) {
-            throw new CannotBeCreateException();
+            throw new CustomBadRequestException("Cannot be create or update, valid the status.");
         }
 
         Optional<CandidateEntity> existingOptCard = candidateRepository.findByCardAndStatusNot(candidateRequestDto.getCard(), Status.INACTIVE);
@@ -192,9 +270,9 @@ public class CandidateService {
             CandidateEntity existing = existingOptCard.get();
 
             if (existing.getStatus() == Status.BLOCKED) {
-                throw new CandidateBlockedException();
+                throw new CustomConflictException("Candidate is blocked.");
             } else {
-                throw new FieldAlreadyExistException("card");
+                throw new CustomConflictException("There is already a card with that parameter.");
             }
         }
 
@@ -204,9 +282,9 @@ public class CandidateService {
             CandidateEntity existing = existingOptPhone.get();
 
             if (existing.getStatus() == Status.BLOCKED) {
-                throw new CandidateBlockedException();
+                throw new CustomConflictException("Candidate is blocked.");
             } else {
-                throw new FieldAlreadyExistException("phone");
+                throw new CustomConflictException("There is already a phone with that parameter.");
             }
         }
 
@@ -216,17 +294,17 @@ public class CandidateService {
             CandidateEntity existing = existingOptEmail.get();
 
             if (existing.getStatus() == Status.BLOCKED) {
-                throw new CandidateBlockedException();
+                throw new CustomConflictException("Candidate is blocked.");
             } else {
-                throw new FieldAlreadyExistException("email");
+                throw new CustomConflictException("There is already a email with that parameter.");
             }
         }
 
         JobProfileEntity jobProfileEntity = jobProfileRepository.findById(candidateRequestDto.getJobProfile())
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(()-> new CustomNotFoundException("That job profile does not exist."));
 
         OriginEntity originEntity = originRepository.findById(candidateRequestDto.getOrigin())
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(()-> new CustomNotFoundException("There is no origin with that ID."));
 
         CandidateEntity candidateEntityNew = new CandidateEntity();
         candidateEntityNew.setName(candidateRequestDto.getName());
@@ -262,7 +340,7 @@ public class CandidateService {
     public Optional<CandidateResponseDto> updateCandidate(Long id, CandidateRequestDto candidateRequestDto) {
 
         CandidateEntity existingEntity  = candidateRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(()-> new CustomNotFoundException("There is no candidate with that ID."));
 
         if(candidateRequestDto.getStatus() == Status.ACTIVE) {
             List<PostulationEntity> postulationFind = postulationRepository.findAllByCandidateId(id);
@@ -298,14 +376,14 @@ public class CandidateService {
 
         if (candidateRequestDto.getStatus() == Status.INACTIVE ||
                 candidateRequestDto.getStatus() == Status.BLOCKED) {
-            throw new CannotBeCreateException();
+            throw new CustomBadRequestException("Cannot be create or update, valid the status.");
         }
 
         JobProfileEntity jobProfileEntity = jobProfileRepository.findById(candidateRequestDto.getJobProfile())
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(()-> new CustomNotFoundException("There is no job profile with that ID."));
 
         OriginEntity originEntity = originRepository.findById(candidateRequestDto.getOrigin())
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(()-> new CustomNotFoundException("There is no origin with that ID."));
 
 
         if (candidateRequestDto.getStatus() == Status.ACTIVE) {
@@ -353,7 +431,7 @@ public class CandidateService {
     @Transactional
     public void deleteCandidate(Long id){
         CandidateEntity existingCandidate = candidateRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(()-> new CustomNotFoundException("There is no candidate with that ID."));
 
         existingCandidate.setStatus(Status.INACTIVE);
 
@@ -393,34 +471,11 @@ public class CandidateService {
         finder.apply(value).ifPresent(candidate -> {
             if (!candidate.getId().equals(selfId)) {
                 if (candidate.getStatus() == Status.BLOCKED) {
-                    throw new CandidateBlockedException();
+                    throw new CustomConflictException("Candidate is blocked");
                 } else {
-                    throw new FieldAlreadyExistException(fieldName);
+                    throw new CustomConflictException("There is already a "+fieldName+" with that parameter.");
                 }
             }
         });
-    }
-
-    private void validationQuery(String query){
-        if (query == null || query.trim().isEmpty()) {
-            throw new IllegalArgumentException("Search query cannot be empty");
-        }
-    }
-
-    private void validationListPage(Page<CandidateEntity> candidates ){
-        if (candidates.isEmpty()) {
-            throw new CandidateNoExistException();
-        }
-    }
-    private void validationQueryNumber(String query){
-        if (query.matches(".*\\d.*")) {
-            throw new IllegalArgumentException("Search query cannot contain numbers");
-        }
-    }
-
-    private void validationListCandidate(List<CandidateEntity> candidates){
-        if (candidates.isEmpty()) {
-            throw new CandidateNoExistException();
-        }
     }
 }

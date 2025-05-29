@@ -5,8 +5,8 @@ import com.candidateSearch.searching.dto.response.JobProfileResponseDto;
 import com.candidateSearch.searching.entity.CandidateEntity;
 import com.candidateSearch.searching.entity.JobProfileEntity;
 import com.candidateSearch.searching.entity.RoleEntity;
-import com.candidateSearch.searching.exception.type.EntityAlreadyExistsException;
-import com.candidateSearch.searching.exception.type.EntityNoExistException;
+import com.candidateSearch.searching.exception.type.CustomConflictException;
+import com.candidateSearch.searching.exception.type.CustomNotFoundException;
 import com.candidateSearch.searching.mapper.IMapperJobProfile;
 import com.candidateSearch.searching.repository.ICandidateRepository;
 import com.candidateSearch.searching.repository.IJobProfileRepository;
@@ -28,7 +28,7 @@ public class JobProfileService {
     public JobProfileResponseDto getJobProfile(Long id){
         return jobProfileRepository.findById(id)
                 .map(mapperJobProfile::toDto)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(()-> new CustomNotFoundException("There is no job profile with that ID."));
     }
 
     public List<JobProfileResponseDto> getAllJobProfile(){
@@ -39,7 +39,7 @@ public class JobProfileService {
 
     public JobProfileResponseDto saveJobProfile(JobProfileRequestDto jobProfileRequestDto) {
         if(jobProfileRepository.existsByName(jobProfileRequestDto.getName())){
-            throw new EntityAlreadyExistsException();
+            throw new CustomConflictException("There is already a job profile with that name.");
         }
 
         JobProfileEntity jobProfileEntity = mapperJobProfile.toEntity(jobProfileRequestDto);
@@ -50,7 +50,7 @@ public class JobProfileService {
 
     public JobProfileResponseDto updateJobProfile(Long id, JobProfileRequestDto jobProfileRequestDto) {
         JobProfileEntity existingJob = jobProfileRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(()-> new CustomNotFoundException("There is no job profile with that ID."));
 
         existingJob.setName(jobProfileRequestDto.getName());
         JobProfileEntity updatedJob = jobProfileRepository.save(existingJob);
@@ -61,7 +61,7 @@ public class JobProfileService {
     @Transactional
     public void deleteJobProfile(Long id){
         JobProfileEntity existingJob = jobProfileRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(()-> new CustomNotFoundException("There is no job profile with that ID."));
 
         List<CandidateEntity> candidates = existingJob.getCandidates();
         if (candidates != null && !candidates.isEmpty()) {

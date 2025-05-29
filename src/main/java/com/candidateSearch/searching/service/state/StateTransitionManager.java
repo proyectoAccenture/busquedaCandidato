@@ -1,7 +1,7 @@
 package com.candidateSearch.searching.service.state;
 
 import com.candidateSearch.searching.entity.utility.State;
-import com.candidateSearch.searching.exception.type.InvalidStateTransitionException;
+import com.candidateSearch.searching.exception.type.CustomBadRequestException;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 import java.util.Collections;
@@ -64,9 +64,9 @@ public class StateTransitionManager {
         }
 
         State fromState = State.getById(fromStateId)
-                .orElseThrow(() -> new IllegalArgumentException("Unknown source state ID: " + fromStateId));
+                .orElseThrow(() -> new CustomBadRequestException("Unknown source state ID: " + fromStateId));
         State toState = State.getById(toStateId)
-                .orElseThrow(() -> new IllegalArgumentException("Unknown target state ID: " + toStateId));
+                .orElseThrow(() -> new CustomBadRequestException("Unknown target state ID: " + toStateId));
 
         return transitions.getOrDefault(fromState, Collections.emptyList())
                 .contains(toState);
@@ -75,11 +75,11 @@ public class StateTransitionManager {
     public void validateTransition(Long fromStateId, Long toStateId) {
         if (!isValidTransition(fromStateId, toStateId)) {
             State fromState = State.getById(fromStateId)
-                    .orElseThrow(() -> new IllegalArgumentException("Unknown source state ID: " + fromStateId));
+                    .orElseThrow(() -> new CustomBadRequestException("Unknown source state ID: " + fromStateId));
             State toState = State.getById(toStateId)
-                    .orElseThrow(() -> new IllegalArgumentException("Unknown target state ID: " + toStateId));
+                    .orElseThrow(() -> new CustomBadRequestException("Unknown target state ID: " + toStateId));
 
-            throw new InvalidStateTransitionException(
+            throw new CustomBadRequestException(
                     String.format("Invalid state transition from '%s' to '%s'",
                             fromState.getStateName(), toState.getStateName()));
         }

@@ -21,24 +21,24 @@ import java.time.LocalDate;
 public class ProcessRequestDto {
 
     @Schema(name = "postulationId",description = "Id of postulation", example = "1")
-    @NotNull(message = "postulationId cannot be null")
-    @Min(value = 1, message = "postulationId must be greater than 0")
+    @NotNull(message = "The postulationId field cannot be null")
+    @Min(value = 1, message = "The postulationId field must be greater than 0")
     private Long postulationId;
 
     @Schema(name = "description", description = "Description about candidate state", example = "This process is...")
-    @NotBlank(message = "description cannot be blank")
-    @Size(min = 1, max = 255, message = "Description must be between 10 and 255 characters")
-    @Pattern(regexp = "^[a-zA-Z0-9 .,!?-]+$", message = "Description contains invalid characters")
+    @NotBlank(message = "The description field cannot be blank")
+    @Size(min = 1, max = 255, message = "The description field must be between 10 and 255 characters")
+    @Pattern(regexp = "^[a-zA-Z0-9 .,!?-]+$", message = "The description field contains invalid characters")
     private String description;
 
     @Schema(name = "assignedDate", description = "Date when the candidate is assigned", example = "2025-01-01")
-    @NotNull(message = "Assigned date cannot be null")
+    @NotNull(message = "The assignedDate field cannot be null")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    @DateWithinRange
+    @DateWithinRange(message = "The assignedDate field must be within the last 3 months and cannot be in the future.")
     private LocalDate assignedDate;
 
     @Schema(name = "status", description = "Status of process = 'ACTIVE', 'INACTIVE' ", example = "ACTIVE")
-    @NotNull(message = "Status cannot be null")
+    @NotNull(message = "The status field cannot be null")
     private Status status;
 }

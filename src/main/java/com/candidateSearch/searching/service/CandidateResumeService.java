@@ -6,13 +6,7 @@ import com.candidateSearch.searching.dto.response.CandidateResumeResponseDto;
 import com.candidateSearch.searching.entity.CandidateEntity;
 import com.candidateSearch.searching.entity.JobProfileEntity;
 import com.candidateSearch.searching.entity.OriginEntity;
-import com.candidateSearch.searching.exception.type.CandidateBlockedException;
-import com.candidateSearch.searching.exception.type.CannotBeCreateException;
-import com.candidateSearch.searching.exception.type.EntityNoExistException;
-import com.candidateSearch.searching.exception.type.BadRequestException;
-import com.candidateSearch.searching.exception.type.InvalidFileTypeException;
-import com.candidateSearch.searching.exception.type.ResourceNotFoundException;
-import com.candidateSearch.searching.exception.type.FieldAlreadyExistException;
+import com.candidateSearch.searching.exception.type.*;
 import com.candidateSearch.searching.mapper.IMapperCandidate;
 import com.candidateSearch.searching.repository.ICandidateRepository;
 import com.candidateSearch.searching.repository.IJobProfileRepository;
@@ -38,15 +32,15 @@ public class CandidateResumeService {
     public void uploadResume(Long candidateId, MultipartFile file) {
         try {
             if (file.isEmpty()) {
-                throw new BadRequestException("The file is empty");
+                throw new CustomBadRequestException("The file is empty");
             }
 
             if (!Objects.equals(file.getContentType(), "application/pdf")) {
-                throw new InvalidFileTypeException("The file must be a PDF");
+                throw new CustomBadRequestException("The file must be a PDF");
             }
 
             CandidateEntity candidate = candidateRepository.findById(candidateId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Candidate not found with ID: " + candidateId));
+                    .orElseThrow(() -> new CustomNotFoundException("Candidate not found with ID: " + candidateId));
 
             candidate.setResumePdf(file.getBytes());
             candidate.setResumeFileName(file.getOriginalFilename());
@@ -61,10 +55,10 @@ public class CandidateResumeService {
     @Transactional(readOnly = true)
     public CandidateResumeResponseDto getResume(Long candidateId) {
         CandidateEntity candidate = candidateRepository.findById(candidateId)
-                .orElseThrow(() -> new ResourceNotFoundException("Candidate not found with ID: " + candidateId));
+                .orElseThrow(() -> new CustomNotFoundException("Candidate not found with ID: " + candidateId));
 
         if (candidate.getResumePdf() == null) {
-            throw new ResourceNotFoundException("The candidate does not have a resume uploaded");
+            throw new CustomNotFoundException("The candidate does not have a resume uploaded.");
         }
 
         return new CandidateResumeResponseDto(
@@ -80,7 +74,7 @@ public class CandidateResumeService {
         try {
             if (candidateRequestDto.getStatus() == Status.INACTIVE ||
                     candidateRequestDto.getStatus() == Status.BLOCKED) {
-                throw new CannotBeCreateException();
+                throw new CustomBadRequestException("Cannot be create or update, valid the status.");
             }
 
             Optional<CandidateEntity> existingOptCard = candidateRepository.findByCardAndStatusNot(candidateRequestDto.getCard(), Status.INACTIVE);
@@ -89,9 +83,9 @@ public class CandidateResumeService {
                 CandidateEntity existing = existingOptCard.get();
 
                 if (existing.getStatus() == Status.BLOCKED) {
-                    throw new CandidateBlockedException();
+                    throw new CustomConflictException("Candidate is blocked.");
                 } else {
-                    throw new FieldAlreadyExistException("card");
+                    throw new CustomConflictException("There is already a candidate with that card.");
                 }
             }
 
@@ -101,9 +95,9 @@ public class CandidateResumeService {
                 CandidateEntity existing = existingOptPhone.get();
 
                 if (existing.getStatus() == Status.BLOCKED) {
-                    throw new CandidateBlockedException();
+                    throw new CustomConflictException("Candidate is blocked.");
                 } else {
-                    throw new FieldAlreadyExistException("phone");
+                    throw new CustomConflictException("That phone number already exists");
                 }
             }
 
@@ -113,17 +107,17 @@ public class CandidateResumeService {
                 CandidateEntity existing = existingOptEmail.get();
 
                 if (existing.getStatus() == Status.BLOCKED) {
-                    throw new CandidateBlockedException();
+                    throw new CustomConflictException("Candidate is blocked.");
                 } else {
-                    throw new FieldAlreadyExistException("email");
+                    throw new CustomConflictException("that email address already exists.");
                 }
             }
 
             JobProfileEntity jobProfileEntity = jobProfileRepository.findById(candidateRequestDto.getJobProfile())
-                    .orElseThrow(EntityNoExistException::new);
+                    .orElseThrow(()-> new CustomNotFoundException("There is no job profile with that ID."));
 
             OriginEntity originEntity = originRepository.findById(candidateRequestDto.getOrigin())
-                    .orElseThrow(EntityNoExistException::new);
+                    .orElseThrow(()-> new CustomNotFoundException("There is no origin with that ID."));
 
             CandidateEntity candidateEntityNew = new CandidateEntity();
             candidateEntityNew.setName(candidateRequestDto.getName());
@@ -147,7 +141,7 @@ public class CandidateResumeService {
 
             if (file != null && !file.isEmpty()) {
                 if (!Objects.equals(file.getContentType(), "application/pdf")) {
-                    throw new InvalidFileTypeException("The file must be a PDF");
+                    throw new CustomBadRequestException("The file must be a PDF");
                 }
 
                 candidateEntityNew.setResumePdf(file.getBytes());

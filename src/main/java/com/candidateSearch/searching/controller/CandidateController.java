@@ -1,11 +1,8 @@
 package com.candidateSearch.searching.controller;
 
 import com.candidateSearch.searching.dto.request.CandidateRequestDto;
-import com.candidateSearch.searching.dto.request.PostulationRequestDto;
-import com.candidateSearch.searching.dto.response.CandidateWithPaginationResponseDto;
-import com.candidateSearch.searching.dto.response.CandidateResponseDto;
-import com.candidateSearch.searching.dto.response.CandidateResumeResponseDto;
-import com.candidateSearch.searching.dto.response.PostulationResponseDto;
+import com.candidateSearch.searching.dto.response.*;
+import com.candidateSearch.searching.entity.utility.Status;
 import com.candidateSearch.searching.service.CandidateResumeService;
 import com.candidateSearch.searching.service.CandidateService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -104,11 +101,46 @@ public class CandidateController {
             @ApiResponse(responseCode = "404", description = "Candidate not found", content = @Content)
     })
     @GetMapping("/search")
-    public ResponseEntity<CandidateWithPaginationResponseDto> getSearchCandidates(
+    public ResponseEntity<PaginationResponseDto<CandidateResponseDto>> getSearchCandidates(
             @RequestParam @NotBlank String query,
             @RequestParam(defaultValue = "0") @Min(0)int page,
             @RequestParam(defaultValue = "10")@Min(1)  int size) {
         return ResponseEntity.ok(candidateService.getSearchCandidates(query, page, size));
+    }
+    @GetMapping("/v2/search")
+    @Operation(summary = "Search candidates by any field and optional status")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Candidate(s) found",
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = CandidateResponseDto.class)))),
+            @ApiResponse(responseCode = "400", description = "Invalid query parameter", content = @Content),
+            @ApiResponse(responseCode = "404", description = "No candidates found", content = @Content)
+    })
+    public ResponseEntity<PaginationResponseDto<CandidateResponseDto>> getSearchCandidates(
+            @RequestParam @NotBlank String query,
+            @RequestParam(required = false) List<Status> status,
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @RequestParam(defaultValue = "10") @Min(1) int size) {
+
+        return ResponseEntity.ok(candidateService.getSearchCandidatesV2(query,  page, size,status));
+    }
+
+
+    @Operation(summary = "Get candidates by full name")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Candidate found",
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = CandidateResponseDto.class)))),
+            @ApiResponse(responseCode = "400", description = "Invalid query parameters", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Candidate not found", content = @Content)
+    })
+    @GetMapping("/v2/search-fullName/")
+    public ResponseEntity<PaginationResponseDto<CandidateResponseDto>> getsSearchCandidates(
+            @RequestParam @NotBlank String query,
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @RequestParam(defaultValue = "10") @Min(1) int size,
+            @RequestParam(name = "status", required = false) List<Status> statuses) {
+        return ResponseEntity.ok(candidateService.getSearchCandidatesFullNameV2(query, page, size, statuses));
     }
 
     @Operation(summary = "Get candidates by full name")
@@ -120,13 +152,15 @@ public class CandidateController {
             @ApiResponse(responseCode = "404", description = "No candidates found", content = @Content)
     })
     @GetMapping("/search-fullName/{fullName}")
-    public ResponseEntity<CandidateWithPaginationResponseDto> getSearchCandidatesFullName(@PathVariable @NotBlank String fullName) {
-        CandidateWithPaginationResponseDto candidateWithPaginationResponseDto = candidateService.getSearchCandidatesFullName(fullName);
+    public ResponseEntity<PaginationResponseDto<CandidateResponseDto>> getSearchCandidatesFullName(@PathVariable @NotBlank String fullName) {
+        PaginationResponseDto<CandidateResponseDto> candidateWithPaginationResponseDto = candidateService.getSearchCandidatesFullName(fullName);
         if (candidateWithPaginationResponseDto.toString().isEmpty()){
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(candidateWithPaginationResponseDto);
     }
+
+
 
     @Operation(summary = "Get all the candidate")
     @ApiResponses(value = {
@@ -140,6 +174,22 @@ public class CandidateController {
         List<CandidateResponseDto> candidates = candidateService.getAllCandidate();
         return candidates.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(candidates);
     }
+
+    @Operation(summary = "Get all the candidate")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "All candidate returned",
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = CandidateResponseDto.class)))),
+            @ApiResponse(responseCode = "404", description = "No data found", content = @Content)
+    })
+    @GetMapping("/v2/candidates/")
+    public PaginationResponseDto<CandidateResponseDto> getAllCandidates(
+            @RequestParam(name = "status", required = false) List<Status> statuses,
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @RequestParam(defaultValue = "10") @Min(1) int size) {
+        return candidateService.getAllCandidates(statuses, page, size);
+    }
+
 
     @Operation(summary = "Add a new candidate")
     @ApiResponses(value = {

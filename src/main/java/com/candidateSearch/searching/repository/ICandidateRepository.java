@@ -17,6 +17,7 @@ public interface ICandidateRepository extends JpaRepository<CandidateEntity, Lon
     Optional<CandidateEntity> findByCardAndStatusNot(String card, Status status);
     Optional<CandidateEntity> findByPhoneAndStatusNot(String card, Status status);
     Optional<CandidateEntity> findByEmailAndStatusNot(String card, Status status);
+    Page<CandidateEntity> findByStatusIn(List<Status> statuses, Pageable pageable);
 
     @Query("SELECT c FROM CandidateEntity c " +
             "WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :query, '%')) " +
@@ -30,6 +31,21 @@ public interface ICandidateRepository extends JpaRepository<CandidateEntity, Lon
     Page<CandidateEntity> searchCandidates(@Param("query") String query, Pageable pageable);
 
     @Query("SELECT c FROM CandidateEntity c " +
+            "WHERE (LOWER(c.name) LIKE LOWER(CONCAT('%', :query, '%')) " +
+            "OR LOWER(c.lastName) LIKE LOWER(CONCAT('%', :query, '%')) " +
+            "OR LOWER(c.card) LIKE LOWER(CONCAT('%', :query, '%')) " +
+            "OR LOWER(c.phone) LIKE LOWER(CONCAT('%', :query, '%')) " +
+            "OR LOWER(c.city) LIKE LOWER(CONCAT('%', :query, '%')) " +
+            "OR LOWER(c.email) LIKE LOWER(CONCAT('%', :query, '%')) " +
+            "OR CAST(c.birthdate AS string) LIKE CONCAT('%', :query, '%') " +
+            "OR CAST(c.datePresentation AS string) LIKE CONCAT('%', :query, '%')) " +
+            "AND c.status IN :statuses")
+    Page<CandidateEntity> searchCandidatesV2(
+            @Param("query") String query,
+            @Param("statuses") List<Status> statuses,
+            Pageable pageable);
+
+    @Query("SELECT c FROM CandidateEntity c " +
             "WHERE LOWER(CONCAT(c.name, ' ', c.lastName)) LIKE LOWER(CONCAT('%', :query1, '%')) " +
             "AND LOWER(CONCAT(c.name, ' ', c.lastName)) LIKE LOWER(CONCAT('%', :query2, '%'))")
     List<CandidateEntity> searchByPartialName(
@@ -40,4 +56,26 @@ public interface ICandidateRepository extends JpaRepository<CandidateEntity, Lon
     @Query("SELECT c FROM CandidateEntity c " +
             "WHERE LOWER(CONCAT(c.name, ' ', c.lastName)) LIKE LOWER(CONCAT('%', :query, '%')) ")
     List<CandidateEntity> searchByFullName(@Param("query") String query, Pageable pageable);
+
+
+    @Query("SELECT c FROM CandidateEntity c " +
+            "WHERE c.status IN :validStatuses AND " +
+            "LOWER(CONCAT(c.name, ' ', c.lastName)) LIKE LOWER(CONCAT('%', :query1, '%')) " +
+            "AND LOWER(CONCAT(c.name, ' ', c.lastName)) LIKE LOWER(CONCAT('%', :query2, '%'))")
+    Page<CandidateEntity> searchByPartialNameV2(
+            @Param("query1") String query1,
+            @Param("query2") String query2,
+            @Param("validStatuses") List<Status> validStatuses,
+            Pageable pageable);
+
+    @Query("SELECT c FROM CandidateEntity c " +
+            "WHERE c.status IN :validStatuses AND " +
+            "LOWER(CONCAT(c.name, ' ', c.lastName)) LIKE LOWER(CONCAT('%', :query, '%'))")
+    Page<CandidateEntity> searchByFullNameV2(
+            @Param("query") String query,
+            @Param("validStatuses") List<Status> validStatuses,
+            Pageable pageable);
+
+
+
 }

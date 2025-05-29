@@ -2,7 +2,10 @@ package com.candidateSearch.searching.controller;
 
 import com.candidateSearch.searching.dto.request.ProcessRequestDto;
 import com.candidateSearch.searching.dto.response.CandidateResponseDto;
+import com.candidateSearch.searching.dto.response.PaginationResponseDto;
+import com.candidateSearch.searching.dto.response.PostulationResponseDto;
 import com.candidateSearch.searching.dto.response.ProcessResponseDto;
+import com.candidateSearch.searching.entity.utility.Status;
 import com.candidateSearch.searching.service.ProcessService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -12,6 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -99,6 +103,23 @@ public class ProcessController {
         return processService.getSearchProcessesByCandidateFullName(query);
     }
 
+    @Operation(summary = "Search processes by candidate name or last name")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Processes found",
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = ProcessResponseDto.class)))),
+            @ApiResponse(responseCode = "400", description = "Invalid request", content = @Content),
+            @ApiResponse(responseCode = "404", description = "No data found", content = @Content)
+    })
+    @GetMapping("/v2/search/fullName")
+    public ResponseEntity<PaginationResponseDto<ProcessResponseDto>> search(
+            @RequestParam @NotBlank String query,
+            @RequestParam(defaultValue = "0") @Min(0)int page,
+            @RequestParam(defaultValue = "10")@Min(1) int size,
+            @RequestParam(name = "status", required = false) List<Status> statuses){
+        return ResponseEntity.ok(processService.getSearchProcessesByCandidateFullNameV2(query, page, size,statuses));
+    }
+
     @Operation(summary = "Get all the process")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "All process returned",
@@ -112,7 +133,22 @@ public class ProcessController {
         return states.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(states);
     }
 
-    @Operation(summary = "Add a new process")
+    @Operation(summary = "Get all the process")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "All process returned",
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = ProcessResponseDto.class)))),
+            @ApiResponse(responseCode = "404", description = "No data found", content = @Content)
+    })
+    @GetMapping("/v2/")
+    public ResponseEntity<PaginationResponseDto<ProcessResponseDto>> getAllProcessV2(
+            @RequestParam(required = false) List<Status> statuses,
+            @RequestParam(defaultValue = "0")@Min(0) int page,
+            @RequestParam(defaultValue = "10")@Min(1) int size) {
+        return  ResponseEntity.ok(processService.getAllProcessV2(statuses,page,size));
+
+    }
+        @Operation(summary = "Add a new process")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "ProcessEntity created", content = @Content),
             @ApiResponse(responseCode = "409", description = "ProcessEntity already exists", content = @Content)

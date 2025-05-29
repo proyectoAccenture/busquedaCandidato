@@ -1,5 +1,9 @@
 package com.candidateSearch.searching.service;
 
+import com.candidateSearch.searching.dto.request.validation.validator.CandidateStateValidator;
+import com.candidateSearch.searching.dto.request.validation.validator.CandidateValidator;
+import com.candidateSearch.searching.dto.response.PaginationResponseDto;
+import com.candidateSearch.searching.exception.type.*;
 import com.candidateSearch.searching.service.state.StateTransitionManager;
 import com.candidateSearch.searching.dto.request.CandidateStateRequestDto;
 import com.candidateSearch.searching.dto.request.CandidateStateRequestUpdateDto;
@@ -10,10 +14,6 @@ import com.candidateSearch.searching.entity.CandidateEntity;
 import com.candidateSearch.searching.entity.ProcessEntity;
 import com.candidateSearch.searching.entity.CandidateStateEntity;
 import com.candidateSearch.searching.entity.StateEntity;
-import com.candidateSearch.searching.exception.type.ProcessNoExistException;
-import com.candidateSearch.searching.exception.type.StateNoFoundException;
-import com.candidateSearch.searching.exception.type.EntityNoExistException;
-import com.candidateSearch.searching.exception.type.CannotBeCreateException;
 import com.candidateSearch.searching.mapper.IMapperCandidateState;
 import com.candidateSearch.searching.mapper.IMapperState;
 import com.candidateSearch.searching.repository.ICandidateStateRepository;
@@ -22,6 +22,9 @@ import com.candidateSearch.searching.repository.IStateRepository;
 import com.candidateSearch.searching.entity.utility.Status;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -41,11 +44,11 @@ public class CandidateStateService {
     public CandidateStateResponseDto addStateToProcess(CandidateStateRequestDto candidateStateRequestDto){
 
         if(candidateStateRequestDto.getStatusHistory().equals(Status.INACTIVE) || candidateStateRequestDto.getStatusHistory().equals(Status.BLOCKED)){
-            throw new CannotBeCreateException();
+            throw new CustomBadRequestException("Cannot be create or update, valid the status.");
         }
 
         ProcessEntity processEntity = processRepository.findById(candidateStateRequestDto.getProcessId())
-                .orElseThrow(ProcessNoExistException::new);
+                .orElseThrow(()->new CustomNotFoundException("There is not process with this ID."));
 
         Optional<CandidateStateEntity> currentStateOptional = candidateStateRepository.findTopByProcessAndStatusHistoryOrderByIdDesc(processEntity, Status.ACTIVE);
 
@@ -54,7 +57,7 @@ public class CandidateStateService {
 
             if (!Boolean.TRUE.equals(lastCandidateState.getStatus()) ||
                     !Status.ACTIVE.equals(lastCandidateState.getStatusHistory())) {
-                throw new CannotBeCreateException();
+                throw new CustomBadRequestException("Cannot be create or update, valid the status.");
             }
             Long fromStateId = lastCandidateState.getState().getId();
 
@@ -64,7 +67,7 @@ public class CandidateStateService {
         }
 
         StateEntity stateEntity = stateRepository.findById(candidateStateRequestDto.getStateId())
-                .orElseThrow(StateNoFoundException::new);
+                .orElseThrow(()-> new CustomNotFoundException("There is no state with that ID."));
 
         CandidateStateEntity newCandidateProcess = new CandidateStateEntity();
         newCandidateProcess.setProcess(processEntity);
@@ -81,7 +84,7 @@ public class CandidateStateService {
 
     public NextValidStatesResponseDto getNextValidStates(Long processId) {
         ProcessEntity process = processRepository.findById(processId)
-                .orElseThrow(ProcessNoExistException::new);
+                .orElseThrow(()-> new CustomNotFoundException("There is no process with that ID."));
 
         NextValidStatesResponseDto response = new NextValidStatesResponseDto();
         response.setProcessId(process.getId());
@@ -98,7 +101,7 @@ public class CandidateStateService {
         List<StateEntity> validStates;
         if (currentState.isEmpty()) {
             validStates = List.of(stateRepository.findById(1L)
-                    .orElseThrow(StateNoFoundException::new));
+                    .orElseThrow(()-> new CustomNotFoundException("There is no state with that ID.")));
         } else {
             Long currentStateId = currentState.get().getState().getId();
             List<Long> nextStateIds = stateTransitionManager.getNextValidStateIds(currentStateId);
@@ -116,7 +119,7 @@ public class CandidateStateService {
 
     public CandidateStateResponseDto getCandidateStateById(Long processId){
          CandidateStateEntity candidateState = candidateStateRepository.findById(processId)
-                .orElseThrow(ProcessNoExistException::new);
+                .orElseThrow(()-> new CustomNotFoundException("There is no candidate with that process ID."));
 
         return mapperCandidateState.toDto(candidateState);
     }
@@ -128,14 +131,35 @@ public class CandidateStateService {
                 .collect(Collectors.toList());
     }
 
+    public PaginationResponseDto<CandidateStateResponseDto> getAllCandidateStates( List<Status> statuses, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<CandidateStateEntity> entityPage = candidateStateRepository.findByStatusHistoryIn(
+                CandidateStateValidator.validateStatusesOrDefault(statuses),
+                pageable);
+
+        List<CandidateStateResponseDto> content = entityPage.getContent().stream()
+                .map(mapperCandidateState::toDto)
+                .toList();
+
+        return new PaginationResponseDto<>(
+                content,
+                entityPage.getNumber(),
+                entityPage.getSize(),
+                entityPage.getTotalPages(),
+                entityPage.getTotalElements()
+        );
+    }
+
+
     public Optional<CandidateStateResponseDto> updateCandidateState(Long id, CandidateStateRequestUpdateDto candidateStateRequestUpdateDto) {
 
         if(candidateStateRequestUpdateDto.getStatusHistory().equals(Status.BLOCKED) || candidateStateRequestUpdateDto.getStatusHistory().equals(Status.INACTIVE)){
-            throw new CannotBeCreateException();
+            throw new CustomBadRequestException("Cannot be create or update, valid the status.");
         }
 
         CandidateStateEntity existingEntity = candidateStateRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(()-> new CustomNotFoundException("There is no candidate with that ID."));
 
         Long currentStateId = existingEntity.getState().getId();
         Long newStateId = candidateStateRequestUpdateDto.getStateId();
@@ -145,11 +169,11 @@ public class CandidateStateService {
         }
 
         if (existingEntity.getProcess().getStatus() != Status.ACTIVE) {
-            throw new CannotBeCreateException();
+            throw new CustomBadRequestException("Cannot be create or update, valid the status.");
         }
 
         StateEntity newState = stateRepository.findById(candidateStateRequestUpdateDto.getStateId())
-                .orElseThrow(StateNoFoundException::new);
+                .orElseThrow(()->new CustomNotFoundException("There is no state with that ID."));
 
         existingEntity.setState(newState);
         existingEntity.setDescription(candidateStateRequestUpdateDto.getDescription());
@@ -165,7 +189,7 @@ public class CandidateStateService {
     @Transactional
     public void deleteCandidateState(Long id){
         CandidateStateEntity existingCandidateState = candidateStateRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(()-> new CustomNotFoundException("There is no candidate with that ID."));
 
         existingCandidateState.setStatusHistory(Status.INACTIVE);
         candidateStateRepository.save(existingCandidateState);

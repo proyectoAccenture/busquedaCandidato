@@ -4,8 +4,8 @@ import com.candidateSearch.searching.dto.request.StateRequestDto;
 import com.candidateSearch.searching.dto.response.StateResponseDto;
 import com.candidateSearch.searching.entity.CandidateStateEntity;
 import com.candidateSearch.searching.entity.StateEntity;
-import com.candidateSearch.searching.exception.type.EntityAlreadyExistsException;
-import com.candidateSearch.searching.exception.type.EntityNoExistException;
+import com.candidateSearch.searching.exception.type.CustomConflictException;
+import com.candidateSearch.searching.exception.type.CustomNotFoundException;
 import com.candidateSearch.searching.mapper.IMapperState;
 import com.candidateSearch.searching.repository.ICandidateStateRepository;
 import com.candidateSearch.searching.repository.IStateRepository;
@@ -26,7 +26,7 @@ public class StateService {
     public StateResponseDto getState(Long id){
         return stateRepository.findById(id)
                 .map(mapperState::toDto)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(()-> new CustomNotFoundException("There is no state with that ID."));
     }
 
     public List<StateResponseDto> getAllState(){
@@ -37,7 +37,7 @@ public class StateService {
 
     public StateResponseDto saveState(StateRequestDto stateRequestDto) {
         if(stateRepository.existsByName(stateRequestDto.getName())){
-            throw new EntityAlreadyExistsException();
+            throw new CustomConflictException("A state with that ID already exists.");
         }
 
         StateEntity stateEntity = mapperState.toEntity(stateRequestDto);
@@ -48,7 +48,7 @@ public class StateService {
 
     public StateResponseDto updateState(Long id, StateRequestDto stateRequestDto) {
         StateEntity existingState = stateRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(()-> new CustomNotFoundException("There is no state with that ID."));
 
         existingState.setName(stateRequestDto.getName());
         StateEntity updatedState = stateRepository.save(existingState);
@@ -59,7 +59,7 @@ public class StateService {
     @Transactional
     public void deleteState(Long id){
         StateEntity existingState = stateRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(()-> new CustomNotFoundException("There is no state with that ID."));
 
         List<CandidateStateEntity> candidateStateExist = candidateStateRepository.findAllByStateId(id);
         if(candidateStateExist != null && !candidateStateExist.isEmpty()){

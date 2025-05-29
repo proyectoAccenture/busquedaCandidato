@@ -1,8 +1,10 @@
 package com.candidateSearch.searching.controller;
 
 import com.candidateSearch.searching.dto.request.PostulationRequestDto;
+import com.candidateSearch.searching.dto.response.PaginationResponseDto;
 import com.candidateSearch.searching.dto.response.PostulationFullResponseDto;
 import com.candidateSearch.searching.dto.response.PostulationResponseDto;
+import com.candidateSearch.searching.entity.utility.Status;
 import com.candidateSearch.searching.service.PostulationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -11,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -81,6 +84,22 @@ public class PostulationController {
         return postulationService.searchByCandidateNameLastNameAndRole(query);
     }
 
+    @Operation(summary = "Search postulations by candidate name, last name or role ID")
+    @ApiResponse(responseCode = "200", description = "Postulations found",
+            content = @Content(mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = PostulationResponseDto.class))))
+    @ApiResponse(responseCode = "400", description = "Invalid query", content = @Content)
+    @ApiResponse(responseCode = "404", description = "No postulations found", content = @Content)
+    @GetMapping("/v2/search/fullName-roleId")
+    public ResponseEntity<PaginationResponseDto<PostulationResponseDto>> search(
+            @RequestParam @NotBlank String query,
+            @RequestParam(defaultValue = "0") @Min(0)int page,
+            @RequestParam(defaultValue = "10")@Min(1) int size,
+            @RequestParam(name = "status", required = false) List<Status> statuses){
+        return ResponseEntity.ok(postulationService.searchByCandidateNameLastNameAndRoleV2(query, page, size,statuses));
+    }
+
+
     @Operation(summary = "Get all the postulation")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "All postulation returned",
@@ -93,6 +112,23 @@ public class PostulationController {
         List<PostulationResponseDto> postulation = postulationService.getAllPostulation();
         return postulation.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(postulation);
     }
+
+    @Operation(summary = "Get all the postulation")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "All postulation returned",
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = PostulationResponseDto.class)))),
+            @ApiResponse(responseCode = "404", description = "No data found", content = @Content)
+    })
+    @GetMapping("/v2/")
+    public ResponseEntity<PaginationResponseDto<PostulationResponseDto>> getAllPostulations(
+            @RequestParam(required = false) List<Status> statuses,
+            @RequestParam(defaultValue = "0")@Min(0) int page,
+            @RequestParam(defaultValue = "10")@Min(1) int size) {
+
+        return ResponseEntity.ok(postulationService.getAllPostulationV2(statuses, page, size));
+    }
+
 
     @Operation(summary = "Add a new postulation")
     @ApiResponses(value = {

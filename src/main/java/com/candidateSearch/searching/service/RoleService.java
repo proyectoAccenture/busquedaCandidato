@@ -5,9 +5,7 @@ import com.candidateSearch.searching.dto.response.RoleResponseDto;
 import com.candidateSearch.searching.entity.OriginEntity;
 import com.candidateSearch.searching.entity.RoleEntity;
 import com.candidateSearch.searching.entity.JobProfileEntity;
-import com.candidateSearch.searching.exception.type.CannotBeCreateException;
-import com.candidateSearch.searching.exception.type.EntityNoExistException;
-import com.candidateSearch.searching.exception.type.FieldAlreadyExistException;
+import com.candidateSearch.searching.exception.type.*;
 import com.candidateSearch.searching.mapper.IMapperRole;
 import com.candidateSearch.searching.repository.IRoleRepository;
 import com.candidateSearch.searching.repository.IJobProfileRepository;
@@ -30,7 +28,7 @@ public class RoleService {
     public RoleResponseDto getRole(Long id){
         return roleRepository.findById(id)
                 .map(mapperRole::toDto)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(()-> new CustomNotFoundException("There is no role with that ID."));
     }
 
     public List<RoleResponseDto> getAllRoles(){
@@ -43,18 +41,18 @@ public class RoleService {
     public RoleResponseDto saveRole(RoleRequestDto roleRequestDto) {
 
         if(roleRequestDto.getStatus().equals(Status.INACTIVE) || roleRequestDto.getStatus().equals(Status.BLOCKED)){
-            throw new CannotBeCreateException();
+            throw new CustomBadRequestException("Cannot be create or update, valid the status.");
         }
 
         if (roleRepository.existsByNameRoleAndStatusNot(roleRequestDto.getNameRole(), Status.INACTIVE)) {
-            throw new FieldAlreadyExistException(roleRequestDto.getNameRole());
+            throw new CustomConflictException("There is already a role with that name");
         }
 
         JobProfileEntity jobProfileEntity = jobProfileRepository.findById(roleRequestDto.getJobProfile())
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(()-> new CustomNotFoundException("There is no job profile with that ID."));
 
         OriginEntity originEntity = originRepository.findById(roleRequestDto.getOrigin())
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(()-> new CustomNotFoundException("There is no origin with that ID."));
 
         RoleEntity roleEntityNew = new RoleEntity();
         roleEntityNew.setNameRole(roleRequestDto.getNameRole());
@@ -85,17 +83,17 @@ public class RoleService {
 
         if (roleRequestDto.getStatus() == Status.INACTIVE ||
                 roleRequestDto.getStatus() == Status.BLOCKED) {
-            throw new CannotBeCreateException();
+            throw new CustomBadRequestException("Cannot be create or update, valid the status.");
         }
 
         RoleEntity existingEntity  = roleRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(()-> new CustomNotFoundException("There is no role with that ID."));
 
         JobProfileEntity jobProfileEntity = jobProfileRepository.findById(roleRequestDto.getJobProfile())
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(()-> new CustomNotFoundException("There is no job profile with that ID."));
 
         OriginEntity originEntity = originRepository.findById(roleRequestDto.getOrigin())
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(()-> new CustomNotFoundException("There is no origin with that ID."));
 
         existingEntity.setNameRole(roleRequestDto.getNameRole());
         existingEntity.setDescription(roleRequestDto.getDescription());
@@ -123,7 +121,7 @@ public class RoleService {
 
     public void deleteRole(Long id){
         RoleEntity existing = roleRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(()-> new CustomNotFoundException("There is no role with that ID."));
 
         existing.setStatus(Status.INACTIVE);
         roleRepository.save(existing);

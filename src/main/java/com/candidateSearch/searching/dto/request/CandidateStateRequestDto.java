@@ -20,33 +20,33 @@ import java.time.LocalDate;
 public class CandidateStateRequestDto {
 
     @Schema(name = "processId",description = "Id of process of candidate",example = "1")
-    @NotNull(message = "processId cannot be null")
-    @Min(value = 1, message = "processId must be greater than 0")
+    @NotNull(message = "The processId field cannot be null")
+    @Min(value = 1, message = "The processId fieldmust be greater than 0")
     private Long processId;
 
     @Schema(name = "stateId", description = "Id of stateId", example = "1")
-    @NotNull(message = "State cannot be null")
-    @Min(value = 1, message = "stateId must be greater than 0")
+    @NotNull(message = "The stateId field cannot be null")
+    @Min(value = 1, message = "The stateId field must be greater than 0")
     private Long stateId;
 
     @Schema(name = "description", description = "Description about candida te process", example = "This process is...")
-    @NotBlank(message = "Description cannot be blank")
-    @Size(min = 1, max = 255, message = "Description must be between 10 and 255 characters")
-    @Pattern(regexp = "^[a-zA-Z0-9 .,!?-]+$", message = "Description contains invalid characters")
+    @NotBlank(message = "The description field cannot be blank")
+    @Size(min = 1, max = 255, message = "The description field must be between 10 and 255 characters")
+    @Pattern(regexp = "^[a-zA-Z0-9 .,!?-]+$", message = "The description field contains invalid characters")
     private String description;
 
     @Schema(name = "status",description = "Status in which a candidate is located")
-    @NotNull(message = "Status cannot be null")
+    @NotNull(message = "The status field cannot be null")
     private Boolean status;
 
     @Schema(name = "statusHistory", description = "Status of process = 'ACTIVE', 'INACTIVE' ", example = "ACTIVE")
-    @NotNull(message = "Status cannot be null")
+    @NotNull(message = "The statusHistory field cannot be null")
     private Status statusHistory;
 
     @Schema(name = "assignedDate", description = "Date when the candidate is assigned", example = "2024-03-01")
-    @NotNull(message = "Assigned date cannot be null")
+    @NotNull(message = "The assignedDate field cannot be null")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    @DateWithinRange
+    @DateWithinRange(message = "The assignedDate field must be within the last 3 months and cannot be in the future.")
     private LocalDate assignedDate;
 }

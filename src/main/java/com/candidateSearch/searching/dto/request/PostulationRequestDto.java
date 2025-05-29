@@ -16,21 +16,21 @@ import java.time.LocalDate;
 public class PostulationRequestDto {
 
     @Schema(name = "datePresentation", description = "Date when the candidate applied", example = "2025-03-01")
-    @NotNull(message = "datePresentation cannot be null")
+    @NotNull(message = "The datePresentation field cannot be null")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    @DateWithinRange
+    @DateWithinRange(message = "The datePresentation field must be within the last 3 months and cannot be in the future.")
     private LocalDate datePresentation;
 
     @Schema(name = "status", description = "Status of process = 'ACTIVE', 'INACTIVE' ", example = "ACTIVE")
-    @NotNull(message = "Status cannot be null")
+    @NotNull(message = "The status field cannot be null")
     private Status status;
 
     @Schema(name = "roleId",description = "Id of role",example = "1")
-    @NotNull(message = "roleId cannot be null")
+    @NotNull(message = "The roleId field cannot be null")
     private Long roleId;
 
     @Schema(name = "candidateId",description = "Id of candidate that appliqued", example = "1")
-    @NotNull(message = "candidateId cannot be null")
+    @NotNull(message = "The candidateId field cannot be null")
     private Long candidateId;
 }

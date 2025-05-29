@@ -5,14 +5,14 @@ import java.util.stream.Collectors;
 import com.candidateSearch.searching.entity.CandidateEntity;
 import com.candidateSearch.searching.entity.OriginEntity;
 import com.candidateSearch.searching.entity.RoleEntity;
-import com.candidateSearch.searching.exception.type.EntityNoExistException;
+import com.candidateSearch.searching.exception.type.CustomConflictException;
+import com.candidateSearch.searching.exception.type.CustomNotFoundException;
 import com.candidateSearch.searching.repository.ICandidateRepository;
 import com.candidateSearch.searching.repository.IRoleRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import com.candidateSearch.searching.dto.request.OriginRequestDto;
 import com.candidateSearch.searching.dto.response.OriginResponseDto;
-import com.candidateSearch.searching.exception.type.EntityAlreadyExistsException;
 import com.candidateSearch.searching.mapper.IMapperOrigin;
 import com.candidateSearch.searching.repository.IOriginRepository;
 import lombok.AllArgsConstructor;
@@ -29,7 +29,7 @@ public class OriginService {
     public OriginResponseDto getOriginById(Long id){
         return originRepository.findById(id)
                 .map(mapperOrigin::toDto)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(()-> new CustomNotFoundException("There is no origin with that ID."));
     }
 
     public List<OriginResponseDto> getAllOrigin(){
@@ -40,7 +40,7 @@ public class OriginService {
 
     public OriginResponseDto saveOrigin(OriginRequestDto originRequestDto) {
         if(originRepository.existsByName(originRequestDto.getName())){
-            throw new EntityAlreadyExistsException();
+            throw new CustomConflictException("There is already an origin with that name.");
         }
 
         OriginEntity originEntity = mapperOrigin.toEntity(originRequestDto);
@@ -51,7 +51,7 @@ public class OriginService {
 
     public OriginResponseDto updateOrigin(Long id, OriginRequestDto originRequestDto) {
         OriginEntity existingOrigin = originRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(()-> new CustomNotFoundException("There is no origin with that ID."));
 
         existingOrigin.setName(originRequestDto.getName());
         OriginEntity updatedOrigin = originRepository.save(existingOrigin);
@@ -62,7 +62,7 @@ public class OriginService {
     @Transactional
     public void deleteOrigin(Long id){
         OriginEntity existingOrigin = originRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(()-> new CustomNotFoundException("There is no origin with that ID."));
 
         List<CandidateEntity> candidates = existingOrigin.getCandidates();
         if (candidates != null && !candidates.isEmpty()) {

@@ -1,21 +1,18 @@
 package com.candidateSearch.searching.service;
 
 import com.candidateSearch.searching.dto.request.ProcessRequestDto;
+import com.candidateSearch.searching.dto.request.validation.validator.PostulationValidator;
+import com.candidateSearch.searching.dto.request.validation.validator.ProcessValidator;
+import com.candidateSearch.searching.dto.response.PaginationResponseDto;
 import com.candidateSearch.searching.dto.response.ProcessResponseDto;
 import com.candidateSearch.searching.entity.CandidateStateEntity;
 import com.candidateSearch.searching.entity.PostulationEntity;
 import com.candidateSearch.searching.entity.ProcessEntity;
 import com.candidateSearch.searching.entity.CandidateEntity;
 import com.candidateSearch.searching.entity.RoleEntity;
-import com.candidateSearch.searching.exception.type.CannotBeCreateException;
-import com.candidateSearch.searching.exception.type.EntityNoExistException;
-import com.candidateSearch.searching.exception.type.ItAlreadyProcessWithIdPostulation;
-import com.candidateSearch.searching.exception.type.PostulationIsOffException;
-import com.candidateSearch.searching.exception.type.ResourceNotFoundException;
-import com.candidateSearch.searching.exception.type.BadRequestException;
-import com.candidateSearch.searching.exception.type.RoleIdNoExistException;
-import com.candidateSearch.searching.exception.type.CandidateNoExistException;
-import com.candidateSearch.searching.exception.type.CandidateNoPostulationException;
+import com.candidateSearch.searching.exception.type.CustomBadRequestException;
+import com.candidateSearch.searching.exception.type.CustomConflictException;
+import com.candidateSearch.searching.exception.type.CustomNotFoundException;
 import com.candidateSearch.searching.mapper.IMapperProcess;
 import com.candidateSearch.searching.repository.ICandidateStateRepository;
 import com.candidateSearch.searching.repository.IPostulationRepository;
@@ -25,6 +22,9 @@ import com.candidateSearch.searching.repository.IRoleRepository;
 import com.candidateSearch.searching.entity.utility.Status;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
@@ -45,7 +45,7 @@ public class ProcessService {
     public List<ProcessResponseDto> getProcessOfCandidateByRole(String roleName) {
 
         RoleEntity role = roleIDRepository.findByNameRole(roleName)
-                .orElseThrow(RoleIdNoExistException::new);
+                .orElseThrow(()->new CustomNotFoundException("There is no role with that ID."));
 
         List<PostulationEntity> postulations = postulationRepository.findByRole(role);
 
@@ -65,20 +65,20 @@ public class ProcessService {
         Boolean postulationEntity = postulationRepository.existsByCandidateId(id);
 
         if(!postulationEntity){
-            throw new EntityNoExistException();
+            throw new CustomNotFoundException("There is no postulation with that ID.");
         }
 
         CandidateEntity candidateEntity = candidateRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(()-> new CustomNotFoundException("There is no candidate with that ID."));
 
         return processRepository.findById(candidateEntity.getId())
                 .map(mapperProcess::toDto)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(()-> new CustomNotFoundException("There is no process with that candidate ID."));
     }
 
     public ProcessResponseDto getByIdProcess(Long id){
         ProcessEntity processEntity = processRepository.findById(id)
-                .orElseThrow(CandidateNoExistException::new);
+                .orElseThrow(()-> new CustomNotFoundException("There is no process with that ID."));
 
         if(processEntity.getStatus().equals(Status.ACTIVE)){
             List<CandidateStateEntity> filteredStates = processEntity.getCandidateState().stream()
@@ -109,55 +109,103 @@ public class ProcessService {
                 .map(mapperProcess::toDto)
                 .collect(Collectors.toList());
     }
+    public PaginationResponseDto<ProcessResponseDto> getAllProcessV2(List<Status> statuses,int page,int size){
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProcessEntity> processEntityPage =processRepository.findByStatusIn(
+                PostulationValidator.validateStatusesOrDefault(statuses),
+                pageable);
+
+        List<ProcessResponseDto> responseDtoList =processEntityPage.getContent()
+                .stream()
+                .map(mapperProcess::toDto)
+                .toList();
+
+        return  new PaginationResponseDto<>(
+                responseDtoList,
+                processEntityPage.getNumber(),
+                processEntityPage.getSize(),
+                processEntityPage.getTotalPages(),
+                processEntityPage.getTotalElements()
+        );
+    }
 
     public List<ProcessResponseDto> getProcessByPostulationId(Long postulationId) {
-        validateLongId(postulationId);
-
+        ProcessValidator.validateLongId(postulationId,postulationRepository);
         Optional<ProcessEntity> processes = processRepository.findByPostulationId(postulationId);
-        validateListProcess(processes);
+        ProcessValidator.validateProcessOptionalNotEmpty(processes);
 
         return processes.stream()
                 .map(mapperProcess::toDto).collect(Collectors.toList());
     }
 
     public List<ProcessResponseDto> getSearchProcessesByCandidateFullName(String query) {
-        validateStringQuery(query);
-        query = normalizeQuery(query);
+        ProcessValidator.validateStringQueryNotEmpty(query);
+        query = ProcessValidator.normalizeQueryNotEmpty(query);
 
         String[] words = query.split(" ");
-
         String word1 = words.length > 0 ? words[0] : null;
         String word2 = words.length > 1 ? words[1] : null;
         String word3 = words.length > 2 ? words[2] : null;
         String word4 = words.length > 3 ? words[3] : null;
 
         List<ProcessEntity> processes = processRepository.searchByCandidateNameOrLastName2(word1, word2, word3, word4);
-
-        validateListProcess(processes);
-
+        ProcessValidator.validateProcessListNotEmpty(processes);
         return processes.stream()
                 .map(mapperProcess::toDto)
                 .collect(Collectors.toList());
     }
 
+    public PaginationResponseDto<ProcessResponseDto> getSearchProcessesByCandidateFullNameV2(String query, int page ,int size,List<Status>statuses){
+        ProcessValidator.validateStringQueryNotEmpty(query);
+        query = ProcessValidator.normalizeQueryNotEmpty(query);
+        Pageable pageable = PageRequest.of(page, size);
+
+        String[] words = query.split(" ");
+        String word1 = words.length > 0 ? words[0] : null;
+        String word2 = words.length > 1 ? words[1] : null;
+        String word3 = words.length > 2 ? words[2] : null;
+        String word4 = words.length > 3 ? words[3] : null;
+
+        Page<ProcessEntity> processEntities=processRepository.searchByCandidateNameAndStatuses(
+                word1,
+                word2,
+                word3,
+                word4,
+                ProcessValidator.validateStatusesOrDefault(statuses),
+                pageable);
+
+        List<ProcessResponseDto> responseDtoList =processEntities.getContent()
+                .stream()
+                .map(mapperProcess::toDto)
+                .toList();
+
+        return  new PaginationResponseDto<>(
+                responseDtoList,
+                processEntities.getNumber(),
+                processEntities.getSize(),
+                processEntities.getTotalPages(),
+                processEntities.getTotalElements()
+        );
+    }
+
     public ProcessResponseDto saveProcess(ProcessRequestDto processRequestDto) {
 
         if(processRequestDto.getStatus().equals(Status.INACTIVE) || processRequestDto.getStatus().equals(Status.BLOCKED)){
-            throw new CannotBeCreateException();
+            throw new CustomBadRequestException("Cannot be create or update, valid the status.");
         }
 
         PostulationEntity postulationEntity = postulationRepository.findById(processRequestDto.getPostulationId())
-                .orElseThrow(CandidateNoPostulationException::new);
+                .orElseThrow(()-> new CustomBadRequestException("The candidate must first have been nominated."));
 
         if (postulationEntity.getStatus().equals(Status.INACTIVE)) {
-            throw new PostulationIsOffException();
+            throw new CustomConflictException("The postulation must be in true.");
         }
 
         if (postulationEntity.getProcess() != null) {
             ProcessEntity existingProcess = postulationEntity.getProcess();
 
             if (existingProcess.getStatus().equals(Status.ACTIVE)) {
-                throw new ItAlreadyProcessWithIdPostulation();
+                throw new CustomConflictException("There is already a process with that id postulation.");
             }
         }
 
@@ -179,20 +227,20 @@ public class ProcessService {
 
         if (processRequestDto.getStatus() == Status.INACTIVE ||
                 processRequestDto.getStatus() == Status.BLOCKED) {
-            throw new CannotBeCreateException();
+            throw new CustomBadRequestException("Cannot be create or update, valid the status.");
         }
 
         ProcessEntity existingEntity  = processRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(()-> new CustomNotFoundException("There is no process with that ID."));
 
         PostulationEntity postulation = postulationRepository.findById(processRequestDto.getPostulationId())
-                .orElseThrow(CandidateNoPostulationException::new);
+                .orElseThrow(()-> new CustomBadRequestException("The candidate must first have been nominated."));
 
         if (processRequestDto.getStatus() == Status.ACTIVE) {
             ProcessEntity currentActiveProcess = postulation.getProcess();
 
             if (!existingEntity.equals(currentActiveProcess) && currentActiveProcess != null && currentActiveProcess.getStatus() == Status.ACTIVE) {
-                throw new ItAlreadyProcessWithIdPostulation();
+                throw new CustomConflictException("You have already submitted an active application.");
             }
         }
 
@@ -210,9 +258,9 @@ public class ProcessService {
     }
 
     @Transactional
-    public void deleteProcess(Long id){
+    public void deleteProcess(Long id) {
         ProcessEntity existingProcess = processRepository.findById(id)
-                .orElseThrow(EntityNoExistException::new);
+                .orElseThrow(() -> new CustomNotFoundException("There is no process with that ID."));
 
         existingProcess.setStatus(Status.INACTIVE);
 
@@ -227,46 +275,6 @@ public class ProcessService {
         }
 
         processRepository.save(existingProcess);
-    }
-
-    private void validateLongId(Long id){
-        if (id == null || id <= 0) {
-            throw new BadRequestException("The application ID must be a positive number.");
-        }
-
-        if (!postulationRepository.existsById(id)) {
-            throw new ResourceNotFoundException("No postulation found with ID: " + id);
-        }
-    }
-
-    private void validateListProcess(List<ProcessEntity> processEntities) {
-        if (processEntities.isEmpty()) {
-            throw new ResourceNotFoundException("No processes found for the given search criteria.");
-        }
-    }
-
-    private void validateListProcess(Optional<ProcessEntity> processEntities) {
-        if (processEntities.isEmpty()) {
-            throw new ResourceNotFoundException("No processes found for the given search criteria.");
-        }
-    }
-
-    private void validateStringQuery(String query) {
-        if (query == null || query.trim().isEmpty()) {
-            throw new BadRequestException("The search query cannot be empty.");
-        }
-    }
-
-    private String normalizeQuery(String query) {
-        if (query == null || query.isBlank()) {
-            return query;
-        }
-        query = query.trim();
-        return query.replaceAll("[áÁ]", "a")
-                .replaceAll("[éÉ]", "e")
-                .replaceAll("[íÍ]", "i")
-                .replaceAll("[óÓ]", "o")
-                .replaceAll("[úÚ]", "u");
     }
 }
 

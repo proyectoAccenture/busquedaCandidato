@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DateWithinRange {
-    String message() default "The date must be within the last 3 months and cannot be in the future.";
+    String message( ) default "The date must be within the last 3 months and cannot be in the future.";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

@@ -17,28 +17,28 @@ import java.time.LocalDate;
 public class CandidateStateRequestUpdateDto {
 
     @Schema(name = "stateId",description = "Id of state", example = "1")
-    @NotNull(message = "state cannot be null")
-    @Min(value = 1, message = "stateId must be greater than 0")
+    @NotNull(message = "The stateId field cannot be null")
+    @Min(value = 1, message = "The stateId field must be greater than 0")
     private Long stateId;
 
     @Schema(name = "description", description = "Description about candidate state", example = "This process is...")
-    @Size(min = 1, max = 255, message = "Description must be between 10 and 255 characters")
-    @NotBlank(message = "Description cannot be blank")
-    @Pattern(regexp = "^[a-zA-Z0-9 .,!?-]+$", message = "Description contains invalid characters")
+    @Size(min = 1, max = 255, message = "The description field must be between 10 and 255 characters")
+    @NotBlank(message = "The description field cannot be blank")
+    @Pattern(regexp = "^[a-zA-Z0-9 .,!?-]+$", message = "The description field contains invalid characters")
     private String description;
 
     @Schema(name = "status", description = "Status in which a candidate state is located")
-    @NotNull(message = "Status cannot be null")
+    @NotNull(message = "The status field cannot be null")
     private Boolean status;
 
     @Schema(name = "statusHistory", description = "Status of process = 'ACTIVE', 'INACTIVE' ", example = "ACTIVE")
-    @NotNull(message = "Status cannot be null")
+    @NotNull(message = "The statusHistory field cannot be null")
     private Status statusHistory;
 
     @Schema(name = "assignedDate", description = "Name of the job profile", example = "2025-01-01")
-    @NotNull(message = "Date in which a candidate is doing the state")
+    @NotNull(message = "The assignedDate field cannot be empty or null")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    @DateWithinRange
+    @DateWithinRange(message = "The assignedDate field must be within the last 3 months and cannot be in the future.")
     private LocalDate assignedDate;
 }

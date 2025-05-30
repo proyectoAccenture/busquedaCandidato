@@ -107,7 +107,7 @@ public class CandidateController {
             @RequestParam(defaultValue = "10")@Min(1)  int size) {
         return ResponseEntity.ok(candidateService.getSearchCandidates(query, page, size));
     }
-    @GetMapping("/v2/search")
+
     @Operation(summary = "Search candidates by any field and optional status")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Candidate(s) found",
@@ -116,6 +116,7 @@ public class CandidateController {
             @ApiResponse(responseCode = "400", description = "Invalid query parameter", content = @Content),
             @ApiResponse(responseCode = "404", description = "No candidates found", content = @Content)
     })
+    @GetMapping("/v2/search")
     public ResponseEntity<PaginationResponseDto<CandidateResponseDto>> getSearchCandidates(
             @RequestParam @NotBlank String query,
             @RequestParam(required = false) List<Status> status,

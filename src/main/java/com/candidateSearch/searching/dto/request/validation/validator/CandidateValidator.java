@@ -40,6 +40,17 @@ public class CandidateValidator {
                 ? List.of(Status.ACTIVE, Status.INACTIVE)
                 : statuses;
     }
+    public static String normalizeQueryNotEmpty(String query) {
+        if (query == null || query.isBlank()) {
+            return query;
+        }
+        return query.trim()
+                .replaceAll("[áÁ]", "a")
+                .replaceAll("[éÉ]", "e")
+                .replaceAll("[íÍ]", "i")
+                .replaceAll("[óÓ]", "o")
+                .replaceAll("[úÚ]", "u");
+    }
 
 
 }

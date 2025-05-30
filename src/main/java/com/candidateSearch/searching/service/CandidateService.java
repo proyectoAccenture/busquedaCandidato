@@ -134,17 +134,27 @@ public class CandidateService {
                 candidates.getTotalElements()
         );
     }
-    public PaginationResponseDto<CandidateResponseDto> getSearchCandidatesV2(String query, int page, int size,List<Status> statuses) {
+    public PaginationResponseDto<CandidateResponseDto> getSearchCandidatesV2(String query, int page, int size, List<Status> statuses) {
         CandidateValidator.validateQueryNotEmpty(query);
+        query = CandidateValidator.normalizeQueryNotEmpty(query);
+
         Pageable pageable = PageRequest.of(page, size);
+        String[] words = query.split(" ");
+        String word1 = words.length > 0 ? words[0] : null;
+        String word2 = words.length > 1 ? words[1] : null;
+        String word3 = words.length > 2 ? words[2] : null;
+        String word4 = words.length > 3 ? words[3] : null;
 
         Page<CandidateEntity> candidates = candidateRepository.searchCandidatesV2(
+                word1,
+                word2,
+                word3,
+                word4,
                 query,
                 CandidateValidator.validateStatusesOrDefault(statuses),
                 pageable);
 
         CandidateValidator.validateCandidatePageNotEmpty(candidates);
-
         List<CandidateResponseDto> candidateDTOs = candidates.getContent().stream()
                 .map(mapperCandidate::toDto)
                 .toList();
@@ -157,6 +167,7 @@ public class CandidateService {
                 candidates.getTotalElements()
         );
     }
+
 
     public PaginationResponseDto<CandidateResponseDto> getSearchCandidatesFullName(String query) {
         CandidateValidator.validateQueryNotEmpty(query);

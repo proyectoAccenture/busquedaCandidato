@@ -9,6 +9,7 @@ import com.candidateSearch.searching.entity.PostulationEntity;
 import com.candidateSearch.searching.entity.utility.Status;
 import com.candidateSearch.searching.exception.globalmessage.GlobalMessage;
 import com.candidateSearch.searching.exception.type.BusinessException;
+import com.candidateSearch.searching.exception.type.FieldAlreadyExistException;
 import com.candidateSearch.searching.repository.ICandidateRepository;
 import com.candidateSearch.searching.repository.ICandidateStateRepository;
 import com.candidateSearch.searching.repository.IJobProfileRepository;
@@ -71,16 +72,17 @@ public class OperationCandidate {
         }
     }
 
-    public void validateField(Optional<CandidateEntity> candidateOpt, String card) {
+    public void validateField(Optional<CandidateEntity> candidateOpt, String field) {
         if (candidateOpt.isPresent()) {
             CandidateEntity existing = candidateOpt.get();
             if (existing.getStatus() == Status.BLOCKED) {
                 throw new BusinessException(GlobalMessage.CANDIDATE_BLOCKED);
             } else {
-                throw new BusinessException(GlobalMessage.FLIED_ALREADY_EXIST);
+                throw new FieldAlreadyExistException(field);
             }
         }
     }
+
     public void validateUniqueFields(CandidateRequestDto dto) {
         validateField(
                 candidateRepository.findByCardAndStatusNot(dto.getCard(), Status.INACTIVE),
@@ -124,14 +126,14 @@ public class OperationCandidate {
         return c;
     }
 
-    public void validateUniqueFieldExceptSelf(String fieldName, String value, Long selfId,
+    public void validateUniqueFieldExceptSelf(String field, String value, Long selfId,
                                                      Function<String, Optional<CandidateEntity>> finder) {
         finder.apply(value).ifPresent(candidate -> {
             if (!candidate.getId().equals(selfId)) {
                 if (candidate.getStatus() == Status.BLOCKED) {
                     throw new BusinessException(GlobalMessage.CANDIDATE_BLOCKED);
                 } else {
-                    throw new BusinessException(GlobalMessage.FLIED_ALREADY_EXIST);
+                    throw new FieldAlreadyExistException(field);
                 }
             }
         });
@@ -144,7 +146,7 @@ public class OperationCandidate {
                 .anyMatch(p -> p.getStatus() == Status.ACTIVE);
 
         if (hasOtherActive) {
-            throw new BusinessException(GlobalMessage.FLIED_ALREADY_EXIST);
+            throw new BusinessException(GlobalMessage.CANDIDATE_ALREADY_HAVE_POSTULATION);
         }
     }
 

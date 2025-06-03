@@ -46,7 +46,7 @@ public class RoleService {
         }
 
         if (roleRepository.existsByNameRoleAndStatusNot(roleRequestDto.getNameRole(), Status.INACTIVE)) {
-            throw new BusinessException(GlobalMessage.FLIED_ALREADY_EXIST);
+            throw new BusinessException(GlobalMessage.CANDIDATE_ALREADY_HAVE_POSTULATION);
         }
 
         JobProfileEntity jobProfileEntity = jobProfileRepository.findById(roleRequestDto.getJobProfile())

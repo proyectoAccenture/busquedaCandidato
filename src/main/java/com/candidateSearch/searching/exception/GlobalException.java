@@ -8,6 +8,7 @@ import com.candidateSearch.searching.exception.type.CannotApplyException;
 import com.candidateSearch.searching.exception.type.CannotBeUpdateException;
 import com.candidateSearch.searching.exception.type.EntityAlreadyExistsException;
 import com.candidateSearch.searching.exception.type.EntityAlreadyHasRelationException;
+import com.candidateSearch.searching.exception.type.FieldAlreadyExistException;
 import com.candidateSearch.searching.exception.type.InvalidFileTypeException;
 import com.candidateSearch.searching.exception.type.InvalidStateTransitionException;
 import com.candidateSearch.searching.exception.type.ItAlreadyExistPostulationException;
@@ -176,6 +177,12 @@ public class GlobalException {
         body.put("Error", "Invalid state transition");
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(FieldAlreadyExistException.class)
+    public ResponseEntity<Map<String, String>> handleFieldAlreadyExistException(FieldAlreadyExistException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Collections.singletonMap("message", ex.getMessage()));
     }
 }
 

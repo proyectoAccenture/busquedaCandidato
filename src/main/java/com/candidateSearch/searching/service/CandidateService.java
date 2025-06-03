@@ -172,7 +172,7 @@ public class CandidateService {
     @Transactional
     public Optional<CandidateResponseDto> updateCandidate(Long id, CandidateRequestDto candidateDto) {
 
-        CandidateEntity existingEntity  = candidateRepository.findById(id)
+        CandidateEntity candidateExist  = candidateRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(GlobalMessage.ENTITY_DOES_NOT_EXIST));
 
         if (candidateDto.getStatus() == Status.INACTIVE ||
@@ -192,11 +192,11 @@ public class CandidateService {
         }
 
         if (candidateDto.getStatus() == Status.ACTIVE &&
-                (existingEntity.getStatus() == Status.INACTIVE || existingEntity.getStatus() == Status.BLOCKED)) {
+                (candidateExist.getStatus() == Status.INACTIVE || candidateExist.getStatus() == Status.BLOCKED)) {
 
-            operationCandidate.validateNoOtherActivePostulation(existingEntity.getId());
-            operationCandidate.activateCascade(existingEntity.getId());
-            existingEntity.setStatus(Status.ACTIVE);
+            operationCandidate.validateNoOtherActivePostulation(candidateExist.getId());
+            operationCandidate.activateCascade(candidateExist.getId());
+            candidateExist.setStatus(Status.ACTIVE);
         }
 
         JobProfileEntity jobProfileEntity = jobProfileRepository.findById(candidateDto.getJobProfile())
@@ -205,8 +205,8 @@ public class CandidateService {
         OriginEntity originEntity = originRepository.findById(candidateDto.getOrigin())
                 .orElseThrow(() -> new BusinessException(GlobalMessage.ENTITY_DOES_NOT_EXIST));
 
-        operationCandidate.updateCandidateField(existingEntity, candidateDto, jobProfileEntity, originEntity);
-        CandidateEntity saved = candidateRepository.save(existingEntity);
+        operationCandidate.updateCandidateField(candidateExist, candidateDto, jobProfileEntity, originEntity);
+        CandidateEntity saved = candidateRepository.save(candidateExist);
 
         operationCandidate.linkRelations(saved, jobProfileEntity, originEntity);
 

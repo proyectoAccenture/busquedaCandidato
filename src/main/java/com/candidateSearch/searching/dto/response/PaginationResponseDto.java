@@ -6,8 +6,8 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class CandidateWithPaginationResponseDto {
-    private List<CandidateResponseDto> candidates;
+public class PaginationResponseDto<T> {
+    private List<T> content;
     private int currentPage;
     private int pageSize;
     private int totalPages;

@@ -1,8 +1,13 @@
 package com.candidateSearch.searching.service;
 
 import com.candidateSearch.searching.dto.request.RoleRequestDto;
+import com.candidateSearch.searching.dto.request.validation.validator.PostulationValidator;
+import com.candidateSearch.searching.dto.request.validation.validator.RoleValidator;
+import com.candidateSearch.searching.dto.response.PaginationResponseDto;
+import com.candidateSearch.searching.dto.response.PostulationResponseDto;
 import com.candidateSearch.searching.dto.response.RoleResponseDto;
 import com.candidateSearch.searching.entity.OriginEntity;
+import com.candidateSearch.searching.entity.PostulationEntity;
 import com.candidateSearch.searching.entity.RoleEntity;
 import com.candidateSearch.searching.entity.JobProfileEntity;
 import com.candidateSearch.searching.exception.globalmessage.GlobalMessage;
@@ -13,6 +18,9 @@ import com.candidateSearch.searching.repository.IJobProfileRepository;
 import com.candidateSearch.searching.repository.IOriginRepository;
 import com.candidateSearch.searching.entity.utility.Status;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -32,13 +40,45 @@ public class RoleService {
                 .orElseThrow(() -> new BusinessException(GlobalMessage.ENTITY_DOES_NOT_EXIST));
     }
 
-    public List<RoleResponseDto> getAllRoles(){
-        return roleRepository.findAll().stream()
-                .filter(roles -> roles.getStatus() == Status.ACTIVE)
+    public PaginationResponseDto<RoleResponseDto> getAllRoles(List<Status> statuses, int page, int size){
+        Pageable pageable = PageRequest.of(page, size);
+        Page<RoleEntity> rolePage = roleRepository.findByStatusIn(
+                RoleValidator.validateStatusesOrDefault(statuses),
+                pageable);
+
+        List<RoleResponseDto> dtoList = rolePage.getContent()
+                .stream()
                 .map(mapperRole::toDto)
                 .collect(Collectors.toList());
+
+        return new PaginationResponseDto<>(
+                dtoList,
+                rolePage.getNumber(),
+                rolePage.getSize(),
+                rolePage.getTotalPages(),
+                rolePage.getTotalElements()
+        );
     }
 
+    public PaginationResponseDto<RoleResponseDto> searchRoles(String query,List<Status> statuses, int page, int size){
+        RoleValidator.validateQueryNotEmpty(query);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<RoleEntity> roleEntityList = roleRepository.searchByAllFields(query,RoleValidator.validateStatusesOrDefault(statuses),pageable);
+        RoleValidator.validateCandidatePageNotEmpty(roleEntityList);
+        List<RoleResponseDto> responseDtoList = roleEntityList.getContent()
+                .stream()
+                .map(mapperRole::toDto)
+                .toList();
+
+        return new PaginationResponseDto<>(
+                responseDtoList,
+                roleEntityList.getNumber(),
+                roleEntityList.getSize(),
+                roleEntityList.getTotalPages(),
+                roleEntityList.getTotalElements()
+        );
+
+    }
     public RoleResponseDto saveRole(RoleRequestDto roleRequestDto) {
 
         if(roleRequestDto.getStatus().equals(Status.INACTIVE) || roleRequestDto.getStatus().equals(Status.BLOCKED)){

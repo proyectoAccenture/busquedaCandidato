@@ -1,6 +1,8 @@
 package com.candidateSearch.searching.service;
 
 import com.candidateSearch.searching.dto.request.PostulationRequestDto;
+import com.candidateSearch.searching.dto.request.validation.validator.PostulationValidator;
+import com.candidateSearch.searching.dto.response.PaginationResponseDto;
 import com.candidateSearch.searching.dto.response.PostulationFullResponseDto;
 import com.candidateSearch.searching.dto.response.PostulationResponseDto;
 import com.candidateSearch.searching.entity.CandidateEntity;
@@ -24,6 +26,9 @@ import com.candidateSearch.searching.repository.IRoleRepository;
 import com.candidateSearch.searching.entity.utility.Status;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -53,16 +58,29 @@ public class PostulationService {
         return mapperPostulation.toDto(postulationEntity);
     }
 
-    public List<PostulationResponseDto> getAllPostulation(){
-        return postulationRepository.findAll().stream()
-                .filter(postulationEntity ->  postulationEntity.getStatus() == Status.ACTIVE)
+    public PaginationResponseDto<PostulationResponseDto> getAllPostulation(List<Status> statuses, int page, int size){
+        Pageable pageable = PageRequest.of(page, size);
+        Page<PostulationEntity> postulationPage = postulationRepository.findByStatusIn(
+                PostulationValidator.validateStatusesOrDefault(statuses),
+                pageable);
+
+        List<PostulationResponseDto> dtoList = postulationPage.getContent()
+                .stream()
                 .map(mapperPostulation::toDto)
                 .collect(Collectors.toList());
+
+        return new PaginationResponseDto<>(
+                dtoList,
+                postulationPage.getNumber(),
+                postulationPage.getSize(),
+                postulationPage.getTotalPages(),
+                postulationPage.getTotalElements()
+        );
     }
 
     public List<PostulationResponseDto> getSearchPostulationsByCandidateFullName(String query) {
-        validateStringQuery(query);
-        query = normalizeQuery(query);
+        PostulationValidator.validateQueryNotEmpty(query);
+        query = PostulationValidator.normalizeQueryNotEmpty(query);
 
         String[] words = query.split(" ");
         String word1 = words.length > 0 ? words[0] : null;
@@ -71,7 +89,7 @@ public class PostulationService {
         String word4 = words.length > 3 ? words[3] : null;
 
         List<PostulationEntity> postulations = postulationRepository.searchByCandidateNameOrLastName(word1, word2, word3, word4);
-        validationListPostulation(postulations);
+        PostulationValidator.validatePostulationListNotEmpty(postulations);
 
         return postulations.stream()
                 .filter(candidateEntity ->  candidateEntity.getStatus() != Status.INACTIVE)
@@ -79,9 +97,10 @@ public class PostulationService {
                 .collect(Collectors.toList());
     }
 
-    public List<PostulationResponseDto> searchByCandidateNameLastNameAndRole(String query) {
-        validateStringQuery(query);
-        query = normalizeQuery(query);
+    public PaginationResponseDto<PostulationResponseDto> searchByCandidateNameLastNameAndRole(String query, List<Status>statuses, int page,int size) {
+        PostulationValidator.validateQueryNotEmpty(query);
+        query = PostulationValidator.normalizeQueryNotEmpty(query);
+        Pageable pageable = PageRequest.of(page, size);
 
         String[] words = query.split(" ");
         String word1 = words.length > 0 ? words[0] : null;
@@ -89,20 +108,29 @@ public class PostulationService {
         String word3 = words.length > 2 ? words[2] : null;
         String word4 = words.length > 3 ? words[3] : null;
 
-        Status statusQuery = null;
-        if ("ACTIVE".equalsIgnoreCase(query) || "1".equals(query)) {
-            statusQuery = Status.ACTIVE;
-        } else if ("BLOCKED".equalsIgnoreCase(query) || "0".equals(query)) {
-            statusQuery = Status.BLOCKED;
-        }
+        Page<PostulationEntity> postulations = postulationRepository
+                .searchByCandidateNameLastNameAndRole(
+                        word1,
+                        word2,
+                        word3,
+                        word4,
+                        query,
+                        PostulationValidator.validateStatusesOrDefault(statuses),
+                        pageable);
 
-        List<PostulationEntity> postulations = postulationRepository.searchByCandidateNameLastNameAndRole(word1, word2, word3, word4, query, statusQuery);
-        validationListPostulation(postulations);
-
-        return postulations.stream()
-                .filter(postulationEntity ->  postulationEntity.getStatus() != Status.INACTIVE)
+        PostulationValidator.validatePostulationPageNotEmpty(postulations);
+        List<PostulationResponseDto> responseDtoList = postulations.getContent()
+                .stream()
                 .map(mapperPostulation::toDto)
-                .collect(Collectors.toList());
+                .toList();
+
+        return new PaginationResponseDto<>(
+                responseDtoList,
+                postulations.getNumber(),
+                postulations.getSize(),
+                postulations.getTotalPages(),
+                postulations.getTotalElements()
+        );
     }
 
     public PostulationResponseDto savePostulation(PostulationRequestDto postulationRequestDto) {
@@ -258,29 +286,5 @@ public class PostulationService {
         }
 
         postulationRepository.save(postulation);
-    }
-
-    private void validationListPostulation(List<PostulationEntity> postulations){
-        if (postulations.isEmpty()) {
-            throw new ResourceNotFoundException("No postulations found for the given search criteria.");
-        }
-    }
-
-    private void validateStringQuery(String query) {
-        if (query == null || query.trim().isEmpty()) {
-            throw new BadRequestException("The search query cannot be empty.");
-        }
-    }
-
-    private String normalizeQuery(String query) {
-        if (query == null || query.isBlank()) {
-            return query;
-        }
-        query = query.trim();
-        return query.replaceAll("[áÁ]", "a")
-                .replaceAll("[éÉ]", "e")
-                .replaceAll("[íÍ]", "i")
-                .replaceAll("[óÓ]", "o")
-                .replaceAll("[úÚ]", "u");
     }
 }

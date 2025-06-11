@@ -1,8 +1,9 @@
 package com.candidateSearch.searching.service;
 
 import com.candidateSearch.searching.dto.request.CandidateRequestDto;
+import com.candidateSearch.searching.dto.request.validation.validator.CandidateValidator;
 import com.candidateSearch.searching.dto.response.CandidateResponseDto;
-import com.candidateSearch.searching.dto.response.CandidateWithPaginationResponseDto;
+import com.candidateSearch.searching.dto.response.PaginationResponseDto;
 import com.candidateSearch.searching.entity.CandidateEntity;
 import com.candidateSearch.searching.entity.JobProfileEntity;
 import com.candidateSearch.searching.entity.OriginEntity;
@@ -75,18 +76,32 @@ public class CandidateService {
                 .collect(Collectors.toList());
     }
 
-    public CandidateWithPaginationResponseDto getSearchCandidates(String query, int page, int size) {
-        validationQuery(query);
+    public PaginationResponseDto<CandidateResponseDto> getSearchCandidates(String query, List<Status> statuses, int page, int size) {
+        CandidateValidator.validateQueryNotEmpty(query);
+        query = CandidateValidator.normalizeQueryNotEmpty(query);
+
         Pageable pageable = PageRequest.of(page, size);
+        String[] words = query.split(" ");
+        String word1 = words.length > 0 ? words[0] : null;
+        String word2 = words.length > 1 ? words[1] : null;
+        String word3 = words.length > 2 ? words[2] : null;
+        String word4 = words.length > 3 ? words[3] : null;
 
-        Page<CandidateEntity> candidates = candidateRepository.searchCandidates(query, pageable);
-        validationListPage(candidates);
+        Page<CandidateEntity> candidates = candidateRepository.searchCandidates(
+                word1,
+                word2,
+                word3,
+                word4,
+                query,
+                CandidateValidator.validateStatusesOrDefault(statuses),
+                pageable);
 
+        CandidateValidator.validateCandidatePageNotEmpty(candidates);
         List<CandidateResponseDto> candidateDTOs = candidates.getContent().stream()
                 .map(mapperCandidate::toDto)
                 .toList();
 
-        return new CandidateWithPaginationResponseDto(
+        return new PaginationResponseDto<>(
                 candidateDTOs,
                 candidates.getNumber(),
                 candidates.getSize(),
@@ -95,9 +110,9 @@ public class CandidateService {
         );
     }
 
-    public CandidateWithPaginationResponseDto getSearchCandidatesFullName(String query, String statusParam) {
-        validationQuery(query);
-        validationQueryNumber(query);
+    public PaginationResponseDto<CandidateResponseDto> getSearchCandidatesFullName(String query, String statusParam) {
+        CandidateValidator.validateQueryNotEmpty(query);
+        CandidateValidator.validateQueryHasNoNumbers(query);
         Pageable pageable = PageRequest.of(0, 10);
 
         Status status;
@@ -117,14 +132,13 @@ public class CandidateService {
             candidates = candidateRepository.searchByFullName(query, pageable);
         }
 
-        validationListCandidate(candidates);
-
+        CandidateValidator.validateCandidateListNotEmpty(candidates);
         List<CandidateResponseDto> candidateDTOs = candidates.stream()
                 .filter(candidate -> candidate.getStatus().equals(status))
                 .map(mapperCandidate::toDto)
                 .toList();
 
-        return new CandidateWithPaginationResponseDto(
+        return new PaginationResponseDto<>(
                 candidateDTOs,
                 0,
                 candidateDTOs.size(),
@@ -139,11 +153,25 @@ public class CandidateService {
                 .orElseThrow(() -> new BusinessException(GlobalMessage.CANDIDATE_DOES_NOT_EXIST));
     }
 
-    public List<CandidateResponseDto> getAllCandidate(){
-        return candidateRepository.findAll().stream()
-                .filter(candidateEntity ->  candidateEntity.getStatus() == Status.ACTIVE)
+    public PaginationResponseDto<CandidateResponseDto> getAllCandidate(List<Status> statuses, int page, int size){
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<CandidateEntity> candidatePage = candidateRepository.findByStatusIn(
+                CandidateValidator.validateStatusesOrDefault(statuses),
+                pageable);
+
+        List<CandidateResponseDto> candidates = candidatePage.getContent()
+                .stream()
                 .map(mapperCandidate::toDto)
-                .collect(Collectors.toList());
+                .toList();
+
+        return new PaginationResponseDto<>(
+                candidates,
+                candidatePage.getNumber(),
+                candidatePage.getSize(),
+                candidatePage.getTotalPages(),
+                candidatePage.getTotalElements()
+        );
     }
 
     public CandidateResponseDto saveCandidate(CandidateRequestDto candidateRequestDto) {
@@ -225,30 +253,5 @@ public class CandidateService {
         );
 
         candidateRepository.save(candidate);
-    }
-
-    private void validationQuery(String query){
-        if (query == null || query.trim().isEmpty()) {
-            throw new IllegalArgumentException("Search query cannot be empty");
-        }
-    }
-
-    private void validationListPage(Page<CandidateEntity> candidates ){
-        if (candidates.isEmpty()) {
-            throw new BusinessException(GlobalMessage.CANDIDATE_DOES_NOT_EXIST);
-
-        }
-    }
-    private void validationQueryNumber(String query){
-        if (query.matches(".*\\d.*")) {
-            throw new IllegalArgumentException("Search query cannot contain numbers");
-        }
-    }
-
-    private void validationListCandidate(List<CandidateEntity> candidates){
-        if (candidates.isEmpty()) {
-            throw new BusinessException(GlobalMessage.CANDIDATE_DOES_NOT_EXIST);
-
-        }
     }
 }

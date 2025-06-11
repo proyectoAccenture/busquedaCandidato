@@ -1,8 +1,7 @@
 package com.candidateSearch.searching.controller;
 
 import com.candidateSearch.searching.dto.request.CandidateRequestDto;
-import com.candidateSearch.searching.dto.request.PostulationRequestDto;
-import com.candidateSearch.searching.dto.response.CandidateWithPaginationResponseDto;
+import com.candidateSearch.searching.dto.response.PaginationResponseDto;
 import com.candidateSearch.searching.dto.response.CandidateResponseDto;
 import com.candidateSearch.searching.dto.response.CandidateResumeResponseDto;
 import com.candidateSearch.searching.dto.response.PostulationResponseDto;
@@ -83,7 +82,9 @@ public class CandidateController {
         return ResponseEntity.ok(candidate);
     }
 
-    @Operation(summary = "Get a candidate by any field")
+    @Operation(summary = "Search candidates by all fields with pagination and filter by status",
+            description = "Fetches candidates that match the search keyword in any of the CandidateEntity fields, with optional " +
+                    "filtering by status and pagination of results.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Candidate found",
                     content = @Content(mediaType = "application/json",
@@ -92,11 +93,12 @@ public class CandidateController {
             @ApiResponse(responseCode = "404", description = "Candidate not found", content = @Content)
     })
     @GetMapping("/search")
-    public ResponseEntity<CandidateWithPaginationResponseDto> getSearchCandidates(
+    public ResponseEntity<PaginationResponseDto<CandidateResponseDto>> getSearchCandidates(
             @RequestParam @NotBlank String query,
-            @RequestParam(defaultValue = "0") @Min(0)int page,
-            @RequestParam(defaultValue = "10")@Min(1)  int size) {
-        return ResponseEntity.ok(candidateService.getSearchCandidates(query, page, size));
+            @RequestParam(required = false) List<Status> status,
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @RequestParam(defaultValue = "10") @Min(1) int size) {
+        return ResponseEntity.ok(candidateService.getSearchCandidates(query, status, page, size));
     }
 
     @Operation(summary = "Get candidates by full name")
@@ -108,15 +110,15 @@ public class CandidateController {
             @ApiResponse(responseCode = "404", description = "No candidates found", content = @Content)
     })
     @GetMapping("/search-fullName/")
-    public ResponseEntity<CandidateWithPaginationResponseDto> getSearchCandidatesFullName(@RequestParam("fullName") @NotBlank String fullName, @RequestParam("status") @NotBlank String status) {
-        CandidateWithPaginationResponseDto candidateWithPaginationResponseDto = candidateService.getSearchCandidatesFullName(fullName, status);
-        if (candidateWithPaginationResponseDto.toString().isEmpty()){
+    public ResponseEntity<PaginationResponseDto<CandidateResponseDto>> getSearchCandidatesFullName(@RequestParam("fullName") @NotBlank String fullName, @RequestParam("status") @NotBlank String status) {
+        PaginationResponseDto<CandidateResponseDto>paginationResponseDto = candidateService.getSearchCandidatesFullName(fullName, status);
+        if (paginationResponseDto.toString().isEmpty()){
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(candidateWithPaginationResponseDto);
+        return ResponseEntity.ok(paginationResponseDto);
     }
 
-    @Operation(summary = "Get all the candidate")
+    @Operation(summary = "Get all the candidate with pagination and filter by status")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "All candidate returned",
                     content = @Content(mediaType = "application/json",
@@ -124,9 +126,11 @@ public class CandidateController {
             @ApiResponse(responseCode = "404", description = "No data found", content = @Content)
     })
     @GetMapping("/")
-    public ResponseEntity<List<CandidateResponseDto>> getAllCandidate(){
-        List<CandidateResponseDto> candidates = candidateService.getAllCandidate();
-        return candidates.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(candidates);
+    public PaginationResponseDto<CandidateResponseDto> getAllCandidates(
+            @RequestParam(name = "status", required = false) List<Status> statuses,
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @RequestParam(defaultValue = "10") @Min(1) int size) {
+        return candidateService.getAllCandidate(statuses, page, size);
     }
 
     @Operation(summary = "Add a new candidate")

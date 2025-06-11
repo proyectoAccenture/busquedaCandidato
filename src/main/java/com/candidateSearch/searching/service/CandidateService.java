@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.util.EnumSet;
 import java.util.List;
@@ -76,11 +77,14 @@ public class CandidateService {
                 .collect(Collectors.toList());
     }
 
-    public PaginationResponseDto<CandidateResponseDto> getSearchCandidates(String query, List<Status> statuses, int page, int size) {
+    public PaginationResponseDto<CandidateResponseDto> getSearchCandidates(String query, List<Status> statuses, int page, int size, String sortBy, String direction) {
         CandidateValidator.validateQueryNotEmpty(query);
         query = CandidateValidator.normalizeQueryNotEmpty(query);
 
-        Pageable pageable = PageRequest.of(page, size);
+        String validSortBy = CandidateValidator.validateOrDefaultSortBy(sortBy);
+        Sort.Direction sortDirection = CandidateValidator.validateOrDefaultDirection(direction);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, validSortBy));
+
         String[] words = query.split(" ");
         String word1 = words.length > 0 ? words[0] : null;
         String word2 = words.length > 1 ? words[1] : null;
@@ -153,8 +157,10 @@ public class CandidateService {
                 .orElseThrow(() -> new BusinessException(GlobalMessage.CANDIDATE_DOES_NOT_EXIST));
     }
 
-    public PaginationResponseDto<CandidateResponseDto> getAllCandidate(List<Status> statuses, int page, int size){
-        Pageable pageable = PageRequest.of(page, size);
+    public PaginationResponseDto<CandidateResponseDto> getAllCandidate(List<Status> statuses, int page, int size, String sortBy, String direction){
+        String validSortBy = CandidateValidator.validateOrDefaultSortBy(sortBy);
+        Sort.Direction sortDirection = CandidateValidator.validateOrDefaultDirection(direction);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, validSortBy));
 
         Page<CandidateEntity> candidatePage = candidateRepository.findByStatusIn(
                 CandidateValidator.validateStatusesOrDefault(statuses),

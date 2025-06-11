@@ -5,12 +5,15 @@ import com.candidateSearch.searching.entity.utility.Status;
 import com.candidateSearch.searching.exception.type.BadRequestException;
 import com.candidateSearch.searching.exception.type.ResourceNotFoundException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import java.util.List;
 
 public class CandidateValidator {
+
     private CandidateValidator() {
-        // Previene la instanciación
+
     }
+
     public static void validateQueryNotEmpty(String query) {
         if (query == null || query.trim().isEmpty()) {
             throw new BadRequestException("Search query cannot be empty");
@@ -40,6 +43,7 @@ public class CandidateValidator {
                 ? List.of(Status.ACTIVE, Status.INACTIVE)
                 : statuses;
     }
+
     public static String normalizeQueryNotEmpty(String query) {
         if (query == null || query.isBlank()) {
             return query;
@@ -52,5 +56,16 @@ public class CandidateValidator {
                 .replaceAll("[úÚ]", "u");
     }
 
+    public static String validateOrDefaultSortBy(String sortBy) {
+        List<String> allowedSortBy = List.of("name","lastName", "datePresentation");
+        return allowedSortBy.contains(sortBy) ? sortBy : "name";
+    }
 
+    public static Sort.Direction validateOrDefaultDirection(String direction) {
+        try {
+            return Sort.Direction.fromString(direction.toUpperCase());
+        } catch (IllegalArgumentException | NullPointerException e) {
+            return Sort.Direction.ASC;
+        }
+    }
 }

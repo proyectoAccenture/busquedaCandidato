@@ -82,7 +82,7 @@ public class CandidateController {
         return ResponseEntity.ok(candidate);
     }
 
-    @Operation(summary = "Search candidates by all fields with pagination and filter by status",
+    @Operation(summary = "Search candidates by fields with pagination, filter by status, and sorting",
             description = "Fetches candidates that match the search keyword in any of the CandidateEntity fields, with optional " +
                     "filtering by status and pagination of results.")
     @ApiResponses(value = {
@@ -97,8 +97,10 @@ public class CandidateController {
             @RequestParam @NotBlank String query,
             @RequestParam(required = false) List<Status> status,
             @RequestParam(defaultValue = "0") @Min(0) int page,
-            @RequestParam(defaultValue = "10") @Min(1) int size) {
-        return ResponseEntity.ok(candidateService.getSearchCandidates(query, status, page, size));
+            @RequestParam(defaultValue = "10") @Min(1) int size,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "ASC") String direction ) {
+        return ResponseEntity.ok(candidateService.getSearchCandidates(query, status, page, size,sortBy, direction));
     }
 
     @Operation(summary = "Get candidates by full name")
@@ -118,7 +120,7 @@ public class CandidateController {
         return ResponseEntity.ok(paginationResponseDto);
     }
 
-    @Operation(summary = "Get all the candidate with pagination and filter by status")
+    @Operation(summary = "Get all the candidate with pagination, filter by status, and sorting")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "All candidate returned",
                     content = @Content(mediaType = "application/json",
@@ -129,8 +131,10 @@ public class CandidateController {
     public PaginationResponseDto<CandidateResponseDto> getAllCandidates(
             @RequestParam(name = "status", required = false) List<Status> statuses,
             @RequestParam(defaultValue = "0") @Min(0) int page,
-            @RequestParam(defaultValue = "10") @Min(1) int size) {
-        return candidateService.getAllCandidate(statuses, page, size);
+            @RequestParam(defaultValue = "10") @Min(1) int size,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "ASC") String direction) {
+        return candidateService.getAllCandidate(statuses, page, size,sortBy,direction);
     }
 
     @Operation(summary = "Add a new candidate")

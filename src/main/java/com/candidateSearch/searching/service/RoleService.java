@@ -1,13 +1,10 @@
 package com.candidateSearch.searching.service;
 
 import com.candidateSearch.searching.dto.request.RoleRequestDto;
-import com.candidateSearch.searching.dto.request.validation.validator.PostulationValidator;
 import com.candidateSearch.searching.dto.request.validation.validator.RoleValidator;
 import com.candidateSearch.searching.dto.response.PaginationResponseDto;
-import com.candidateSearch.searching.dto.response.PostulationResponseDto;
 import com.candidateSearch.searching.dto.response.RoleResponseDto;
 import com.candidateSearch.searching.entity.OriginEntity;
-import com.candidateSearch.searching.entity.PostulationEntity;
 import com.candidateSearch.searching.entity.RoleEntity;
 import com.candidateSearch.searching.entity.JobProfileEntity;
 import com.candidateSearch.searching.exception.globalmessage.GlobalMessage;
@@ -21,6 +18,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -40,8 +38,11 @@ public class RoleService {
                 .orElseThrow(() -> new BusinessException(GlobalMessage.ENTITY_DOES_NOT_EXIST));
     }
 
-    public PaginationResponseDto<RoleResponseDto> getAllRoles(List<Status> statuses, int page, int size){
-        Pageable pageable = PageRequest.of(page, size);
+    public PaginationResponseDto<RoleResponseDto> getAllRoles(List<Status> statuses, int page, int size, String sortBy, String direction){
+        String validSortBy = RoleValidator.validateOrDefaultSortBy(sortBy);
+        Sort.Direction sortDirection = RoleValidator.validateOrDefaultDirection(direction);
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, validSortBy));
         Page<RoleEntity> rolePage = roleRepository.findByStatusIn(
                 RoleValidator.validateStatusesOrDefault(statuses),
                 pageable);
@@ -60,9 +61,12 @@ public class RoleService {
         );
     }
 
-    public PaginationResponseDto<RoleResponseDto> searchRoles(String query,List<Status> statuses, int page, int size){
+    public PaginationResponseDto<RoleResponseDto> searchRoles(String query,List<Status> statuses, int page, int size, String sortBy, String direction){
         RoleValidator.validateQueryNotEmpty(query);
-        Pageable pageable = PageRequest.of(page, size);
+        String validSortBy = RoleValidator.validateOrDefaultSortBy(sortBy);
+        Sort.Direction sortDirection = RoleValidator.validateOrDefaultDirection(direction);
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, validSortBy));
         Page<RoleEntity> roleEntityList = roleRepository.searchByAllFields(query,RoleValidator.validateStatusesOrDefault(statuses),pageable);
         RoleValidator.validateCandidatePageNotEmpty(roleEntityList);
         List<RoleResponseDto> responseDtoList = roleEntityList.getContent()

@@ -2,7 +2,6 @@ package com.candidateSearch.searching.controller;
 
 import com.candidateSearch.searching.dto.request.RoleRequestDto;
 import com.candidateSearch.searching.dto.response.PaginationResponseDto;
-import com.candidateSearch.searching.dto.response.PostulationResponseDto;
 import com.candidateSearch.searching.dto.response.RoleResponseDto;
 import com.candidateSearch.searching.entity.utility.Status;
 import com.candidateSearch.searching.service.RoleService;
@@ -19,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -42,7 +40,7 @@ public class RoleController {
         return ResponseEntity.ok(roleResponseDto);
     }
 
-    @Operation(summary = "Get all the roles with pagination and filter by status")
+    @Operation(summary = "Get all the roles with pagination, filter by status, and sorting")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "All role returned",
                     content = @Content(mediaType = "application/json",
@@ -53,12 +51,14 @@ public class RoleController {
     public ResponseEntity<PaginationResponseDto<RoleResponseDto>> getAllPostulations(
             @RequestParam(required = false) List<Status> statuses,
             @RequestParam(defaultValue = "0")@Min(0) int page,
-            @RequestParam(defaultValue = "10")@Min(1) int size) {
+            @RequestParam(defaultValue = "10")@Min(1) int size,
+            @RequestParam(defaultValue = "nameRole") String sortBy,
+            @RequestParam(defaultValue = "ASC") String direction) {
 
-        return ResponseEntity.ok(roleService.getAllRoles(statuses, page, size));
+        return ResponseEntity.ok(roleService.getAllRoles(statuses, page, size,sortBy,direction));
     }
 
-    @Operation(summary = "Search roles by all fields with pagination and filter by status",
+    @Operation(summary = "Search roles by all fields with pagination, filter by status, and sorting",
             description = "Fetches roles that match the search keyword in any of the RoleEntity fields, with optional " +
                     "filtering by status and pagination of results.")
     @ApiResponses(value = {
@@ -72,8 +72,10 @@ public class RoleController {
             @RequestParam @NotBlank String query,
             @RequestParam(name = "status", required = false) List<Status> statuses,
             @RequestParam(defaultValue = "0") @Min(0)int page,
-            @RequestParam(defaultValue = "10")@Min(1) int size){
-        return ResponseEntity.ok(roleService.searchRoles(query, statuses, page, size));
+            @RequestParam(defaultValue = "10")@Min(1) int size,
+            @RequestParam(defaultValue = "nameRole") String sortBy,
+            @RequestParam(defaultValue = "ASC") String direction){
+        return ResponseEntity.ok(roleService.searchRoles(query, statuses, page, size,sortBy,direction));
     }
 
     @Operation(summary = "Add a new role")

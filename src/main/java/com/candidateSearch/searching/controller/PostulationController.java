@@ -73,7 +73,7 @@ public class PostulationController {
         return postulationService.getSearchPostulationsByCandidateFullName(query);
     }
 
-    @Operation(summary = "Search postulations by all fields with pagination and filter by status",
+    @Operation(summary = "Search postulations by all fields with pagination, filter by status, and sorting",
             description = "Fetches postulations that match the search keyword in any of the PostulationEntity fields, with optional " +
                     "filtering by status and pagination of results.")
     @ApiResponse(responseCode = "200", description = "Postulations found",
@@ -86,11 +86,13 @@ public class PostulationController {
             @RequestParam @NotBlank String query,
             @RequestParam(name = "status", required = false) List<Status> statuses,
             @RequestParam(defaultValue = "0") @Min(0)int page,
-            @RequestParam(defaultValue = "10")@Min(1) int size){
-        return ResponseEntity.ok(postulationService.searchByCandidateNameLastNameAndRole(query, statuses, page, size));
+            @RequestParam(defaultValue = "10")@Min(1) int size,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "ASC") String direction){
+        return ResponseEntity.ok(postulationService.searchByCandidateNameLastNameAndRole(query, statuses, page, size,sortBy,direction));
     }
 
-    @Operation(summary = "Get all the postulation with pagination and filter by status")
+    @Operation(summary = "Get all the postulation with pagination, filter by status, and sorting")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "All postulation returned",
                     content = @Content(mediaType = "application/json",
@@ -101,9 +103,11 @@ public class PostulationController {
     public ResponseEntity<PaginationResponseDto<PostulationResponseDto>> getAllPostulations(
             @RequestParam(required = false) List<Status> statuses,
             @RequestParam(defaultValue = "0")@Min(0) int page,
-            @RequestParam(defaultValue = "10")@Min(1) int size) {
+            @RequestParam(defaultValue = "10")@Min(1) int size,
+            @RequestParam(defaultValue = "datePresentation") String sortBy,
+            @RequestParam(defaultValue = "ASC") String direction) {
 
-        return ResponseEntity.ok(postulationService.getAllPostulation(statuses, page, size));
+        return ResponseEntity.ok(postulationService.getAllPostulation(statuses, page, size,sortBy,direction));
     }
 
     @Operation(summary = "Add a new postulation")

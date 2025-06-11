@@ -11,12 +11,10 @@ import com.candidateSearch.searching.entity.PostulationEntity;
 import com.candidateSearch.searching.entity.ProcessEntity;
 import com.candidateSearch.searching.entity.RoleEntity;
 import com.candidateSearch.searching.exception.globalmessage.GlobalMessage;
-import com.candidateSearch.searching.exception.type.BadRequestException;
 import com.candidateSearch.searching.exception.type.BusinessException;
 import com.candidateSearch.searching.exception.type.CannotApplyException;
 import com.candidateSearch.searching.exception.type.CannotBeUpdateException;
 import com.candidateSearch.searching.exception.type.ItAlreadyExistPostulationException;
-import com.candidateSearch.searching.exception.type.ResourceNotFoundException;
 import com.candidateSearch.searching.mapper.IMapperPostulation;
 import com.candidateSearch.searching.repository.ICandidateRepository;
 import com.candidateSearch.searching.repository.ICandidateStateRepository;
@@ -29,6 +27,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -58,8 +57,13 @@ public class PostulationService {
         return mapperPostulation.toDto(postulationEntity);
     }
 
-    public PaginationResponseDto<PostulationResponseDto> getAllPostulation(List<Status> statuses, int page, int size){
-        Pageable pageable = PageRequest.of(page, size);
+    public PaginationResponseDto<PostulationResponseDto> getAllPostulation(List<Status> statuses, int page, int size, String sortBy, String direction){
+        String validSortBy = PostulationValidator.validateAllOrDefaultSortBy(sortBy);
+        Sort.Direction sortDirection = PostulationValidator.validateOrDefaultDirection(direction);
+        String sortField = PostulationValidator.resolveAllJpaField(validSortBy);
+        Sort sort = Sort.by(sortDirection, sortField);
+
+        Pageable pageable = PageRequest.of(page, size, sort);
         Page<PostulationEntity> postulationPage = postulationRepository.findByStatusIn(
                 PostulationValidator.validateStatusesOrDefault(statuses),
                 pageable);
@@ -97,11 +101,16 @@ public class PostulationService {
                 .collect(Collectors.toList());
     }
 
-    public PaginationResponseDto<PostulationResponseDto> searchByCandidateNameLastNameAndRole(String query, List<Status>statuses, int page,int size) {
+    public PaginationResponseDto<PostulationResponseDto> searchByCandidateNameLastNameAndRole(String query, List<Status>statuses, int page,int size, String sortBy, String direction) {
         PostulationValidator.validateQueryNotEmpty(query);
         query = PostulationValidator.normalizeQueryNotEmpty(query);
-        Pageable pageable = PageRequest.of(page, size);
 
+        String validSortBy = PostulationValidator.validateOrDefaultSortBy(sortBy);
+        Sort.Direction sortDirection = PostulationValidator.validateOrDefaultDirection(direction);
+        String sortField = PostulationValidator.resolveJpaField(validSortBy);
+        Sort sort = Sort.by(sortDirection, sortField);
+
+        Pageable pageable = PageRequest.of(page, size,sort);
         String[] words = query.split(" ");
         String word1 = words.length > 0 ? words[0] : null;
         String word2 = words.length > 1 ? words[1] : null;

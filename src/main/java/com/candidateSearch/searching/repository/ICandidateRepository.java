@@ -23,28 +23,30 @@ public interface ICandidateRepository extends JpaRepository<CandidateEntity, Lon
     SELECT c FROM CandidateEntity c
     LEFT JOIN c.origin o
     LEFT JOIN c.jobProfile jp
-    WHERE (
-        (:word1 IS NULL OR LOWER(COALESCE(c.name, '')) LIKE LOWER(CONCAT('%', :word1, '%')) OR LOWER(COALESCE(c.lastName, '')) LIKE LOWER(CONCAT('%', :word1, '%'))) AND
-        (:word2 IS NULL OR LOWER(COALESCE(c.name, '')) LIKE LOWER(CONCAT('%', :word2, '%')) OR LOWER(COALESCE(c.lastName, '')) LIKE LOWER(CONCAT('%', :word2, '%'))) AND
-        (:word3 IS NULL OR LOWER(COALESCE(c.name, '')) LIKE LOWER(CONCAT('%', :word3, '%')) OR LOWER(COALESCE(c.lastName, '')) LIKE LOWER(CONCAT('%', :word3, '%'))) AND
-        (:word4 IS NULL OR LOWER(COALESCE(c.name, '')) LIKE LOWER(CONCAT('%', :word4, '%')) OR LOWER(COALESCE(c.lastName, '')) LIKE LOWER(CONCAT('%', :word4, '%')))
+    WHERE c.status IN :statuses
+    AND (
+        (
+            (:word1 IS NULL OR LOWER(COALESCE(c.name, '')) LIKE LOWER(CONCAT('%', :word1, '%')) OR LOWER(COALESCE(c.lastName, '')) LIKE LOWER(CONCAT('%', :word1, '%'))) AND
+            (:word2 IS NULL OR LOWER(COALESCE(c.name, '')) LIKE LOWER(CONCAT('%', :word2, '%')) OR LOWER(COALESCE(c.lastName, '')) LIKE LOWER(CONCAT('%', :word2, '%'))) AND
+            (:word3 IS NULL OR LOWER(COALESCE(c.name, '')) LIKE LOWER(CONCAT('%', :word3, '%')) OR LOWER(COALESCE(c.lastName, '')) LIKE LOWER(CONCAT('%', :word3, '%'))) AND
+            (:word4 IS NULL OR LOWER(COALESCE(c.name, '')) LIKE LOWER(CONCAT('%', :word4, '%')) OR LOWER(COALESCE(c.lastName, '')) LIKE LOWER(CONCAT('%', :word4, '%')))
+        )
+        OR LOWER(COALESCE(c.card, '')) LIKE LOWER(CONCAT('%', :query, '%'))
+        OR LOWER(COALESCE(c.phone, '')) LIKE LOWER(CONCAT('%', :query, '%'))
+        OR LOWER(COALESCE(c.city, '')) LIKE LOWER(CONCAT('%', :query, '%'))
+        OR LOWER(COALESCE(c.email, '')) LIKE LOWER(CONCAT('%', :query, '%'))
+        OR LOWER(COALESCE(c.source, '')) LIKE LOWER(CONCAT('%', :query, '%'))
+        OR LOWER(COALESCE(c.skills, '')) LIKE LOWER(CONCAT('%', :query, '%'))
+        OR LOWER(COALESCE(c.workExperience, '')) LIKE LOWER(CONCAT('%', :query, '%'))
+        OR LOWER(COALESCE(c.seniority, '')) LIKE LOWER(CONCAT('%', :query, '%'))
+        OR LOWER(COALESCE(c.yearsExperience, '')) LIKE LOWER(CONCAT('%', :query, '%'))
+        OR LOWER(COALESCE(o.name, '')) LIKE LOWER(CONCAT('%', :query, '%'))
+        OR LOWER(COALESCE(jp.name, '')) LIKE LOWER(CONCAT('%', :query, '%'))
+        OR CAST(COALESCE(c.birthdate, null) AS string) LIKE LOWER(CONCAT('%', :query, '%'))
+        OR CAST(COALESCE(c.datePresentation, null) AS string) LIKE LOWER(CONCAT('%', :query, '%'))
+        OR LOWER(CONCAT(c.name, ' ', c.lastName)) LIKE LOWER(CONCAT('%', :query, '%'))
+        OR LOWER(CONCAT(c.lastName, ' ', c.name)) LIKE LOWER(CONCAT('%', :query, '%'))
     )
-    AND c.status IN :statuses
-    OR LOWER(COALESCE(c.card, '')) LIKE LOWER(CONCAT('%', :query, '%'))
-    OR LOWER(COALESCE(c.phone, '')) LIKE LOWER(CONCAT('%', :query, '%'))
-    OR LOWER(COALESCE(c.city, '')) LIKE LOWER(CONCAT('%', :query, '%'))
-    OR LOWER(COALESCE(c.email, '')) LIKE LOWER(CONCAT('%', :query, '%'))
-    OR LOWER(COALESCE(c.source, '')) LIKE LOWER(CONCAT('%', :query, '%'))
-    OR LOWER(COALESCE(c.skills, '')) LIKE LOWER(CONCAT('%', :query, '%'))
-    OR LOWER(COALESCE(c.workExperience, '')) LIKE LOWER(CONCAT('%', :query, '%'))
-    OR LOWER(COALESCE(c.seniority, '')) LIKE LOWER(CONCAT('%', :query, '%'))
-    OR LOWER(COALESCE(c.yearsExperience, '')) LIKE LOWER(CONCAT('%', :query, '%'))
-    OR LOWER(COALESCE(o.name, '')) LIKE LOWER(CONCAT('%', :query, '%'))
-    OR LOWER(COALESCE(jp.name, '')) LIKE LOWER(CONCAT('%', :query, '%'))
-    OR CAST(COALESCE(c.birthdate, null) AS string) LIKE LOWER(CONCAT('%', :query, '%'))
-    OR CAST(COALESCE(c.datePresentation, null) AS string) LIKE LOWER(CONCAT('%', :query, '%'))
-    OR LOWER(CONCAT(c.name, ' ', c.lastName)) LIKE LOWER(CONCAT('%', :query, '%'))
-    OR LOWER(CONCAT(c.lastName, ' ', c.name)) LIKE LOWER(CONCAT('%', :query, '%'))
 """)
     Page<CandidateEntity> searchCandidates(
             @Param("word1") String word1,
@@ -55,6 +57,7 @@ public interface ICandidateRepository extends JpaRepository<CandidateEntity, Lon
             @Param("statuses") List<Status> statuses,
             Pageable pageable
     );
+
 
     @Query("SELECT c FROM CandidateEntity c " +
             "WHERE LOWER(CONCAT(c.name, ' ', c.lastName)) LIKE LOWER(CONCAT('%', :query1, '%')) " +

@@ -32,7 +32,7 @@ public class CandidateStateRequestDto {
     @Schema(name = "description", description = "Description about candida te process", example = "This process is...")
     @NotBlank(message = "Description cannot be blank")
     @Size(min = 1, max = 255, message = "Description must be between 10 and 255 characters")
-    @Pattern(regexp = "^[a-zA-Z0-9 .,!?-]+$", message = "Description contains invalid characters")
+    @Pattern(regexp = "^[a-zA-ZñÑáéíóúÁÉÍÓÚ0-9 .,!?-]+$", message = "Description contains invalid characters")
     private String description;
 
     @Schema(name = "status",description = "Status in which a candidate is located")

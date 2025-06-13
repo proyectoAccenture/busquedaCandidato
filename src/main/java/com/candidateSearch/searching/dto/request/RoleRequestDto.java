@@ -30,6 +30,7 @@ public class RoleRequestDto {
     @Schema(name = "description", description = "experience should have of the candidate", example = "string")
     @NotBlank(message = "Description cannot be blank")
     @Size(min = 1, max = 500, message = "The description must be between 1 and 500 characters")
+    @Pattern(regexp = "^[a-zA-ZñÑáéíóúÁÉÍÓÚ0-9 .,!?-]+$", message = "Description contains invalid characters")
     private String description;
 
     @Schema(name = "contract", description = "contract of the candidate", example = "string")

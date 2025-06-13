@@ -51,8 +51,11 @@ public class CandidateController {
             @ApiResponse(responseCode = "409", description = "Candidate is already vetoed", content = @Content)
     })
     @PatchMapping("/")
-    public ResponseEntity<CandidateResponseDto> vetoCandidate(@RequestParam("card") @NotBlank String card, @RequestParam("status") @NotBlank String status) {
-        CandidateResponseDto response = candidateService.vetaCandidate(card, status);
+    public ResponseEntity<CandidateResponseDto> vetoCandidate(
+            @RequestParam("card") @NotBlank String card,
+            @RequestParam("status") @NotBlank String status,
+            @RequestParam(required = false) String blockReason) {
+        CandidateResponseDto response = candidateService.vetaCandidate(card, status, blockReason);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

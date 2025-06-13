@@ -36,7 +36,7 @@ public class CandidateService {
     private final IMapperCandidate mapperCandidate;
     private final OperationCandidate operationCandidate;
 
-    public CandidateResponseDto vetaCandidate(String card, String requestedStatus) {
+    public CandidateResponseDto vetaCandidate(String card, String requestedStatus,String blockReason) {
         CandidateEntity candidate = candidateRepository
                 .findByCardAndStatusNot(card, Status.INACTIVE)
                 .orElseThrow(() -> new BusinessException(GlobalMessage.ENTITY_DOES_NOT_EXIST));
@@ -54,8 +54,11 @@ public class CandidateService {
 
         if (status == Status.ACTIVE && currentStatus == Status.BLOCKED) {
             targetStatus = Status.ACTIVE;
+            candidate.setBlockReason(null);
         } else if (status == Status.BLOCKED && currentStatus == Status.ACTIVE) {
+            CandidateValidator.validateBlockReason(blockReason);
             targetStatus = Status.BLOCKED;
+            candidate.setBlockReason(blockReason);
         } else {
             throw new BusinessException(GlobalMessage.INCORRECT_STATUS);
         }

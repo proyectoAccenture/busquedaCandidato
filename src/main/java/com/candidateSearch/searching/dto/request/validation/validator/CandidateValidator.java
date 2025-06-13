@@ -9,9 +9,19 @@ import org.springframework.data.domain.Sort;
 import java.util.List;
 
 public class CandidateValidator {
+    private static final String BLOCK_REASON_REGEX = "^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ .,]*$";
 
     private CandidateValidator() {
 
+    }
+    public static void validateBlockReason(String blockReason) {
+        if (blockReason == null || blockReason.trim().isEmpty()) {
+            throw new BadRequestException("Block reason must not be empty when blocking a candidate.");
+        }
+
+        if (!blockReason.matches(BLOCK_REASON_REGEX)) {
+            throw new BadRequestException("Block reason only allows letters, numbers, spaces, tildes, dots, and commas.");
+        }
     }
 
     public static void validateQueryNotEmpty(String query) {

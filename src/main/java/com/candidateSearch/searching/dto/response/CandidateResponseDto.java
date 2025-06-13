@@ -70,6 +70,9 @@ public class CandidateResponseDto {
     @Schema(name = "status", description = "Status of the candidate (true if active, false if closed)", example = "false")
     private Status status;
 
+    @Schema(name = "blockReason", description = "Reason related to the candidate's status", example = "The candidate does not meet the minimum requirements.")
+    private String blockReason;
+
     @Schema(name = "originId",description = "Id of origin")
     private Long originId;
 

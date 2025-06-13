@@ -75,6 +75,9 @@ public class CandidateEntity {
     @Column(nullable = false)
     private LocalDate datePresentation;
 
+    @Column(name = "block_reason")
+    private String blockReason;
+
     @Lob
     @Column(name = "resume_pdf", columnDefinition = "LONGBLOB")
     private byte[] resumePdf;
